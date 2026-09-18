@@ -1438,10 +1438,10 @@
       "projects": "Go to Projects"
     },
     "list": {
-      "title": "Task List",
-      "navigateDown": "Highlight next task",
-      "navigateUp": "Highlight previous task",
-      "open": "Open highlighted task"
+      "title": "Task lists",
+      "navigateDown": "Next task",
+      "navigateUp": "Previous task",
+      "open": "Open the task"
     },
     "gantt": {
       "title": "Gantt Chart",
@@ -1451,7 +1451,8 @@
       "expandTaskRight": "Expand task end date later",
       "shrinkTaskLeft": "Shrink task from start date",
       "shrinkTaskRight": "Shrink task from end date"
-    }
+    },
+    "newTask": "New task"
   },
   "update": {
     "available": "There is an update available!",
@@ -1813,7 +1814,8 @@
     },
     "kbd": {
       "then": "then"
-    }
+    },
+    "cancel": "Cancel"
   },
   "notFound": {
     "title": "Nothing woven here",
@@ -1993,5 +1995,325 @@
       "serverError": "The server couldn't open this share. Try again later.",
       "failed": "This share link couldn't be opened."
     }
+  },
+  "tasks": {
+    "priority": {
+      "label": "Priority: {priority}",
+      "unset": "No priority",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "urgent": "Urgent",
+      "doNow": "Do now"
+    },
+    "row": {
+      "due": "Due {date}",
+      "markDone": "Complete “{title}”",
+      "markUndone": "Reopen “{title}”",
+      "unread": "Unread updates",
+      "repeats": "Repeats",
+      "subtasks": "{done} of {total} subtasks done",
+      "checklist": "{done} of {total} checklist items done",
+      "comments": "{count} comment | {count} comments",
+      "attachments": "{count} attachment | {count} attachments",
+      "actions": "Task actions",
+      "more": "Options"
+    },
+    "actions": {
+      "open": "Open",
+      "markDone": "Complete",
+      "markUndone": "Reopen",
+      "dueHeading": "Due date",
+      "dueToday": "Today",
+      "dueTomorrow": "Tomorrow",
+      "dueNextWeek": "Next week",
+      "dueRemove": "Remove date",
+      "favorite": "Add to favorites",
+      "unfavorite": "Remove from favorites",
+      "copyLink": "Copy link",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "deleteTitle": "Delete this task?",
+      "deleteDescription": "“{title}” will be deleted with its comments and attachments. This can't be undone.",
+      "doneToast": "Completed: {title}",
+      "undoneToast": "Reopened: {title}",
+      "undo": "Undo",
+      "dueSet": "Due date updated",
+      "dueRemoved": "Due date removed",
+      "duplicated": "Task duplicated",
+      "linkCopied": "Link copied"
+    },
+    "list": {
+      "loading": "Loading tasks"
+    }
+  },
+  "agenda": {
+    "title": "Today",
+    "week": "week {week}",
+    "newTask": "New task",
+    "norns": {
+      "past": "Urðr · what was",
+      "present": "Verðandi · what is",
+      "future": "Skuld · what shall be"
+    },
+    "overdue": "Overdue",
+    "today": "Today",
+    "upcoming": "Next 7 days",
+    "todayEmpty": "Nothing due today.",
+    "upcomingEmpty": "Nothing due in the next seven days.",
+    "allClear": "All clear. Tasks with a due date show up here as their day comes.",
+    "loadFailed": "Your tasks couldn't be loaded",
+    "retry": "Try again"
+  },
+  "pickers": {
+    "unitShort": {
+      "minutes": "{n} min",
+      "hours": "{n} h",
+      "days": "{n} day | {n} days",
+      "weeks": "{n} week | {n} weeks"
+    },
+    "date": {
+      "inputLabel": "Date in words",
+      "placeholder": "Tomorrow 10:00, friday, in 3 days…",
+      "noMatch": "No date recognised yet",
+      "apply": "Apply {date}",
+      "shortcutsLabel": "Quick dates",
+      "shortcuts": {
+        "today": "Today",
+        "tomorrow": "Tomorrow",
+        "nextMonday": "Next Monday",
+        "thisWeekend": "This weekend",
+        "laterThisWeek": "Later this week",
+        "nextWeek": "Next week",
+        "nextWeekend": "Next weekend",
+        "endOfMonth": "End of month",
+        "inAMonth": "In a month"
+      },
+      "time": "Time",
+      "timePresets": "Common times",
+      "clear": "Remove date",
+      "done": "Done"
+    },
+    "reminder": {
+      "at": {
+        "due_date": "At due time",
+        "start_date": "At start time",
+        "end_date": "At end time"
+      },
+      "before": {
+        "due_date": "{period} before due date",
+        "start_date": "{period} before start date",
+        "end_date": "{period} before end date"
+      },
+      "after": {
+        "due_date": "{period} after due date",
+        "start_date": "{period} after start date",
+        "end_date": "{period} after end date"
+      },
+      "short": {
+        "at": "At the time",
+        "before": "{period} before",
+        "after": "{period} after"
+      },
+      "inactive": "{text} · no date",
+      "relativeTo": {
+        "due_date": "Due date",
+        "start_date": "Start date",
+        "end_date": "End date"
+      },
+      "empty": "No reminders yet",
+      "remove": "Remove reminder",
+      "addAbsolute": "Date and time",
+      "addRelative": "Custom",
+      "needsDate": "Set a due, start or end date to add reminders relative to it.",
+      "newTitle": "New reminder",
+      "editTitle": "Edit reminder",
+      "back": "Back",
+      "add": "Add",
+      "amount": "Amount",
+      "unit": "Unit",
+      "direction": "Before or after",
+      "beforeLabel": "Before",
+      "afterLabel": "After",
+      "relativeToLabel": "Relative to"
+    },
+    "repeat": {
+      "none": "Doesn't repeat",
+      "every": {
+        "seconds": "Every second | Every {n} seconds",
+        "minutes": "Every minute | Every {n} minutes",
+        "hours": "Every hour | Every {n} hours",
+        "days": "Every day | Every {n} days",
+        "weeks": "Every week | Every {n} weeks",
+        "months": "Every month | Every {n} months",
+        "years": "Every year | Every {n} years"
+      },
+      "fromCompletion": "{interval} · from completion",
+      "everyPrefix": "Every",
+      "amount": "Interval",
+      "unit": "Unit",
+      "months": "month | months",
+      "fromCompletionToggle": "Repeat from completion date",
+      "hintFromCompletion": "The next date counts from the day you complete the task.",
+      "hintFromDate": "The next date counts from the current one, even if you complete it late.",
+      "monthsHint": "Here a month counts as a 30-day block."
+    }
+  },
+  "taskDetail": {
+    "title": "Task",
+    "panel": "Task detail",
+    "resize": "Resize the task panel",
+    "breadcrumb": "Where this task lives",
+    "close": "Close",
+    "subscribe": "Get notified about changes",
+    "unsubscribe": "Stop notifications",
+    "titleLabel": "Task title",
+    "titleRequired": "A task needs a title.",
+    "notFound": "This task doesn't exist",
+    "notFoundDescription": "It may have been deleted, or it belongs to a project you can't see.",
+    "loadFailed": "The task couldn't be loaded",
+    "unknownProject": "Unknown project",
+    "empty": "Empty",
+    "addProperty": "Add property",
+    "searchProject": "Search projects…",
+    "searchLabels": "Search or create labels…",
+    "searchPeople": "Search people…",
+    "created": "created {date}",
+    "createdBy": "created {date} by {user}",
+    "updated": "updated {date}",
+    "properties": {
+      "project": "Project",
+      "priority": "Priority",
+      "dueDate": "Due",
+      "startDate": "Starts",
+      "endDate": "Ends",
+      "reminders": "Reminders",
+      "repeat": "Repeats",
+      "labels": "Labels",
+      "assignees": "Assignees",
+      "progress": "Progress",
+      "color": "Color"
+    },
+    "relations": {
+      "subtasks": "Subtasks",
+      "title": "Relations",
+      "addSubtask": "Add a subtask",
+      "link": "Link task",
+      "kind": "Relation",
+      "searchTask": "Search tasks…",
+      "remove": "Remove the relation with “{title}”",
+      "kinds": {
+        "subtask": "Subtasks",
+        "parenttask": "Part of",
+        "related": "Related",
+        "blocking": "Blocks",
+        "blocked": "Blocked by",
+        "precedes": "Comes before",
+        "follows": "Comes after",
+        "duplicateof": "Duplicate of",
+        "duplicates": "Duplicated by",
+        "copiedfrom": "Copied from",
+        "copiedto": "Copied to"
+      }
+    },
+    "attachments": {
+      "title": "Attachments",
+      "upload": "Attach",
+      "camera": "Camera",
+      "empty": "No files yet.",
+      "emptyDrop": "No files yet. Drop them here or attach them.",
+      "drop": "Drop to attach",
+      "open": "Open",
+      "openNamed": "Open {name}",
+      "download": "Download",
+      "downloadNamed": "Download {name}",
+      "actions": "Actions for {name}",
+      "cover": "Cover",
+      "setCover": "Use as cover",
+      "removeCover": "Remove cover",
+      "delete": "Delete",
+      "deleteTitle": "Delete this attachment?",
+      "deleteDescription": "“{name}” will be deleted from the task. This can't be undone.",
+      "previous": "Previous",
+      "next": "Next",
+      "previewFailed": "This file couldn't be loaded."
+    },
+    "description": {
+      "title": "Description",
+      "placeholder": "Add notes, a checklist, links… type / for more",
+      "saving": "saving…",
+      "saved": "saved"
+    },
+    "reactions": {
+      "add": "Add a reaction",
+      "search": "Search emoji…",
+      "toggle": "{emoji} {count}: {names}"
+    },
+    "comments": {
+      "title": "Comments",
+      "placeholder": "Write a comment…",
+      "send": "Comment",
+      "sendHint": "{mod} ⏎",
+      "loadMore": "Show more comments",
+      "empty": "No comments yet.",
+      "edited": "edited",
+      "edit": "Edit",
+      "editHint": "{mod} ⏎ to save · esc to cancel",
+      "copyLink": "Copy link",
+      "actions": "Comment actions",
+      "delete": "Delete",
+      "deleteTitle": "Delete this comment?",
+      "deleteDescription": "It will be gone for everyone. This can't be undone."
+    }
+  },
+  "editor": {
+    "commands": "Commands",
+    "emoji": "Emoji",
+    "mentions": "People",
+    "inlineCode": "Inline code",
+    "codeBlock": "Code block",
+    "divider": "Divider",
+    "imageTooltip": "Upload an image and attach it to the task.",
+    "tableTooltip": "Insert a table.",
+    "insertBlock": "Insert block",
+    "mention": "Mention someone",
+    "done": "Done",
+    "apply": "Apply",
+    "uploading": "Uploading image…",
+    "link": {
+      "edit": "Edit link",
+      "remove": "Remove link",
+      "open": "Open"
+    }
+  },
+  "quickAdd": {
+    "title": "New task",
+    "label": "New task, with quick add magic",
+    "placeholder": "What needs doing?",
+    "hint": "{label}label  {project}project  {priority}priority  {assignee}person",
+    "lines": "{count} tasks, one per line",
+    "repeats": "Repeats",
+    "project": "Project: {project}",
+    "noProject": "No project",
+    "newLineHint": "⇧⏎ another task",
+    "submit": "Create task",
+    "submitMany": "Create {count} tasks",
+    "created": "Created: {title}",
+    "createdMany": "{count} task created | {count} tasks created"
+  },
+  "upcoming": {
+    "title": "Upcoming",
+    "range": "Range",
+    "ranges": {
+      "next7Days": "7 days",
+      "next14Days": "14 days",
+      "next30Days": "30 days",
+      "custom": "Custom"
+    },
+    "showOverdue": "Overdue",
+    "showUndated": "No date",
+    "undated": "No date",
+    "emptyTitle": "Nothing coming up",
+    "emptyDescription": "Tasks with a due date in this range will show up here."
   }
 }

@@ -48,7 +48,8 @@ describe('task labels', () => {
 
 		expect(sdk.taskLabelsCreate).toHaveBeenCalledWith({path: {task: 5}, body: {label_id: 2}})
 		expect(labels()).toEqual({detail: [urgent, home], board: [urgent, home]})
-		expect(message.success).toHaveBeenCalledWith({message: 'The label has been added successfully.'})
+		// The picker shows the change in place, so there is no toast.
+		expect(message.success).not.toHaveBeenCalled()
 	})
 
 	it('removes a label', async () => {

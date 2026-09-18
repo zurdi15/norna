@@ -2,8 +2,10 @@
 import {computed, type Component} from 'vue'
 import {useRoute} from 'vue-router'
 import {useI18n} from 'vue-i18n'
+import {useActiveElement} from '@vueuse/core'
 import {CalendarDays, FolderKanban, House, Plus, Search} from '@lucide/vue'
 
+import {isFormField} from '@/helpers/shortcut'
 import {useShellStore} from '@/stores/shell'
 import {cn} from '@/ui/cn'
 import {useKeyboardInset} from '@/ui/composables/useKeyboardInset'
@@ -13,6 +15,10 @@ const {t} = useI18n()
 const route = useRoute()
 const shell = useShellStore()
 const keyboardInset = useKeyboardInset()
+// Android doesn't report its keyboard to the visual viewport, so typing also hides the bar.
+const activeElement = useActiveElement()
+const typing = computed(() => isFormField(activeElement.value ?? null)
+	|| (activeElement.value?.closest('[contenteditable="true"]') ?? null) !== null)
 
 const routeName = computed(() => String(route.name ?? ''))
 
@@ -42,7 +48,7 @@ const itemClass = 'flex flex-col items-center justify-center gap-0.5 text-3xs fo
 <template>
 	<!-- Hidden while the keyboard is open (iOS): it would sit on top of the field being typed in. -->
 	<nav
-		v-show="keyboardInset === 0"
+		v-show="keyboardInset === 0 && !typing"
 		:aria-label="t('shell.navigation')"
 		class="fixed inset-x-0 bottom-0 z-(--z-nav) border-t border-line bg-canvas/92 pb-safe backdrop-blur-md"
 	>

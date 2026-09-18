@@ -3,7 +3,6 @@ import type {QueryClient} from '@tanstack/vue-query'
 
 import {taskLabelsBulkReplace, taskLabelsCreate, taskLabelsDelete} from '@/client/generated'
 import type {Label} from '@/client/generated'
-import {i18n} from '@/i18n'
 
 import {contextMutationOptions} from './contextMutation'
 import {invalidateTask, invalidateTaskCollections, patchTaskInCaches} from './tasks'
@@ -36,7 +35,6 @@ export function addTaskLabelMutationOptions() {
 			}))
 		},
 		onSettled: ({taskId}, client) => settle(client, taskId),
-		successMessage: () => i18n.global.t('task.label.addSuccess'),
 	})
 }
 
@@ -52,7 +50,6 @@ export function removeTaskLabelMutationOptions() {
 			}))
 		},
 		onSettled: ({taskId}, client) => settle(client, taskId),
-		successMessage: () => i18n.global.t('task.label.removeSuccess'),
 	})
 }
 

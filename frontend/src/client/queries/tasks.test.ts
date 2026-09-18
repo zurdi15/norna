@@ -38,6 +38,7 @@ import {
 	deleteTaskMutationOptions,
 	duplicateTaskMutationOptions,
 	editTasksInShape,
+	everyTaskQuery,
 	infiniteTaskListQuery,
 	markTaskReadMutationOptions,
 	moveTaskToProjectMutationOptions,
@@ -154,6 +155,18 @@ describe('task queries', () => {
 		expect(sdk.projectViewTasksList).toHaveBeenCalledWith({path: {project: 1, view: 5}, query: {q: 'milk', per_page: 50, page: 1}})
 		expect(nextTaskPage(taskPage([], {page: 1, total_pages: 2}))).toBe(2)
 		expect(nextTaskPage(taskPage([], {page: 2, total_pages: 2}))).toBeUndefined()
+	})
+
+	it('loads every page of an agenda query into one list', async () => {
+		sdk.tasksList
+			.mockResolvedValueOnce({data: {items: [task({id: 1})], page: 1, total: 2, total_pages: 2}})
+			.mockResolvedValueOnce({data: {items: [task({id: 2})], page: 2, total: 2, total_pages: 2}})
+
+		const tasks = await queryClient.fetchQuery(everyTaskQuery({filter: 'done = false', q: ''}))
+
+		expect(tasks.map(item => item.id)).toEqual([1, 2])
+		expect(sdk.tasksList).toHaveBeenNthCalledWith(2, {query: {filter: 'done = false', page: 2}})
+		expect(everyTaskQuery({filter: 'done = false'}).queryKey[1]).toBe('list')
 	})
 })
 

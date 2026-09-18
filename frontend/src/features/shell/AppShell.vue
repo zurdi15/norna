@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onBeforeUnmount, watch} from 'vue'
+import {computed, onBeforeUnmount, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useI18n} from 'vue-i18n'
 import {toast} from 'vue-sonner'
@@ -8,6 +8,9 @@ import {useOnline} from '@vueuse/core'
 import {useNotifications} from '@/composables/useNotifications'
 import {useRenewTokenOnFocus} from '@/composables/useRenewTokenOnFocus'
 import {useWebSocket} from '@/composables/useWebSocket'
+import TaskDetailPanel from '@/features/tasks/detail/TaskDetailPanel.vue'
+import QuickAddDialog from '@/features/tasks/quick-add/QuickAddDialog.vue'
+import {useTaskBackdrop} from '@/features/tasks/detail/useTaskBackdrop'
 import {useBaseStore} from '@/stores/base'
 import {useShellStore} from '@/stores/shell'
 import {useBreakpoints} from '@/ui/composables/useBreakpoints'
@@ -26,6 +29,10 @@ const baseStore = useBaseStore()
 const {isMd, isLg} = useBreakpoints()
 
 useRenewTokenOnFocus()
+
+// A task opened from a page shows beside it on wide screens; elsewhere it takes the whole page.
+const {backdrop, close: closeTaskPanel} = useTaskBackdrop()
+const taskPanel = computed(() => isLg.value && backdrop.value !== null)
 
 const {connect, subscribe} = useWebSocket()
 connect()
@@ -103,10 +110,24 @@ function focusMain() {
 			tabindex="-1"
 			class="min-w-0 flex-1 pb-[calc(3.75rem+env(safe-area-inset-bottom))] focus:outline-none md:pb-0"
 		>
-			<RouterView />
+			<!-- One RouterView either way, so the page behind the panel isn't remounted when it opens. -->
+			<RouterView :route="taskPanel ? backdrop ?? undefined : undefined" />
 		</main>
+		<TaskDetailPanel
+			v-if="taskPanel"
+			@close="closeTaskPanel"
+		>
+			<RouterView v-slot="{Component}">
+				<component
+					:is="Component"
+					in-panel
+					@close="closeTaskPanel"
+				/>
+			</RouterView>
+		</TaskDetailPanel>
 	</div>
 	<BottomNav v-if="!isMd" />
 	<CommandPalette />
 	<ShortcutsDialog />
+	<QuickAddDialog />
 </template>

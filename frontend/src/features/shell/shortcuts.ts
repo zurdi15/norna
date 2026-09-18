@@ -29,6 +29,10 @@ export const KEYBOARD_SHORTCUTS: ShortcutGroup[] = [
 				title: 'keyboardShortcuts.quickSearch',
 				...shortcutBindingToDisplay(SHORTCUTS.quickSearch),
 			},
+			{
+				title: 'keyboardShortcuts.newTask',
+				...shortcutBindingToDisplay(SHORTCUTS.newTask),
+			},
 		],
 	},
 	{
@@ -58,7 +62,7 @@ export const KEYBOARD_SHORTCUTS: ShortcutGroup[] = [
 	},
 	{
 		title: 'keyboardShortcuts.list.title',
-		available: (route) => route.name === 'project.view',
+		available: (route) => ['home', 'tasks.range', 'project.view', 'task.detail'].includes(route.name as string),
 		shortcuts: [
 			{
 				title: 'keyboardShortcuts.list.navigateDown',

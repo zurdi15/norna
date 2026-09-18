@@ -79,7 +79,8 @@ describe('comment writes', () => {
 		expect(cached('asc').map(item => item.id)).toEqual([1, 2, 3])
 		expect(cached('desc').map(item => item.id)).toEqual([3, 2, 1])
 		expect(queryClient.getQueryData<Task>(taskKeys.detail(5))?.comment_count).toBe(3)
-		expect(message.success).toHaveBeenCalledWith({message: 'The comment was added successfully.'})
+		// The comment shows up in place, so there is no toast.
+		expect(message.success).not.toHaveBeenCalled()
 	})
 
 	it('does not append behind pages that are not loaded yet', async () => {

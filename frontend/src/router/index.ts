@@ -9,7 +9,7 @@ import {LINK_SHARE_HASH_PREFIX} from '@/constants/linkShareHash'
 import {REDIRECT_HASH_PREFIX} from '@/constants/redirectHash'
 import {AUTH_ROUTE_NAMES} from '@/constants/authRouteNames'
 import {PRO_FEATURE} from '@/constants/proFeatures'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 import {error, success} from '@/message'
 
 import {useAuthStore} from '@/stores/auth'
@@ -46,7 +46,7 @@ const router = createRouter({
 		{
 			path: '/',
 			name: 'home',
-			component: PagePending,
+			component: () => import('@/pages/PageHome.vue'),
 		},
 		{
 			path: '/:pathMatch(.*)*',
@@ -86,8 +86,6 @@ const router = createRouter({
 		{
 			path: '/register',
 			name: 'user.register',
-			// FIXME: use dynamic imports
-			// component: PagePending,
 			component: () => import('@/pages/auth/PageRegister.vue'),
 			meta: {
 				title: 'user.auth.createAccount',
@@ -210,20 +208,18 @@ const router = createRouter({
 		{
 			path: '/share/:share/auth',
 			name: 'link-share.auth',
-			// FIXME: use dynamic imports
-			// component: PagePending,
 			component: () => import('@/pages/auth/PageLinkShareAuth.vue'),
 		},
 		{
 			path: '/tasks/:id',
 			name: 'task.detail',
-			component: PagePending,
+			component: () => import('@/pages/PageTaskDetail.vue'),
 			props: route => ({ taskId: Number(route.params.id as string) }),
 		},
 		{
 			path: '/tasks/by/upcoming',
 			name: 'tasks.range',
-			component: PagePending,
+			component: () => import('@/pages/PageUpcoming.vue'),
 			props: route => ({
 				dateFrom: parseDateOrString(route.query.from as string, new Date()),
 				dateTo: parseDateOrString(route.query.to as string, getNextWeekDate()),
@@ -470,7 +466,7 @@ export async function getAuthForRoute(to: RouteLocation, authStore: RouteAuthSta
 			await authStore.verifyEmail(confirmToken)
 			await authStore.refreshUserInfo()
 			if (hadPending && !authStore.info?.pending_email) {
-				success({message: i18n.global.t('user.settings.updateEmailConfirmed')})
+				success({message: translate('user.settings.updateEmailConfirmed')})
 				return {name: 'user.settings.email-update'}
 			}
 		} catch (e) {

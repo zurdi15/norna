@@ -8,7 +8,6 @@ import {
 	taskCommentsUpdate,
 } from '@/client/generated'
 import type {PaginatedTaskComment, TaskComment} from '@/client/generated'
-import {i18n} from '@/i18n'
 
 import {contextMutationOptions} from './contextMutation'
 import {invalidateTask, invalidateTaskCollections, patchTaskInCaches} from './tasks'
@@ -148,7 +147,6 @@ export function createCommentMutationOptions() {
 			adjustCommentCount(client, taskId, 1)
 		},
 		onSettled: ({taskId}, client) => invalidateComments(client, taskId),
-		successMessage: () => i18n.global.t('task.comment.addedSuccess'),
 	})
 }
 
@@ -207,7 +205,6 @@ export function deleteCommentMutationOptions() {
 		},
 		onSuccess: (_data, {taskId}, client) => adjustCommentCount(client, taskId, -1),
 		onSettled: ({taskId}, client) => invalidateComments(client, taskId),
-		successMessage: () => i18n.global.t('task.comment.deleteSuccess'),
 	})
 }
 

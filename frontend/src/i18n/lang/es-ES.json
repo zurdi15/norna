@@ -406,7 +406,52 @@
 			"quote": "Cita",
 			"link": "Enlace",
 			"image": "Imagen",
-			"horizontalRule": "Regla Horizontal"
+			"horizontalRule": "Regla Horizontal",
+			"label": "Editor de texto enriquecido",
+			"heading1Tooltip": "Encabezado de sección grande.",
+			"heading2Tooltip": "Encabezado de sección mediano.",
+			"heading3Tooltip": "Encabezado de sección pequeño.",
+			"underline": "Subrayado",
+			"codeTooltip": "Un fragmento de código.",
+			"quoteTooltip": "Una cita.",
+			"bulletList": "Lista con viñetas",
+			"bulletListTooltip": "Una lista sencilla con viñetas.",
+			"orderedList": "Lista numerada",
+			"orderedListTooltip": "Una lista con números.",
+			"urlPlaceholder": "URL",
+			"imageTooltip": "Sube una imagen desde tu equipo.",
+			"altText": "Texto alternativo",
+			"altTextPlaceholder": "Describe esta imagen",
+			"toolbarLabel": "Formato de texto",
+			"horizontalRuleTooltip": "Divide una sección.",
+			"text": "Texto",
+			"textTooltip": "Empieza a escribir texto normal.",
+			"taskList": "Lista de tareas",
+			"taskListTooltip": "Sigue tareas con una lista de pendientes.",
+			"undo": "Deshacer",
+			"redo": "Rehacer",
+			"placeholder": "Escribe algo o usa «/» para ver más opciones…",
+			"table": {
+				"title": "Tabla",
+				"insert": "Insertar tabla",
+				"addColumnBefore": "Añadir columna antes",
+				"addColumnAfter": "Añadir columna después",
+				"deleteColumn": "Eliminar columna",
+				"addRowBefore": "Añadir fila antes",
+				"addRowAfter": "Añadir fila después",
+				"deleteRow": "Eliminar fila",
+				"deleteTable": "Eliminar tabla",
+				"mergeCells": "Combinar celdas",
+				"splitCell": "Dividir celda",
+				"toggleHeaderColumn": "Alternar columna de encabezado",
+				"toggleHeaderRow": "Alternar fila de encabezado",
+				"toggleHeaderCell": "Alternar celda de encabezado",
+				"mergeOrSplit": "Combinar o dividir",
+				"fixTables": "Reparar tablas"
+			},
+			"emoji": {
+				"empty": "No se encontró ningún emoji"
+			}
 		},
 		"multiselect": {
 			"selectPlaceholder": "Clic o Enter para seleccionar"
@@ -570,7 +615,9 @@
 			"delete": "Eliminar este comentario",
 			"deleteText1": "¿Está seguro que desea eliminar este comentario?",
 			"deleteSuccess": "El comentario fue eliminado con éxito.",
-			"addedSuccess": "El comentario fue añadido con éxito."
+			"addedSuccess": "El comentario fue añadido con éxito.",
+			"jumpToOriginal": "Ir al comentario original",
+			"deletedComment": "comentario eliminado"
 		},
 		"deferDueDate": {
 			"title": "Aplazar fecha de vencimiento",
@@ -672,6 +719,9 @@
 			"dateTime": "Combina cualquiera de los formatos de fecha con \"{time}\" (o {timePM}) para establecer la hora.",
 			"repeats": "Tareas repetitivas",
 			"repeatsDescription": "Para establecer una tarea repetitiva en un intervalo, simplemente añade '{suffix}' al texto de la tarea. La cantidad debe ser un número y puede ser omitido para utilizar solo el tipo (ver ejemplos)."
+		},
+		"mention": {
+			"noUsersFound": "No se encontraron usuarios"
 		}
 	},
 	"team": {
@@ -759,6 +809,13 @@
 			"labels": "Ir a Etiquetas",
 			"teams": "Ir a Equipos",
 			"projects": "Ir a Proyectos"
+		},
+		"newTask": "Nueva tarea",
+		"list": {
+			"title": "Listas de tareas",
+			"navigateDown": "Tarea siguiente",
+			"navigateUp": "Tarea anterior",
+			"open": "Abrir la tarea"
 		}
 	},
 	"update": {
@@ -929,7 +986,8 @@
 		},
 		"kbd": {
 			"then": "y luego"
-		}
+		},
+		"cancel": "Cancelar"
 	},
 	"notFound": {
 		"title": "Aquí no hay nada tejido",
@@ -1109,5 +1167,325 @@
 			"serverError": "El servidor no ha podido abrir este enlace. Inténtalo más tarde.",
 			"failed": "No se ha podido abrir este enlace compartido."
 		}
+	},
+	"tasks": {
+		"priority": {
+			"label": "Prioridad: {priority}",
+			"unset": "Sin prioridad",
+			"low": "Baja",
+			"medium": "Media",
+			"high": "Alta",
+			"urgent": "Urgente",
+			"doNow": "Hazlo ya"
+		},
+		"row": {
+			"due": "Vence {date}",
+			"markDone": "Completar «{title}»",
+			"markUndone": "Reabrir «{title}»",
+			"unread": "Novedades sin leer",
+			"repeats": "Se repite",
+			"subtasks": "{done} de {total} subtareas hechas",
+			"checklist": "{done} de {total} elementos de la lista hechos",
+			"comments": "{count} comentario | {count} comentarios",
+			"attachments": "{count} adjunto | {count} adjuntos",
+			"actions": "Acciones de la tarea",
+			"more": "Opciones"
+		},
+		"actions": {
+			"open": "Abrir",
+			"markDone": "Completar",
+			"markUndone": "Reabrir",
+			"dueHeading": "Vencimiento",
+			"dueToday": "Hoy",
+			"dueTomorrow": "Mañana",
+			"dueNextWeek": "La semana que viene",
+			"dueRemove": "Quitar la fecha",
+			"favorite": "Añadir a favoritas",
+			"unfavorite": "Quitar de favoritas",
+			"copyLink": "Copiar enlace",
+			"duplicate": "Duplicar",
+			"delete": "Borrar",
+			"deleteTitle": "¿Borrar esta tarea?",
+			"deleteDescription": "«{title}» se borrará junto con sus comentarios y adjuntos. No se puede deshacer.",
+			"doneToast": "Completada: {title}",
+			"undoneToast": "Reabierta: {title}",
+			"undo": "Deshacer",
+			"dueSet": "Fecha de vencimiento cambiada",
+			"dueRemoved": "Fecha de vencimiento quitada",
+			"duplicated": "Tarea duplicada",
+			"linkCopied": "Enlace copiado"
+		},
+		"list": {
+			"loading": "Cargando tareas"
+		}
+	},
+	"agenda": {
+		"title": "Hoy",
+		"week": "semana {week}",
+		"newTask": "Nueva tarea",
+		"norns": {
+			"past": "Urðr · lo que fue",
+			"present": "Verðandi · lo que es",
+			"future": "Skuld · lo que será"
+		},
+		"overdue": "Vencidas",
+		"today": "Hoy",
+		"upcoming": "Próximos 7 días",
+		"todayEmpty": "Nada vence hoy.",
+		"upcomingEmpty": "Nada vence en los próximos siete días.",
+		"allClear": "Todo en orden. Las tareas con fecha aparecerán aquí según se acerque su día.",
+		"loadFailed": "No se han podido cargar tus tareas",
+		"retry": "Reintentar"
+	},
+	"pickers": {
+		"unitShort": {
+			"minutes": "{n} min",
+			"hours": "{n} h",
+			"days": "{n} día | {n} días",
+			"weeks": "{n} semana | {n} semanas"
+		},
+		"date": {
+			"inputLabel": "Fecha en palabras",
+			"placeholder": "Mañana 10:00, viernes, en 3 días…",
+			"noMatch": "Aún no se reconoce ninguna fecha",
+			"apply": "Aplicar {date}",
+			"shortcutsLabel": "Fechas rápidas",
+			"shortcuts": {
+				"today": "Hoy",
+				"tomorrow": "Mañana",
+				"nextMonday": "Próximo lunes",
+				"thisWeekend": "Este fin de semana",
+				"laterThisWeek": "Más tarde esta semana",
+				"nextWeek": "Próxima semana",
+				"nextWeekend": "Próximo fin de semana",
+				"endOfMonth": "Fin de mes",
+				"inAMonth": "En un mes"
+			},
+			"time": "Hora",
+			"timePresets": "Horas habituales",
+			"clear": "Quitar fecha",
+			"done": "Listo"
+		},
+		"reminder": {
+			"at": {
+				"due_date": "Al vencimiento",
+				"start_date": "Al inicio",
+				"end_date": "Al final"
+			},
+			"before": {
+				"due_date": "{period} antes del vencimiento",
+				"start_date": "{period} antes del inicio",
+				"end_date": "{period} antes del final"
+			},
+			"after": {
+				"due_date": "{period} después del vencimiento",
+				"start_date": "{period} después del inicio",
+				"end_date": "{period} después del final"
+			},
+			"short": {
+				"at": "A la hora",
+				"before": "{period} antes",
+				"after": "{period} después"
+			},
+			"inactive": "{text} · sin fecha",
+			"relativeTo": {
+				"due_date": "Vencimiento",
+				"start_date": "Inicio",
+				"end_date": "Final"
+			},
+			"empty": "Sin recordatorios",
+			"remove": "Quitar recordatorio",
+			"addAbsolute": "Fecha y hora",
+			"addRelative": "Personalizado",
+			"needsDate": "Pon una fecha de vencimiento, inicio o final para añadir recordatorios relativos a ella.",
+			"newTitle": "Nuevo recordatorio",
+			"editTitle": "Editar recordatorio",
+			"back": "Volver",
+			"add": "Añadir",
+			"amount": "Cantidad",
+			"unit": "Unidad",
+			"direction": "Antes o después",
+			"beforeLabel": "Antes",
+			"afterLabel": "Después",
+			"relativeToLabel": "Respecto a"
+		},
+		"repeat": {
+			"none": "No se repite",
+			"every": {
+				"seconds": "Cada segundo | Cada {n} segundos",
+				"minutes": "Cada minuto | Cada {n} minutos",
+				"hours": "Cada hora | Cada {n} horas",
+				"days": "Cada día | Cada {n} días",
+				"weeks": "Cada semana | Cada {n} semanas",
+				"months": "Cada mes | Cada {n} meses",
+				"years": "Cada año | Cada {n} años"
+			},
+			"fromCompletion": "{interval} · desde que se completa",
+			"everyPrefix": "Cada",
+			"amount": "Intervalo",
+			"unit": "Unidad",
+			"months": "mes | meses",
+			"fromCompletionToggle": "Repetir desde que se completa",
+			"hintFromCompletion": "La siguiente fecha se cuenta desde el día en que completas la tarea.",
+			"hintFromDate": "La siguiente fecha se cuenta desde la actual, aunque la completes tarde.",
+			"monthsHint": "Aquí un mes cuenta como un bloque de 30 días."
+		}
+	},
+	"taskDetail": {
+		"title": "Tarea",
+		"panel": "Detalle de la tarea",
+		"resize": "Cambiar el ancho del panel de la tarea",
+		"breadcrumb": "Dónde está esta tarea",
+		"close": "Cerrar",
+		"subscribe": "Recibir avisos de cambios",
+		"unsubscribe": "Dejar de recibir avisos",
+		"titleLabel": "Título de la tarea",
+		"titleRequired": "Una tarea necesita un título.",
+		"notFound": "Esta tarea no existe",
+		"notFoundDescription": "Puede que se haya borrado o que esté en un proyecto al que no tienes acceso.",
+		"loadFailed": "No se ha podido cargar la tarea",
+		"unknownProject": "Proyecto desconocido",
+		"empty": "Vacío",
+		"addProperty": "Añadir propiedad",
+		"searchProject": "Buscar proyectos…",
+		"searchLabels": "Buscar o crear etiquetas…",
+		"searchPeople": "Buscar personas…",
+		"created": "creada {date}",
+		"createdBy": "creada {date} por {user}",
+		"updated": "actualizada {date}",
+		"properties": {
+			"project": "Proyecto",
+			"priority": "Prioridad",
+			"dueDate": "Vence",
+			"startDate": "Empieza",
+			"endDate": "Termina",
+			"reminders": "Recordatorios",
+			"repeat": "Se repite",
+			"labels": "Etiquetas",
+			"assignees": "Asignada a",
+			"progress": "Progreso",
+			"color": "Color"
+		},
+		"relations": {
+			"subtasks": "Subtareas",
+			"title": "Relaciones",
+			"addSubtask": "Añadir una subtarea",
+			"link": "Relacionar",
+			"kind": "Relación",
+			"searchTask": "Buscar tareas…",
+			"remove": "Quitar la relación con «{title}»",
+			"kinds": {
+				"subtask": "Subtareas",
+				"parenttask": "Forma parte de",
+				"related": "Relacionada con",
+				"blocking": "Bloquea a",
+				"blocked": "Bloqueada por",
+				"precedes": "Va antes de",
+				"follows": "Va después de",
+				"duplicateof": "Duplicado de",
+				"duplicates": "Duplicada en",
+				"copiedfrom": "Copiada de",
+				"copiedto": "Copiada en"
+			}
+		},
+		"attachments": {
+			"title": "Adjuntos",
+			"upload": "Adjuntar",
+			"camera": "Cámara",
+			"empty": "Aún no hay archivos.",
+			"emptyDrop": "Aún no hay archivos. Suéltalos aquí o adjúntalos.",
+			"drop": "Suelta para adjuntar",
+			"open": "Abrir",
+			"openNamed": "Abrir {name}",
+			"download": "Descargar",
+			"downloadNamed": "Descargar {name}",
+			"actions": "Acciones de {name}",
+			"cover": "Portada",
+			"setCover": "Usar como portada",
+			"removeCover": "Quitar la portada",
+			"delete": "Borrar",
+			"deleteTitle": "¿Borrar este adjunto?",
+			"deleteDescription": "«{name}» se borrará de la tarea. No se puede deshacer.",
+			"previous": "Anterior",
+			"next": "Siguiente",
+			"previewFailed": "No se ha podido cargar este archivo."
+		},
+		"description": {
+			"title": "Descripción",
+			"placeholder": "Añade notas, una lista, enlaces… escribe / para más",
+			"saving": "guardando…",
+			"saved": "guardado"
+		},
+		"reactions": {
+			"add": "Añadir una reacción",
+			"search": "Buscar emoji…",
+			"toggle": "{emoji} {count}: {names}"
+		},
+		"comments": {
+			"title": "Comentarios",
+			"placeholder": "Escribe un comentario…",
+			"send": "Comentar",
+			"sendHint": "{mod} ⏎",
+			"loadMore": "Ver más comentarios",
+			"empty": "Aún no hay comentarios.",
+			"edited": "editado",
+			"edit": "Editar",
+			"editHint": "{mod} ⏎ para guardar · esc para cancelar",
+			"copyLink": "Copiar enlace",
+			"actions": "Acciones del comentario",
+			"delete": "Borrar",
+			"deleteTitle": "¿Borrar este comentario?",
+			"deleteDescription": "Desaparecerá para todo el mundo. No se puede deshacer."
+		}
+	},
+	"editor": {
+		"commands": "Comandos",
+		"emoji": "Emoji",
+		"mentions": "Personas",
+		"inlineCode": "Código en línea",
+		"codeBlock": "Bloque de código",
+		"divider": "Separador",
+		"imageTooltip": "Sube una imagen y adjúntala a la tarea.",
+		"tableTooltip": "Inserta una tabla.",
+		"insertBlock": "Insertar bloque",
+		"mention": "Mencionar a alguien",
+		"done": "Listo",
+		"apply": "Aplicar",
+		"uploading": "Subiendo imagen…",
+		"link": {
+			"edit": "Editar enlace",
+			"remove": "Quitar enlace",
+			"open": "Abrir"
+		}
+	},
+	"quickAdd": {
+		"title": "Nueva tarea",
+		"label": "Nueva tarea, con la sintaxis mágica",
+		"placeholder": "¿Qué hay que hacer?",
+		"hint": "{label}etiqueta  {project}proyecto  {priority}prioridad  {assignee}persona",
+		"lines": "{count} tareas, una por línea",
+		"repeats": "Se repite",
+		"project": "Proyecto: {project}",
+		"noProject": "Sin proyecto",
+		"newLineHint": "⇧⏎ otra tarea",
+		"submit": "Crear la tarea",
+		"submitMany": "Crear {count} tareas",
+		"created": "Creada: {title}",
+		"createdMany": "{count} tarea creada | {count} tareas creadas"
+	},
+	"upcoming": {
+		"title": "Próximas",
+		"range": "Rango",
+		"ranges": {
+			"next7Days": "7 días",
+			"next14Days": "14 días",
+			"next30Days": "30 días",
+			"custom": "Personalizado"
+		},
+		"showOverdue": "Vencidas",
+		"showUndated": "Sin fecha",
+		"undated": "Sin fecha",
+		"emptyTitle": "No viene nada",
+		"emptyDescription": "Aquí aparecerán las tareas que venzan en este rango."
 	}
 }

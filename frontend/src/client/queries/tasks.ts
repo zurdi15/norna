@@ -28,7 +28,7 @@ import type {
 import {queryClient} from '@/client/queryClient'
 import {colorFromHex} from '@/helpers/color/colorFromHex'
 import {getRandomColorHex} from '@/helpers/color/randomColor'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 import {error} from '@/message'
 import {problemStatus} from '@/modules/api/problem'
 import {parseTaskText} from '@/modules/quickAddMagic'
@@ -45,6 +45,7 @@ import {
 import {normalizeTaskInput, type TaskInput} from '@/modules/task/task'
 
 import {contextMutationOptions} from './contextMutation'
+import {fetchAllPages} from './fetchAllPages'
 import {ensureLabels, labelKeys, refreshLabels} from './labels'
 import {ensureProjects, getCachedProject, projectKeys} from './projects'
 import {searchProjectUsers} from './userSearch'
@@ -94,6 +95,7 @@ export const taskKeys = {
 		['tasks', 'board', projectId, viewId, params] as const,
 	bucketTasks: (projectId: number, viewId: number, params: TaskBoardParams, bucketId: number) =>
 		['tasks', 'board', projectId, viewId, params, bucketId] as const,
+	everyPage: (params: TaskListParams) => ['tasks', 'list', {kind: 'all'}, params, 'every'] as const,
 }
 
 export const TASKS_PER_PAGE = 50
@@ -187,6 +189,15 @@ export function infiniteTaskListQuery(scope: TaskListScope, params: Omit<TaskLis
 		initialPageParam: 1,
 		getNextPageParam: nextTaskPage,
 		enabled: isLoadableScope(scope),
+	})
+}
+
+/** Every task matching the params, all pages loaded: for agenda views that group the whole set. */
+export function everyTaskQuery(params: Omit<TaskListParams, 'page'>) {
+	const query = compactTaskListParams(params)
+	return queryOptions({
+		queryKey: taskKeys.everyPage(query),
+		queryFn: () => fetchAllPages(async page => toTaskPage((await tasksList({query: {...query, page}})).data)),
 	})
 }
 
@@ -439,9 +450,9 @@ export type TaskMessage<TInput> = (input: TInput) => string | undefined
 
 export function defaultPatchMessage({patch}: PatchTaskInput): string | undefined {
 	if (patch.done !== undefined) {
-		return i18n.global.t(patch.done ? 'task.doneSuccess' : 'task.undoneSuccess')
+		return translate(patch.done ? 'task.doneSuccess' : 'task.undoneSuccess')
 	}
-	return i18n.global.t('task.detail.updateSuccess')
+	return translate('task.detail.updateSuccess')
 }
 
 /** A PATCH of one task with a full optimistic flow; specific edits map their input to the patch. */
@@ -492,8 +503,8 @@ export function toggleTaskFavoriteMutationOptions() {
 export function moveTaskToProjectMutationOptions() {
 	return taskPatchMutationOptions<{id: number, projectId: number}>({
 		toPatch: ({id, projectId}) => ({id, patch: {project_id: projectId}}),
-		successMessage: ({projectId}) => i18n.global.t('task.movedToProject', {
-			project: getCachedProject(projectId)?.title ?? i18n.global.t('project.title'),
+		successMessage: ({projectId}) => translate('task.movedToProject', {
+			project: getCachedProject(projectId)?.title ?? translate('project.title'),
 		}),
 	})
 }
@@ -531,7 +542,7 @@ export function updateTaskMutationOptions() {
 			invalidateTaskCollections(client, 'all'),
 			invalidateTask(client, id),
 		]),
-		successMessage: () => i18n.global.t('task.detail.updateSuccess'),
+		successMessage: () => translate('task.detail.updateSuccess'),
 	})
 }
 
@@ -564,7 +575,7 @@ export function deleteTaskMutationOptions() {
 			client.removeQueries({queryKey: taskKeys.detail(id), exact: true})
 		},
 		onSettled: (_id, client) => invalidateTaskCollections(client, []),
-		successMessage: () => i18n.global.t('task.detail.deleteSuccess'),
+		successMessage: () => translate('task.detail.deleteSuccess'),
 	})
 }
 
@@ -582,7 +593,7 @@ export function duplicateTaskMutationOptions() {
 			invalidateTaskCollections(client, 'all'),
 			invalidateTask(client, id),
 		]),
-		successMessage: () => i18n.global.t('task.detail.duplicateSuccess'),
+		successMessage: () => translate('task.detail.duplicateSuccess'),
 	})
 }
 
@@ -667,7 +678,7 @@ export interface QuickAddTasksResult {
 
 export class ProjectRequiredError extends Error {
 	constructor() {
-		super(i18n.global.t('project.create.addProjectRequired'))
+		super(translate('project.create.addProjectRequired'))
 		this.name = 'ProjectRequiredError'
 	}
 }
@@ -819,7 +830,7 @@ async function createQuickAddTasks(built: {task: QuickAddTask, labels: string[]}
 					body: {tasks: batch.map(index => built[index]!.task)},
 				})
 				if (!Array.isArray(data.tasks) || data.tasks.length !== batch.length) {
-					throw new Error(i18n.global.t('task.bulkCreateUnexpectedResponse'))
+					throw new Error(translate('task.bulkCreateUnexpectedResponse'))
 				}
 				// The response is in payload order; titles can't be matched, quick add rewrites them.
 				data.tasks.forEach((task, batchIndex) => {

@@ -1,0 +1,118 @@
+<script setup lang="ts">
+import {computed} from 'vue'
+import {useI18n} from 'vue-i18n'
+import {Plus} from '@lucide/vue'
+
+import {useTitle} from '@/composables/useTitle'
+import MobileRootActions from '@/features/shell/MobileRootActions.vue'
+import PageHeader from '@/features/shell/PageHeader.vue'
+import TaskList, {type TaskListGroup} from '@/features/tasks/TaskList.vue'
+import TaskListSkeleton from '@/features/tasks/TaskListSkeleton.vue'
+import {useAgenda} from '@/features/tasks/useAgenda'
+import {isoWeek} from '@/modules/task/dueDate'
+import {useGlobalNow} from '@/composables/useGlobalNow'
+import {useShellStore} from '@/stores/shell'
+import {useBreakpoints} from '@/ui/composables/useBreakpoints'
+import UiButton from '@/ui/UiButton.vue'
+import UiEmptyState from '@/ui/UiEmptyState.vue'
+
+// Receives no route props, but a fragment root must not inherit stray attributes.
+defineOptions({inheritAttrs: false})
+
+const {t, locale} = useI18n()
+useTitle(() => t('agenda.title'))
+
+const shell = useShellStore()
+const {isMd} = useBreakpoints()
+const {now} = useGlobalNow()
+const agenda = useAgenda()
+
+// "jue 18 sept · semana 38": the day at a glance, in the mono of the metadata.
+const caption = computed(() => {
+	const parts = new Intl.DateTimeFormat(locale.value, {weekday: 'short', day: 'numeric', month: 'short'}).formatToParts(now.value)
+	const part = (type: Intl.DateTimeFormatPartTypes) => parts.find(candidate => candidate.type === type)?.value ?? ''
+	return `${part('weekday')} ${part('day')} ${part('month')} · ${t('agenda.week', {week: isoWeek(now.value)})}`
+})
+
+const groups = computed<TaskListGroup[]>(() => [
+	{
+		key: 'overdue',
+		caption: t('agenda.norns.past'),
+		title: t('agenda.overdue'),
+		tone: 'danger',
+		tasks: agenda.overdue.value,
+	},
+	{
+		key: 'today',
+		caption: t('agenda.norns.present'),
+		title: t('agenda.today'),
+		tasks: agenda.dueToday.value,
+		keepWhenEmpty: true,
+	},
+	{
+		key: 'upcoming',
+		caption: t('agenda.norns.future'),
+		title: t('agenda.upcoming'),
+		tasks: agenda.upcoming.value,
+		keepWhenEmpty: true,
+	},
+])
+
+const nothingAtAll = computed(() => groups.value.every(group => group.tasks.length === 0))
+</script>
+
+<template>
+	<PageHeader
+		:title="t('agenda.title')"
+		:caption="isMd ? caption : undefined"
+		large
+	>
+		<template #subtitle>
+			<p class="mt-1 caption">
+				{{ caption }}
+			</p>
+		</template>
+		<template #actions>
+			<UiButton
+				v-if="isMd"
+				variant="primary"
+				size="sm"
+				:icon="Plus"
+				shortcut="KeyN"
+				@click="shell.quickAddOpen = true"
+			>
+				{{ t('agenda.newTask') }}
+			</UiButton>
+			<MobileRootActions />
+		</template>
+	</PageHeader>
+
+	<div class="pb-10">
+		<TaskListSkeleton v-if="agenda.isPending.value" />
+		<UiEmptyState
+			v-else-if="agenda.isError.value"
+			:title="t('agenda.loadFailed')"
+		>
+			<template #actions>
+				<UiButton @click="agenda.refetch()">
+					{{ t('agenda.retry') }}
+				</UiButton>
+			</template>
+		</UiEmptyState>
+		<template v-else>
+			<TaskList :groups="groups">
+				<template #group-empty="{group}">
+					<p class="px-4 py-2 text-sm text-ink-faint @xl:px-6">
+						{{ group.key === 'today' ? t('agenda.todayEmpty') : t('agenda.upcomingEmpty') }}
+					</p>
+				</template>
+			</TaskList>
+			<p
+				v-if="nothingAtAll"
+				class="px-4 pt-6 text-center text-sm text-ink-muted"
+			>
+				{{ t('agenda.allClear') }}
+			</p>
+		</template>
+	</div>
+</template>

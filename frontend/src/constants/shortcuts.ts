@@ -5,6 +5,7 @@ export const PRIMARY_MODIFIER_KEY = isAppleDevice() ? '⌘' : 'ctrl'
 export const SHORTCUTS = {
 	toggleMenu: 'Mod+KeyE',
 	quickSearch: 'Mod+KeyK',
+	newTask: 'KeyN',
 	showKeyboardShortcuts: 'Shift+Slash',
 	navigation: {
 		overview: 'KeyG KeyO',

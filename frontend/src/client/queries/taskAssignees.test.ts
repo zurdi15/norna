@@ -52,7 +52,8 @@ describe('task assignees', () => {
 
 		expect(sdk.taskAssigneesCreate).toHaveBeenCalledWith({path: {task: 5}, body: {user_id: 2}})
 		expect(assignees()).toEqual({detail: [alice, bob], list: [alice, bob]})
-		expect(message.success).toHaveBeenCalledWith({message: 'The user has been assigned successfully.'})
+		// The picker shows the change in place, so there is no toast.
+		expect(message.success).not.toHaveBeenCalled()
 	})
 
 	it('refetches active lists, which can filter by assignee', async () => {
