@@ -7,7 +7,7 @@ import {
 } from '@/client/generated'
 import type {AttachmentUploadError, TaskAttachment} from '@/client/generated'
 import {downloadBlob} from '@/helpers/downloadBlob'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 import {error} from '@/message'
 
 import {contextMutationOptions} from './contextMutation'
@@ -165,7 +165,7 @@ export interface SetCoverImageInput {
 export function setCoverImageMutationOptions() {
 	return taskPatchMutationOptions<SetCoverImageInput>({
 		toPatch: ({taskId, attachmentId}) => ({id: taskId, patch: {cover_image_attachment_id: attachmentId ?? 0}}),
-		successMessage: () => i18n.global.t('task.attachment.successfullyChangedCoverImage'),
+		successMessage: () => translate('task.attachment.successfullyChangedCoverImage'),
 	})
 }
 

@@ -9,6 +9,7 @@ const {success, error} = vi.hoisted(() => ({
 vi.mock('@/message', () => ({success, error}))
 vi.mock('@/i18n', () => ({
 	i18n: {global: {t: (key: string) => key}},
+	translate: (key: string) => key,
 }))
 
 import router, {getAuthForRoute} from './index'

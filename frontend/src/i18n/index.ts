@@ -31,6 +31,16 @@ export const i18n = createI18n({
 	} as Record<SupportedLocale, any>,
 })
 
+/**
+ * i18n's t() outside components, with a narrow signature: the generic one makes
+ * TypeScript give up on the message schema once it grows (TS2589).
+ */
+export function translate(key: string, named?: Record<string, unknown>): string
+export function translate(key: string, plural: number, named?: Record<string, unknown>): string
+export function translate(key: string, ...args: unknown[]): string {
+	return (i18n.global as unknown as {t: (key: string, ...args: unknown[]) => string}).t(key, ...args)
+}
+
 export async function setLanguage(lang: SupportedLocale): Promise<SupportedLocale | undefined> {
 	if (!lang) {
 		throw new Error('language is empty')

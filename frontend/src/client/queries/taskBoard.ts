@@ -12,7 +12,7 @@ import {
 import type {Bucket, Task, TaskBucket, TaskCollection, TaskPosition} from '@/client/generated'
 import {isClientRequestContextCurrent} from '@/client/requestContext'
 import {calculateItemPosition} from '@/helpers/calculateItemPosition'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 
 import {contextMutationOptions} from './contextMutation'
 import {projectKeys} from './projects'
@@ -354,11 +354,11 @@ export function updateBucketMutationOptions(successMessage?: () => string) {
 }
 
 export function renameBucketMutationOptions() {
-	return updateBucketMutationOptions(() => i18n.global.t('project.kanban.bucketTitleSavedSuccess'))
+	return updateBucketMutationOptions(() => translate('project.kanban.bucketTitleSavedSuccess'))
 }
 
 export function setBucketLimitMutationOptions() {
-	return updateBucketMutationOptions(() => i18n.global.t('project.kanban.bucketLimitSavedSuccess'))
+	return updateBucketMutationOptions(() => translate('project.kanban.bucketLimitSavedSuccess'))
 }
 
 export interface DeleteBucketInput {
@@ -384,7 +384,7 @@ export function deleteBucketMutationOptions() {
 			client.invalidateQueries({queryKey: projectKeys.detail(projectId)}),
 			client.invalidateQueries({queryKey: projectKeys.list(), refetchType: 'none'}),
 		]),
-		successMessage: () => i18n.global.t('project.kanban.deleteBucketSuccess'),
+		successMessage: () => translate('project.kanban.deleteBucketSuccess'),
 	})
 }
 

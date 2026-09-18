@@ -11,7 +11,7 @@ import type {Label, LabelWritable} from '@/client/generated'
 import {queryClient} from '@/client/queryClient'
 import {fetchAllPages} from './fetchAllPages'
 import {colorFromHex} from '@/helpers/color/colorFromHex'
-import {i18n} from '@/i18n'
+import {i18n, translate} from '@/i18n'
 import {success} from '@/message'
 
 export const labelKeys = {
@@ -142,7 +142,7 @@ export function updateLabelMutationOptions() {
 			client.setQueryData<Label[]>(labelKeys.all, current =>
 				current?.map(existing => existing.id === updated.id ? updated : existing),
 			)
-			success({message: i18n.global.t('label.edit.success')})
+			success({message: translate('label.edit.success')})
 		},
 		onSettled: (_data, _error, _label, _context, {client}) =>
 			client.invalidateQueries({queryKey: labelKeys.all}),
@@ -166,7 +166,7 @@ export function deleteLabelMutationOptions() {
 		},
 		onError: (_error, _label, context, {client}) => restoreLabels(client, context?.previous),
 		onSuccess: () => {
-			success({message: i18n.global.t('label.deleteSuccess')})
+			success({message: translate('label.deleteSuccess')})
 		},
 		onSettled: (_data, _error, _label, _context, {client}) =>
 			client.invalidateQueries({queryKey: labelKeys.all}),

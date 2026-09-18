@@ -1,7 +1,7 @@
 import {useMutation} from '@tanstack/vue-query'
 
 import {subscriptionsCreate, subscriptionsDelete} from '@/client/generated'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 
 import {contextMutationOptions} from './contextMutation'
 import {invalidateTask, patchTaskInCaches} from './tasks'
@@ -29,7 +29,7 @@ export function setTaskSubscriptionMutationOptions() {
 			patchTaskInCaches(client, taskId, task => ({...task, subscription}))
 		},
 		onSettled: ({taskId}, client) => invalidateTask(client, taskId),
-		successMessage: (_subscription, {subscribed}) => i18n.global.t(subscribed
+		successMessage: (_subscription, {subscribed}) => translate(subscribed
 			? 'task.subscription.subscribeSuccessTask'
 			: 'task.subscription.unsubscribeSuccessTask'),
 	})

@@ -29,7 +29,7 @@ import {
 	redirectToProviderOnLogout,
 } from '@/helpers/redirectToProvider'
 import {clearTaskCache} from '@/helpers/taskCache'
-import {getBrowserLanguage, i18n, setLanguage, type SupportedLocale} from '@/i18n'
+import {getBrowserLanguage, i18n, setLanguage, translate, type SupportedLocale} from '@/i18n'
 import {error, success} from '@/message'
 import {problemCode, problemStatus} from '@/modules/api/problem'
 import {identityFromToken, isExpired, type SessionIdentity} from '@/modules/session/identity'
@@ -456,7 +456,7 @@ export const useAuthStore = defineStore('auth', () => {
 				}
 			}
 			if (showMessage) {
-				success({message: i18n.global.t('user.settings.general.savedSuccess')})
+				success({message: translate('user.settings.general.savedSuccess')})
 			}
 		} catch (e) {
 			error(e)

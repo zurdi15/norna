@@ -11,7 +11,7 @@ import type {
 } from '@/client/generated'
 import {contextMutationOptions} from './contextMutation'
 import {mapProjectNavigationItem, projectKeys, type ProjectListResult, type ProjectResponse} from './projects'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 
 export type ProjectViewDraft = Required<Omit<ProjectViewWritable, 'bucket_configuration'>> & {
 	bucket_configuration: NonNullable<ProjectViewWritable['bucket_configuration']>
@@ -102,7 +102,7 @@ export function createProjectViewMutationOptions(shouldNotify: ShouldNotify = ()
 			updateProjectViews(client, input.projectId, views => replaceView(views, created))
 		},
 		onSettled: ({projectId}, client) => invalidateProjectViews(client, projectId),
-		successMessage: (_created, input) => shouldNotify(input) ? i18n.global.t('project.views.createSuccess') : undefined,
+		successMessage: (_created, input) => shouldNotify(input) ? translate('project.views.createSuccess') : undefined,
 		toastError: shouldNotify,
 	})
 }
@@ -125,7 +125,7 @@ export function updateProjectViewMutationOptions(successMessage?: string, should
 			updateProjectViews(client, input.projectId, views => replaceView(views, updated))
 		},
 		onSettled: ({projectId}, client) => invalidateProjectViews(client, projectId),
-		successMessage: (_updated, input) => shouldNotify(input) ? successMessage ?? i18n.global.t('project.views.updateSuccess') : undefined,
+		successMessage: (_updated, input) => shouldNotify(input) ? successMessage ?? translate('project.views.updateSuccess') : undefined,
 		toastError: shouldNotify,
 	})
 }

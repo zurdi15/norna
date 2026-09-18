@@ -1,4 +1,4 @@
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 import {toast, type ExternalToast} from 'vue-sonner'
 
 interface ErrorBody {
@@ -16,10 +16,6 @@ interface ErrorLike extends ErrorBody {
 	cause?: ErrorBody & {response?: {data?: ErrorBody}}
 }
 
-// A narrow signature for i18n's t(): the generic one makes TypeScript give up on
-// the message schema here (TS2589).
-const translate = (key: string, params?: Record<string, unknown>): string =>
-	(i18n.global as unknown as {t: (key: string, params?: Record<string, unknown>) => string}).t(key, params)
 
 // Error codes whose translation is generic enough that the server detail helps.
 const CODES_WITH_DETAIL = [4016, 4017, 4018, 4019, 4024]
