@@ -420,7 +420,9 @@ export const useAuthStore = defineStore('auth', () => {
 
 	/**
 	 * Saves the general settings. The store updates first so the UI reflects the change
-	 * right away; frontend settings are merged into the stored blob before sending.
+	 * right away, and goes back if the server refuses it (unless a later save has already
+	 * replaced it); frontend settings are merged into the stored blob before sending.
+	 * Resolves to whether it was saved.
 	 */
 	async function saveUserSettings({
 		settings: newSettings,
@@ -428,10 +430,12 @@ export const useAuthStore = defineStore('auth', () => {
 	}: {
 		settings: UserSettings,
 		showMessage?: boolean,
-	}) {
+	}): Promise<boolean> {
 		setIsLoadingGeneralSettings(true)
+		const previous = settings.value
+		const oldName = info.value?.name
+		const applied = {...newSettings}
 		try {
-			const oldName = info.value?.name
 			const frontendSettings = mergeFrontendSettings(storedFrontendSettings, newSettings.frontend_settings)
 			const {extra_settings_links: _links, ...writable} = newSettings
 			const body = {
@@ -441,7 +445,7 @@ export const useAuthStore = defineStore('auth', () => {
 				language: configStore.demo_mode_enabled ? undefined : writable.language,
 			}
 
-			settings.value = {...newSettings}
+			settings.value = applied
 			if (info.value) {
 				info.value = {...info.value, name: newSettings.name}
 			}
@@ -458,8 +462,19 @@ export const useAuthStore = defineStore('auth', () => {
 			if (showMessage) {
 				success({message: translate('user.settings.general.savedSuccess')})
 			}
+			return true
 		} catch (e) {
+			if (settings.value === applied) {
+				settings.value = previous
+				if (info.value && oldName !== undefined) {
+					info.value = {...info.value, name: oldName}
+				}
+				if (previous.language !== applied.language) {
+					await setLanguage(previous.language as SupportedLocale)
+				}
+			}
 			error(e)
+			return false
 		} finally {
 			setIsLoadingGeneralSettings(false)
 		}
@@ -523,6 +538,7 @@ export const useAuthStore = defineStore('auth', () => {
 		removeToken()
 		const loggedInVia = getLoggedInVia()
 		lastUserInfoRefresh.value = null
+		setNeedsTotpPasscode(false)
 		setAuthenticated(false)
 		setUser(null)
 		window.localStorage.clear() // Clear all settings and history we might have saved in local storage.
