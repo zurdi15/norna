@@ -1,11 +1,15 @@
-import type {ITask} from '@/modelTypes/ITask'
+import type {Task} from '@/client/generated'
 
 export interface GanttBarPosition {
-	x: number       // left edge x position
-	y: number       // vertical center y position
-	width: number   // bar width in pixels
+	/** Left edge, in px from the timeline start. */
+	x: number
+	/** Vertical center, in px from the first row's top. */
+	y: number
+	width: number
 	rowIndex: number
 }
+
+export type GanttArrowKind = 'blocking' | 'precedes'
 
 export interface GanttArrow {
 	fromTaskId: number
@@ -14,21 +18,18 @@ export interface GanttArrow {
 	startY: number
 	endX: number
 	endY: number
-	color: string
-	relationKind: 'blocking' | 'precedes'
+	relationKind: GanttArrowKind
 }
 
-const ARROW_COLORS: Record<string, string> = {
-	blocking: 'var(--danger)',
-	precedes: 'var(--grey-500)',
-}
+// follows and blocked are the same relations seen from the other end.
+const SOURCE_KINDS: readonly GanttArrowKind[] = ['blocking', 'precedes']
 
 /**
- * Builds arrow data for dependency relations between visible Gantt tasks.
- * Only processes `blocking` and `precedes` directions to avoid duplicates.
+ * Arrows for the dependency relations between tasks that have a bar on screen. A task
+ * hidden under a collapsed parent hands its arrows to that parent.
  */
 export function buildRelationArrows(
-	tasks: Map<number, ITask>,
+	tasks: Map<number, Task>,
 	positions: Map<number, GanttBarPosition>,
 	hiddenToAncestor: Map<number, number>,
 ): GanttArrow[] {
@@ -36,45 +37,27 @@ export function buildRelationArrows(
 	const seen = new Set<string>()
 
 	for (const [taskId, task] of tasks) {
-		const sourceKinds = ['blocking', 'precedes'] as const
+		for (const kind of SOURCE_KINDS) {
+			for (const related of task.related_tasks?.[kind] ?? []) {
+				if (typeof related.id !== 'number') continue
 
-		for (const kind of sourceKinds) {
-			const relatedTasks = task.relatedTasks?.[kind] ?? []
+				const fromId = hiddenToAncestor.get(taskId) ?? taskId
+				const toId = hiddenToAncestor.get(related.id) ?? related.id
+				const from = positions.get(fromId)
+				const to = positions.get(toId)
+				if (!from || !to || fromId === toId) continue
 
-			for (const related of relatedTasks) {
-				let fromId = taskId
-				let toId = related.id
-
-				// Re-route hidden tasks to their visible ancestor
-				if (hiddenToAncestor.has(fromId)) {
-					fromId = hiddenToAncestor.get(fromId)!
-				}
-				if (hiddenToAncestor.has(toId)) {
-					toId = hiddenToAncestor.get(toId)!
-				}
-
-				// Skip if either end is not visible
-				if (!positions.has(fromId) || !positions.has(toId)) continue
-
-				// Skip self-arrows (can happen after re-routing)
-				if (fromId === toId) continue
-
-				// Deduplicate
 				const key = `${Math.min(fromId, toId)}-${Math.max(fromId, toId)}-${kind}`
 				if (seen.has(key)) continue
 				seen.add(key)
 
-				const fromPos = positions.get(fromId)!
-				const toPos = positions.get(toId)!
-
 				arrows.push({
 					fromTaskId: fromId,
 					toTaskId: toId,
-					startX: fromPos.x + fromPos.width,
-					startY: fromPos.y,
-					endX: toPos.x,
-					endY: toPos.y,
-					color: ARROW_COLORS[kind],
+					startX: from.x + from.width,
+					startY: from.y,
+					endX: to.x,
+					endY: to.y,
 					relationKind: kind,
 				})
 			}
@@ -88,9 +71,8 @@ const PREFERRED_SPREAD_PX = 6
 const MAX_TOTAL_SPREAD_PX = 24
 
 /**
- * When multiple arrows share the same source or target task,
- * offset their Y positions so they don't overlap visually.
- * The spread is capped to stay within the row height.
+ * Arrows that leave or reach the same bar fan out vertically instead of overlapping,
+ * within a spread that stays inside the row.
  */
 function spreadOverlappingArrows(arrows: GanttArrow[]): GanttArrow[] {
 	spreadByKey(arrows, 'fromTaskId', 'startY')
@@ -101,22 +83,37 @@ function spreadOverlappingArrows(arrows: GanttArrow[]): GanttArrow[] {
 function spreadByKey(arrows: GanttArrow[], groupKey: 'fromTaskId' | 'toTaskId', yKey: 'startY' | 'endY') {
 	const groups = new Map<number, GanttArrow[]>()
 	for (const arrow of arrows) {
-		const id = arrow[groupKey]
-		let group = groups.get(id)
-		if (!group) {
-			group = []
-			groups.set(id, group)
-		}
+		const group = groups.get(arrow[groupKey]) ?? []
 		group.push(arrow)
+		groups.set(arrow[groupKey], group)
 	}
 
 	for (const group of groups.values()) {
 		if (group.length < 2) continue
 		const totalSpread = Math.min((group.length - 1) * PREFERRED_SPREAD_PX, MAX_TOTAL_SPREAD_PX)
 		const step = totalSpread / (group.length - 1)
-		for (let i = 0; i < group.length; i++) {
-			group[i][yKey] += -totalSpread / 2 + i * step
-		}
+		group.forEach((arrow, index) => {
+			arrow[yKey] += -totalSpread / 2 + index * step
+		})
 	}
 }
 
+/**
+ * The path of an arrow: an S-curve when the target starts to the right of the source,
+ * otherwise a detour out to the right, along the gap between rows, and back in.
+ */
+export function arrowPath({startX, startY, endX, endY}: GanttArrow, rowHeight: number): string {
+	const dx = endX - startX
+	if (dx >= 12) {
+		const bend = Math.min(dx * 0.5, 40)
+		return `M ${startX} ${startY} C ${startX + bend} ${startY}, ${endX - bend} ${endY}, ${endX} ${endY}`
+	}
+	const out = 10
+	const midY = startY + (endY >= startY ? rowHeight / 2 : -rowHeight / 2)
+	return [
+		`M ${startX} ${startY}`,
+		`C ${startX + out} ${startY}, ${startX + out} ${midY}, ${startX} ${midY}`,
+		`L ${endX} ${midY}`,
+		`C ${endX - out} ${midY}, ${endX - out} ${endY}, ${endX} ${endY}`,
+	].join(' ')
+}

@@ -14,6 +14,7 @@ import {
 	tasksDuplicate,
 	tasksList,
 	tasksMarkRead,
+	tasksPositionUpdate,
 	tasksRead,
 	tasksUpdate,
 } from '@/client/generated'
@@ -608,6 +609,31 @@ export function markTaskReadMutationOptions() {
 	})
 }
 
+export interface UpdateTaskPositionInput {
+	taskId: number
+	viewId: number
+	position: number
+}
+
+/** Reorders a task inside a list view. Board moves go through taskBoard.ts, which also changes buckets. */
+export function updateTaskPositionMutationOptions() {
+	return contextMutationOptions({
+		mutationFn: async ({taskId, viewId, position}: UpdateTaskPositionInput) => {
+			const {data} = await tasksPositionUpdate({path: {task: taskId}, body: {position, project_view_id: viewId}})
+			return data
+		},
+		// Positions belong to a view, so only list caches take the new one; boards keep theirs.
+		optimistic: {
+			queryKeys: () => [taskKeys.lists()],
+			update: ({taskId, position}, client) => {
+				editTaskCaches(client, task => task.id === taskId ? {...task, position} : task, {queryKey: taskKeys.lists(), embedded: false})
+			},
+		},
+		// The server may renumber the whole view; the active list reloads in its order.
+		onSettled: (_input, client) => client.invalidateQueries({queryKey: taskKeys.lists()}),
+	})
+}
+
 export interface BulkUpdateTasksInput {
 	ids: number[]
 	patch: TaskPatch
@@ -906,6 +932,10 @@ export function useDuplicateTaskMutation() {
 
 export function useMarkTaskReadMutation() {
 	return useMutation(markTaskReadMutationOptions())
+}
+
+export function useUpdateTaskPositionMutation() {
+	return useMutation(updateTaskPositionMutationOptions())
 }
 
 export function useBulkUpdateTasksMutation() {

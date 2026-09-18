@@ -339,7 +339,7 @@ const router = createRouter({
 		{
 			path: '/projects/:projectId/:viewId',
 			name: 'project.view',
-			component: PagePending,
+			component: () => import('@/pages/PageProject.vue'),
 			props: route => ({ 
 				projectId: parseInt(route.params.projectId as string),
 				viewId: route.params.viewId ? parseInt(route.params.viewId as string): undefined,

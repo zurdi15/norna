@@ -1,17 +1,18 @@
 import {computed, ref, shallowRef, toValue, watch, type MaybeRefOrGetter} from 'vue'
 import {useRouter, isNavigationFailure} from 'vue-router'
 import type {LocationQueryRaw} from 'vue-router'
-import {useRouteQuery} from '@vueuse/router'
-import {hashKey, useQuery} from '@tanstack/vue-query'
+import {hashKey, useInfiniteQuery, useQuery} from '@tanstack/vue-query'
 
 import {
 	TASKS_PER_PAGE,
+	infiniteTaskListQuery,
 	taskListQuery,
 	type TaskExpand,
 	type TaskListParams,
 	type TaskListScope,
 	type TaskPage,
 } from '@/client/queries/tasks'
+import {useDisplayedRoute, useDisplayedRouteQuery} from '@/composables/useDisplayedRoute'
 import {useAuthStore} from '@/stores/auth'
 import {useViewFiltersStore} from '@/stores/viewFilters'
 
@@ -110,9 +111,10 @@ export interface UseTaskListOptions {
  * a project view they are also remembered per view, and restored when a link
  * without them (the sidebar) opens the view again.
  */
-export function useTaskList(
+// The url-bound part shared by the paged and the infinite list.
+function useTaskListState(
 	scopeGetter: MaybeRefOrGetter<TaskListScope>,
-	options: UseTaskListOptions = {},
+	options: UseTaskListOptions,
 ) {
 	const sortByDefault = options.sortByDefault ?? SORT_BY_DEFAULT
 	const scope = computed(() => toValue(scopeGetter))
@@ -124,17 +126,25 @@ export function useTaskList(
 
 	const params = ref<TaskListFilters>({filter: '', filter_include_nulls: false, q: ''})
 
-	const page = useRouteQuery('page', '1', {transform: Number})
-	const filter = useRouteQuery('filter')
-	const s = useRouteQuery('s')
+	// The page's own url: behind an open task the current route is the task's.
+	const {isCurrent} = useDisplayedRoute()
+	const pageQuery = useDisplayedRouteQuery('page')
+	const page = computed<number>({
+		get: () => Number(queryString(pageQuery.value) ?? '1'),
+		set: value => pageQuery.value = value === 1 ? undefined : String(value),
+	})
+	const filter = useDisplayedRouteQuery('filter')
+	const s = useDisplayedRouteQuery('s')
+	const nulls = useDisplayedRouteQuery('nulls')
 
 	watch(filter, v => { params.value.filter = queryString(v) ?? '' }, {immediate: true})
 	watch(s, v => { params.value.q = queryString(v) ?? '' }, {immediate: true})
 
 	watch(() => params.value.filter, v => { filter.value = v || undefined })
 	watch(() => params.value.q, v => { s.value = v || undefined })
+	watch(nulls, v => { params.value.filter_include_nulls = v === 'true' }, {immediate: true})
 
-	const sortQuery = useRouteQuery('sort')
+	const sortQuery = useDisplayedRouteQuery('sort')
 
 	const sortBy = computed<SortBy>({
 		get() {
@@ -165,6 +175,10 @@ export function useTaskList(
 			const urlIsEmpty = !sortValue && !filterValue && !sValue && currentPage === 1
 			if (viewIdChanged && urlIsEmpty) {
 				const storedQuery = viewFiltersStore.getViewQuery(viewId)
+				// Behind an open task the page shows the url it was opened from, as it is.
+				if (Object.keys(storedQuery).length > 0 && !isCurrent.value) {
+					return
+				}
 				if (Object.keys(storedQuery).length > 0) {
 					const restore = router.replace({query: {...router.currentRoute.value.query, ...storedQuery}})
 					pendingQueryRestore.value = restore
@@ -218,6 +232,15 @@ export function useTaskList(
 		per_page: options.perPage ?? TASKS_PER_PAGE,
 	}))
 
+	return {scope, params, sortBy, page, listParams, pendingQueryRestore}
+}
+
+export function useTaskList(
+	scopeGetter: MaybeRefOrGetter<TaskListScope>,
+	options: UseTaskListOptions = {},
+) {
+	const {scope, params, sortBy, page, listParams, pendingQueryRestore} = useTaskListState(scopeGetter, options)
+
 	const query = useQuery(computed(() => {
 		const listQuery = taskListQuery(scope.value, listParams.value)
 		const scopeHash = hashKey([scope.value])
@@ -237,6 +260,41 @@ export function useTaskList(
 		isFetching: query.isFetching,
 		error: query.error,
 		currentPage: page,
+		params,
+		sortByParam: sortBy,
+		refetch: query.refetch,
+	}
+}
+
+/**
+ * The same list as useTaskList, loaded page after page into one growing list
+ * (for phones and long lists). The url keeps sort, filter and search, not the page.
+ */
+export function useInfiniteTaskList(
+	scopeGetter: MaybeRefOrGetter<TaskListScope>,
+	options: UseTaskListOptions = {},
+) {
+	const {scope, params, sortBy, listParams, pendingQueryRestore} = useTaskListState(scopeGetter, options)
+
+	const query = useInfiniteQuery(computed(() => {
+		const {page: _page, ...rest} = listParams.value
+		const infinite = infiniteTaskListQuery(scope.value, rest)
+		return {
+			...infinite,
+			// infiniteQueryOptions' type drops `enabled`; the factory still sets it for unloadable scopes.
+			enabled: (infinite as {enabled?: unknown}).enabled !== false && !pendingQueryRestore.value,
+		}
+	}))
+
+	return {
+		tasks: computed(() => (query.data.value?.pages ?? []).flatMap(page => page.items)),
+		total: computed(() => query.data.value?.pages[0]?.total ?? 0),
+		hasMore: query.hasNextPage,
+		isLoadingMore: query.isFetchingNextPage,
+		loadMore: () => query.fetchNextPage(),
+		isPending: query.isPending,
+		isFetching: query.isFetching,
+		error: query.error,
 		params,
 		sortByParam: sortBy,
 		refetch: query.refetch,

@@ -1,68 +1,153 @@
-import {describe, expect, it, vi} from 'vitest'
-import {reactive, ref, type Ref} from 'vue'
-import type {RouteLocationNormalized} from 'vue-router'
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest'
+import {defineComponent, h, nextTick, shallowRef, type ShallowRef} from 'vue'
+import {enableAutoUnmount, flushPromises, mount} from '@vue/test-utils'
+import {createMemoryHistory, createRouter, RouterView, type RouteLocationNormalizedLoaded} from 'vue-router'
 
-vi.mock('vue-router', async importOriginal => ({
-	...await importOriginal<typeof import('vue-router')>(),
-	useRouter: () => ({
-		resolve: (to: {params: {projectId: number, viewId: number}}) => ({
-			fullPath: `/projects/${to.params.projectId}/${to.params.viewId}`,
-		}),
-		push: vi.fn(),
-	}),
-}))
+import {presetRange} from './ganttRange'
+import {
+	ganttFiltersFromQuery,
+	ganttFiltersToQuery,
+	ganttRangeFilter,
+	ganttTaskParams,
+	useGanttFilters,
+} from './useGanttFilters'
 
-vi.mock('@/stores/viewFilters', () => ({
-	useViewFiltersStore: () => ({
-		setViewQuery: vi.fn(),
-		clearViewQuery: vi.fn(),
-	}),
-}))
+enableAutoUnmount(afterEach)
 
-vi.mock('./useGanttTaskList', () => ({
-	useGanttTaskList: () => ({
-		tasks: ref(new Map()),
-		isLoading: ref(false),
-		loadTasks: vi.fn(),
-		addTask: vi.fn(),
-		updateTask: vi.fn(),
-	}),
-}))
+const now = new Date(2026, 8, 18, 15, 30)
+const day = (year: number, month: number, date: number) => new Date(year, month - 1, date)
 
-import {useGanttFilters} from './useGanttFilters'
+beforeEach(() => {
+	vi.useFakeTimers({toFake: ['Date']})
+	vi.setSystemTime(now)
+})
 
-function routeRef(route: Partial<RouteLocationNormalized>): Ref<RouteLocationNormalized> {
-	return ref(reactive(route)) as unknown as Ref<RouteLocationNormalized>
-}
+afterEach(() => {
+	vi.useRealTimers()
+})
 
-describe('useGanttFilters', () => {
-	// The gantt view renders as the backdrop of the task detail modal, where the current route is
-	// the task and has no project params.
-	it('takes project and view id from the props, not from the route', () => {
-		const route = routeRef({
-			name: 'task.detail',
-			params: {id: '3619'},
-			query: {},
-			fullPath: '/tasks/3619',
-		})
-
-		const {filters} = useGanttFilters(route, ref(5), ref(2759))
-
-		expect(filters.value.projectId).toBe(5)
-		expect(filters.value.viewId).toBe(2759)
+describe('url query', () => {
+	it('reads the range and the toggle', () => {
+		expect(ganttFiltersFromQuery({dateFrom: '2024-01-01', dateTo: '2024-02-01', showTasksWithoutDates: 'true'}, now))
+			.toEqual({range: {from: day(2024, 1, 1), to: day(2024, 2, 1)}, showTasksWithoutDates: true})
 	})
 
-	it('reads the date range from the route query', () => {
-		const route = routeRef({
-			name: 'project.view',
-			params: {projectId: '5', viewId: '2759'},
-			query: {dateFrom: '2024-01-01', dateTo: '2024-02-01'},
-			fullPath: '/projects/5/2759?dateFrom=2024-01-01&dateTo=2024-02-01',
+	it('falls back to the default range with the toggle off', () => {
+		expect(ganttFiltersFromQuery({}, now))
+			.toEqual({range: presetRange('next3Months', now), showTasksWithoutDates: false})
+	})
+
+	it('writes only what differs from the defaults', () => {
+		expect(ganttFiltersToQuery({range: presetRange('next3Months', now), showTasksWithoutDates: false}, now))
+			.toEqual({dateFrom: undefined, dateTo: undefined, showTasksWithoutDates: undefined})
+		expect(ganttFiltersToQuery({range: presetRange('thisMonth', now), showTasksWithoutDates: true}, now))
+			.toEqual({dateFrom: '2026-09-01', dateTo: '2026-09-30', showTasksWithoutDates: 'true'})
+	})
+})
+
+describe('api params', () => {
+	const filters = {range: {from: day(2026, 9, 1), to: day(2026, 9, 30)}, showTasksWithoutDates: false}
+	const view = {filter: '', q: '', filter_include_nulls: false}
+
+	it('asks for every task whose dates reach into the range, a few days wider for open-ended bars', () => {
+		const filter = ganttRangeFilter(filters.range)
+		expect(filter).toContain('(start_date >= "2026-08-27" && start_date < "2026-10-06")')
+		expect(filter).toContain('(due_date >= "2026-08-27" && due_date < "2026-10-06")')
+		expect(filter).toContain('(start_date < "2026-10-06" && end_date >= "2026-08-27")')
+		expect(filter.split(' || ')).toHaveLength(5)
+	})
+
+	it('adds the page search and filter to the range', () => {
+		const params = ganttTaskParams(filters, {filter: 'done = false', q: 'disk', filter_include_nulls: false}, {subtasks: true, timezone: 'Europe/Madrid'})
+		expect(params.filter).toBe(`(${ganttRangeFilter(filters.range)}) && (done = false)`)
+		expect(params).toMatchObject({q: 'disk', filter_timezone: 'Europe/Madrid', expand: ['subtasks'], filter_include_nulls: false})
+	})
+
+	it('includes tasks without dates when either asks for them', () => {
+		expect(ganttTaskParams({...filters, showTasksWithoutDates: true}, view, {subtasks: true}).filter_include_nulls).toBe(true)
+		expect(ganttTaskParams(filters, {...view, filter_include_nulls: true}, {subtasks: true}).filter_include_nulls).toBe(true)
+	})
+
+	it('does not nest where subtasks can\'t be expanded', () => {
+		expect(ganttTaskParams(filters, view, {subtasks: false}).expand).toEqual([])
+	})
+})
+
+describe('useGanttFilters', () => {
+	let state: ReturnType<typeof useGanttFilters> | undefined
+
+	const Page = defineComponent({
+		setup() {
+			state = useGanttFilters()
+			return () => h('div')
+		},
+	})
+
+	async function mountAt(path: string, backdrop?: ShallowRef<RouteLocationNormalizedLoaded | null>) {
+		const router = createRouter({
+			history: createMemoryHistory(),
+			routes: [
+				{path: '/projects/:projectId/:viewId', name: 'project.view', component: Page},
+				{path: '/tasks/:id', name: 'task.detail', component: {render: () => h('p')}},
+			],
+		})
+		await router.push(path)
+		await router.isReady()
+		// Like the app shell: with a task open, the page behind renders the route it was opened from.
+		const App = defineComponent({
+			setup: () => () => h(RouterView, {route: backdrop?.value ?? undefined}),
+		})
+		mount(App, {global: {plugins: [router]}})
+		await flushPromises()
+		return router
+	}
+
+	beforeEach(() => {
+		state = undefined
+	})
+
+	it('reads the range from the url', async () => {
+		await mountAt('/projects/2/6?dateFrom=2024-01-01&dateTo=2024-02-01')
+		expect(state!.range.value).toEqual({from: day(2024, 1, 1), to: day(2024, 2, 1)})
+		expect(state!.showTasksWithoutDates.value).toBe(false)
+	})
+
+	it('writes changes to the url next to the page\'s own keys', async () => {
+		const router = await mountAt('/projects/2/6?filter=done+%3D+false&s=disk')
+
+		state!.range.value = presetRange('thisMonth', now)
+		await flushPromises()
+		expect(router.currentRoute.value.query).toEqual({
+			filter: 'done = false',
+			s: 'disk',
+			dateFrom: '2026-09-01',
+			dateTo: '2026-09-30',
 		})
 
-		const {filters} = useGanttFilters(route, ref(5), ref(2759))
+		state!.showTasksWithoutDates.value = true
+		state!.range.value = presetRange('next3Months', now)
+		await flushPromises()
+		expect(router.currentRoute.value.query).toEqual({filter: 'done = false', s: 'disk', showTasksWithoutDates: 'true'})
+	})
 
-		expect(filters.value.dateFrom).toBe(new Date(2024, 0, 1).toISOString())
-		expect(filters.value.dateTo).toBe(new Date(2024, 1, 1).toISOString())
+	it('keeps its range behind an open task and saves changes made there once back', async () => {
+		const backdrop = shallowRef<RouteLocationNormalizedLoaded | null>(null)
+		const router = await mountAt('/projects/2/6?dateFrom=2026-09-01&dateTo=2026-09-30', backdrop)
+
+		backdrop.value = {...router.currentRoute.value}
+		await router.push('/tasks/11')
+		await flushPromises()
+		expect(state!.range.value).toEqual({from: day(2026, 9, 1), to: day(2026, 9, 30)})
+
+		state!.range.value = presetRange('thisYear', now)
+		await flushPromises()
+		expect(router.currentRoute.value.fullPath).toBe('/tasks/11')
+		expect(state!.range.value).toEqual(presetRange('thisYear', now))
+
+		await router.push(backdrop.value.fullPath)
+		backdrop.value = null
+		await nextTick()
+		await flushPromises()
+		expect(router.currentRoute.value.query).toEqual({dateFrom: '2026-01-01', dateTo: '2026-12-31'})
 	})
 })

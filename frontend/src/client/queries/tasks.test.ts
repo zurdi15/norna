@@ -22,6 +22,7 @@ const sdk = vi.hoisted(() => ({
 	tasksDuplicate: vi.fn(),
 	tasksList: vi.fn(),
 	tasksMarkRead: vi.fn(),
+	tasksPositionUpdate: vi.fn(),
 	tasksRead: vi.fn(),
 	tasksUpdate: vi.fn(),
 }))
@@ -55,6 +56,7 @@ import {
 	taskQuery,
 	toggleTaskFavoriteMutationOptions,
 	updateTaskMutationOptions,
+	updateTaskPositionMutationOptions,
 	type TaskListScope,
 	type TaskPage,
 } from './tasks'
@@ -621,5 +623,26 @@ describe('quick add', () => {
 			expect(sdk.taskLabelsBulkReplace).toHaveBeenCalledTimes(2)
 			expect(result.tasks.map(created => created?.labels)).toEqual([[{id: 9, title: 'errand'}], [{id: 9, title: 'errand'}]])
 		})
+	})
+})
+
+describe('list reordering', () => {
+	afterEach(() => queryClient.clear())
+
+	it('moves the task in list caches only and reloads the list afterwards', async () => {
+		const listKey = taskKeys.list(viewScope, {})
+		const boardKey = taskKeys.board(1, 7, {})
+		queryClient.setQueryData(listKey, taskPage([task({id: 1, position: 100})]))
+		queryClient.setQueryData(boardKey, [{id: 3, tasks: [task({id: 1, position: 5})], count: 1}])
+		sdk.tasksPositionUpdate.mockResolvedValue({data: {task_id: 1, position: 250, project_view_id: 5}})
+		const invalidate = vi.spyOn(queryClient, 'invalidateQueries')
+
+		await queryClient.getMutationCache().build(queryClient, updateTaskPositionMutationOptions() as MutationOptions<unknown, Error, unknown, unknown>)
+			.execute({taskId: 1, viewId: 5, position: 250})
+
+		expect(sdk.tasksPositionUpdate).toHaveBeenCalledWith({path: {task: 1}, body: {position: 250, project_view_id: 5}})
+		expect(queryClient.getQueryData<TaskPage>(listKey)?.items[0]?.position).toBe(250)
+		expect(queryClient.getQueryData<{tasks: Task[]}[]>(boardKey)?.[0]?.tasks[0]?.position).toBe(5)
+		expect(invalidate).toHaveBeenCalledWith({queryKey: taskKeys.lists()})
 	})
 })

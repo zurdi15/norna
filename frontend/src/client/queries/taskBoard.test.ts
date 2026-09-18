@@ -296,7 +296,7 @@ describe('bucket writes', () => {
 
 		expect(board()[0]).toMatchObject({title: 'Backlog', limit: 5, count: 30})
 		expect(board()[0]?.tasks).toHaveLength(2)
-		expect(message.success).toHaveBeenCalledWith({message: 'The bucket title has been saved successfully.'})
+		expect(message.success).toHaveBeenCalledWith({message: 'Column renamed'})
 	})
 
 	it('reorders buckets by their new position', async () => {
@@ -318,6 +318,6 @@ describe('bucket writes', () => {
 
 		expect(invalidate).toHaveBeenCalledWith({queryKey: taskKeys.viewBoards(1, 6)})
 		expect(invalidate).toHaveBeenCalledWith({queryKey: projectKeys.detail(1)})
-		expect(message.success).toHaveBeenCalledWith({message: 'The bucket has been deleted successfully.'})
+		expect(message.success).toHaveBeenCalledWith({message: 'Column deleted'})
 	})
 })

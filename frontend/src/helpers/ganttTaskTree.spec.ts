@@ -1,141 +1,133 @@
 import {describe, expect, it} from 'vitest'
-import {buildGanttTaskTree} from './ganttTaskTree'
-import type {ITask} from '@/modelTypes/ITask'
 
-function makeTask(id: number, overrides: Partial<ITask> = {}): ITask {
+import type {Task} from '@/client/generated'
+import {NO_DATE} from '@/modules/task/task'
+
+import {buildGanttTaskTree} from './ganttTaskTree'
+
+function makeTask(id: number, overrides: Partial<Task> = {}): Task {
 	return {
 		id,
 		title: `Task ${id}`,
-		startDate: new Date('2026-03-01'),
-		endDate: new Date('2026-03-10'),
-		dueDate: null,
+		start_date: '2026-03-01T00:00:00Z',
+		end_date: '2026-03-10T00:00:00Z',
+		due_date: NO_DATE,
 		done: false,
-		relatedTasks: {},
+		related_tasks: {},
 		...overrides,
-	} as ITask
+	}
+}
+
+function taskMap(...tasks: Task[]): Map<number, Task> {
+	return new Map(tasks.map(task => [task.id!, task]))
 }
 
 describe('buildGanttTaskTree', () => {
 	it('returns flat list when no relations exist', () => {
-		const tasks = new Map<number, ITask>([
-			[1, makeTask(1)],
-			[2, makeTask(2)],
-		])
-
-		const result = buildGanttTaskTree(tasks)
+		const result = buildGanttTaskTree(taskMap(makeTask(1), makeTask(2)))
 
 		expect(result).toHaveLength(2)
-		expect(result[0].task.id).toBe(1)
-		expect(result[0].indentLevel).toBe(0)
-		expect(result[0].isParent).toBe(false)
-		expect(result[1].task.id).toBe(2)
-		expect(result[1].indentLevel).toBe(0)
+		expect(result[0]!.task.id).toBe(1)
+		expect(result[0]!.indentLevel).toBe(0)
+		expect(result[0]!.isParent).toBe(false)
+		expect(result[0]!.parentId).toBeNull()
+		expect(result[1]!.task.id).toBe(2)
+		expect(result[1]!.indentLevel).toBe(0)
 	})
 
 	it('nests subtasks under parents in depth-first order', () => {
-		const child1 = makeTask(2, {
-			relatedTasks: {parenttask: [makeTask(1)]},
-		})
-		const child2 = makeTask(3, {
-			relatedTasks: {parenttask: [makeTask(1)]},
-		})
-		const parent = makeTask(1, {
-			relatedTasks: {subtask: [makeTask(2), makeTask(3)]},
-		})
+		const result = buildGanttTaskTree(taskMap(
+			makeTask(1, {related_tasks: {subtask: [makeTask(2), makeTask(3)]}}),
+			makeTask(2, {related_tasks: {parenttask: [makeTask(1)]}}),
+			makeTask(3, {related_tasks: {parenttask: [makeTask(1)]}}),
+		))
 
-		const tasks = new Map<number, ITask>([
-			[1, parent],
-			[2, child1],
-			[3, child2],
-		])
+		expect(result.map(node => node.task.id)).toEqual([1, 2, 3])
+		expect(result[0]!.isParent).toBe(true)
+		expect(result[0]!.childIds).toEqual([2, 3])
+		expect(result[1]!.indentLevel).toBe(1)
+		expect(result[1]!.parentId).toBe(1)
+		expect(result[2]!.indentLevel).toBe(1)
+	})
 
-		const result = buildGanttTaskTree(tasks)
+	it('orders roots and siblings like the map, not like the relation lists', () => {
+		const result = buildGanttTaskTree(taskMap(
+			makeTask(9),
+			makeTask(3, {related_tasks: {parenttask: [makeTask(1)]}}),
+			makeTask(1, {related_tasks: {subtask: [makeTask(2), makeTask(3)]}}),
+			makeTask(2, {related_tasks: {parenttask: [makeTask(1)]}}),
+		))
 
-		expect(result).toHaveLength(3)
-		expect(result[0].task.id).toBe(1)
-		expect(result[0].indentLevel).toBe(0)
-		expect(result[0].isParent).toBe(true)
-		expect(result[0].childIds).toEqual([2, 3])
-		expect(result[1].task.id).toBe(2)
-		expect(result[1].indentLevel).toBe(1)
-		expect(result[2].task.id).toBe(3)
-		expect(result[2].indentLevel).toBe(1)
+		expect(result.map(node => node.task.id)).toEqual([9, 1, 3, 2])
 	})
 
 	it('handles multi-level nesting', () => {
-		const grandchild = makeTask(3, {
-			relatedTasks: {parenttask: [makeTask(2)]},
-		})
-		const child = makeTask(2, {
-			relatedTasks: {
-				parenttask: [makeTask(1)],
-				subtask: [makeTask(3)],
-			},
-		})
-		const parent = makeTask(1, {
-			relatedTasks: {subtask: [makeTask(2)]},
-		})
+		const result = buildGanttTaskTree(taskMap(
+			makeTask(1, {related_tasks: {subtask: [makeTask(2)]}}),
+			makeTask(2, {related_tasks: {parenttask: [makeTask(1)], subtask: [makeTask(3)]}}),
+			makeTask(3, {related_tasks: {parenttask: [makeTask(2)]}}),
+		))
 
-		const tasks = new Map<number, ITask>([
-			[1, parent],
-			[2, child],
-			[3, grandchild],
-		])
-
-		const result = buildGanttTaskTree(tasks)
-
-		expect(result).toHaveLength(3)
-		expect(result[0].indentLevel).toBe(0) // parent
-		expect(result[1].indentLevel).toBe(1) // child
-		expect(result[1].isParent).toBe(true)
-		expect(result[2].indentLevel).toBe(2) // grandchild
+		expect(result.map(node => node.indentLevel)).toEqual([0, 1, 2])
+		expect(result[1]!.isParent).toBe(true)
+		expect(result[2]!.parentId).toBe(2)
 	})
 
 	it('caps indent level at max depth', () => {
-		// Build a chain: 1 -> 2 -> 3 -> 4 -> 5 -> 6
-		const tasks = new Map<number, ITask>()
+		const tasks: Task[] = []
 		for (let i = 1; i <= 6; i++) {
-			const relatedTasks: ITask['relatedTasks'] = {}
-			if (i > 1) relatedTasks.parenttask = [makeTask(i - 1)]
-			if (i < 6) relatedTasks.subtask = [makeTask(i + 1)]
-			tasks.set(i, makeTask(i, {relatedTasks}))
+			const related: NonNullable<Task['related_tasks']> = {}
+			if (i > 1) related.parenttask = [makeTask(i - 1)]
+			if (i < 6) related.subtask = [makeTask(i + 1)]
+			tasks.push(makeTask(i, {related_tasks: related}))
 		}
 
-		const result = buildGanttTaskTree(tasks)
+		const result = buildGanttTaskTree(taskMap(...tasks))
 
-		expect(result[4].indentLevel).toBe(4) // level 4 (0-indexed)
-		expect(result[5].indentLevel).toBe(4) // capped at 4
+		expect(result[4]!.indentLevel).toBe(4)
+		expect(result[5]!.indentLevel).toBe(4)
 	})
 
 	it('calculates derived dates for dateless parents from children', () => {
-		const child1 = makeTask(2, {
-			startDate: new Date('2026-03-05'),
-			endDate: new Date('2026-03-10'),
-			relatedTasks: {parenttask: [makeTask(1)]},
-		})
-		const child2 = makeTask(3, {
-			startDate: new Date('2026-03-01'),
-			endDate: new Date('2026-03-15'),
-			relatedTasks: {parenttask: [makeTask(1)]},
-		})
-		const parent = makeTask(1, {
-			startDate: null,
-			endDate: null,
-			dueDate: null,
-			relatedTasks: {subtask: [makeTask(2), makeTask(3)]},
-		})
+		const result = buildGanttTaskTree(taskMap(
+			makeTask(1, {
+				start_date: NO_DATE,
+				end_date: NO_DATE,
+				related_tasks: {subtask: [makeTask(2), makeTask(3)]},
+			}),
+			makeTask(2, {
+				start_date: '2026-03-05T00:00:00Z',
+				end_date: '2026-03-10T00:00:00Z',
+				related_tasks: {parenttask: [makeTask(1)]},
+			}),
+			makeTask(3, {
+				start_date: '2026-03-01T00:00:00Z',
+				end_date: NO_DATE,
+				due_date: '2026-03-15T00:00:00Z',
+				related_tasks: {parenttask: [makeTask(1)]},
+			}),
+		))
 
-		const tasks = new Map<number, ITask>([
-			[1, parent],
-			[2, child1],
-			[3, child2],
-		])
+		expect(result[0]!.derivedStartDate?.toISOString()).toContain('2026-03-01')
+		expect(result[0]!.derivedEndDate?.toISOString()).toContain('2026-03-15')
+		expect(result[0]!.hasDerivedDates).toBe(true)
+	})
 
-		const result = buildGanttTaskTree(tasks)
+	it('keeps parents with their own dates underived', () => {
+		const result = buildGanttTaskTree(taskMap(
+			makeTask(1, {related_tasks: {subtask: [makeTask(2)]}}),
+			makeTask(2, {related_tasks: {parenttask: [makeTask(1)]}}),
+		))
 
-		expect(result[0].derivedStartDate?.toISOString()).toContain('2026-03-01')
-		expect(result[0].derivedEndDate?.toISOString()).toContain('2026-03-15')
-		expect(result[0].hasDerivedDates).toBe(true)
+		expect(result[0]!.hasDerivedDates).toBe(false)
+	})
+
+	it('still gives every task a row when parents form a cycle', () => {
+		const result = buildGanttTaskTree(taskMap(
+			makeTask(1, {related_tasks: {parenttask: [makeTask(2)], subtask: [makeTask(2)]}}),
+			makeTask(2, {related_tasks: {parenttask: [makeTask(1)], subtask: [makeTask(1)]}}),
+		))
+
+		expect(result.map(node => node.task.id).sort()).toEqual([1, 2])
 	})
 })
-

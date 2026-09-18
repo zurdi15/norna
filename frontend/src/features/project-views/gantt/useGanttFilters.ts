@@ -1,162 +1,129 @@
-import {watch, type Ref} from 'vue'
-import type {RouteLocationNormalized, RouteLocationRaw, LocationQueryRaw} from 'vue-router'
+import {computed, inject, shallowRef, watch} from 'vue'
+import {routerViewLocationKey, useRoute, useRouter, type LocationQuery, type LocationQueryRaw} from 'vue-router'
 
-import {useViewFiltersStore} from '@/stores/viewFilters'
+import type {TaskListParams} from '@/client/queries/tasks'
+import {useGlobalNow} from '@/composables/useGlobalNow'
+import {addDays, startOfDay} from '@/helpers/time/dateMath'
 
-import {isoToKebabDate} from '@/helpers/time/isoToKebabDate'
-import {parseDateProp} from '@/helpers/time/parseDateProp'
-import {parseBooleanProp} from '@/helpers/time/parseBooleanProp'
-import {useRouteFilters, type UseRouteFiltersReturn} from '@/composables/useRouteFilters'
-import {useGanttTaskList, type UseGanttTaskListReturn} from './useGanttTaskList'
+import {OPEN_END_DAYS} from './ganttBars'
+import {formatKebabDate, rangeFromQuery, rangeToQuery, type GanttRange} from './ganttRange'
+import type {ViewFilters} from '../useViewFilters'
 
-import type {TaskFilterParams} from '@/services/taskCollection'
-
-import type {DateISO} from '@/types/DateISO'
-import type {DateKebab} from '@/types/DateKebab'
-
-// convenient internal filter object
 export interface GanttFilters {
-	projectId: number
-	viewId: number,
-	dateFrom: DateISO
-	dateTo: DateISO
+	range: GanttRange
 	showTasksWithoutDates: boolean
 }
 
-const DEFAULT_SHOW_TASKS_WITHOUT_DATES = false
+// Large pages: the chart shows every task of its range at once and loads any further page right away.
+export const GANTT_PAGE_SIZE = 250
 
-const DEFAULT_DATEFROM_DAY_OFFSET = -15
-const DEFAULT_DATETO_DAY_OFFSET = +55
-
-const now = new Date()
-
-function getDefaultDateFrom() {
-	return new Date(now.getFullYear(), now.getMonth(), now.getDate() + DEFAULT_DATEFROM_DAY_OFFSET).toISOString()
-}
-
-function getDefaultDateTo() {
-	return new Date(now.getFullYear(), now.getMonth(), now.getDate() + DEFAULT_DATETO_DAY_OFFSET).toISOString()
-}
-
-// FIXME: use zod for this
-function ganttRouteToFilters(route: Partial<RouteLocationNormalized>, projectId: number, viewId: number): GanttFilters {
+export function ganttFiltersFromQuery(query: LocationQuery, now: Date): GanttFilters {
 	return {
-		projectId,
-		viewId,
-		dateFrom: parseDateProp(route.query?.dateFrom as DateKebab) || getDefaultDateFrom(),
-		dateTo: parseDateProp(route.query?.dateTo as DateKebab) || getDefaultDateTo(),
-		showTasksWithoutDates: parseBooleanProp(route.query?.showTasksWithoutDates as string) || DEFAULT_SHOW_TASKS_WITHOUT_DATES,
+		range: rangeFromQuery(query, now),
+		showTasksWithoutDates: query.showTasksWithoutDates === 'true',
 	}
 }
 
-function ganttGetDefaultFilters(projectId: number, viewId: number): GanttFilters {
-	return ganttRouteToFilters({}, projectId, viewId)
+export function ganttFiltersToQuery(filters: GanttFilters, now: Date): Record<string, string | undefined> {
+	return {
+		...rangeToQuery(filters.range, now),
+		showTasksWithoutDates: filters.showTasksWithoutDates ? 'true' : undefined,
+	}
 }
 
-// FIXME: use zod for this
-function ganttFiltersToRoute(filters: GanttFilters): RouteLocationRaw {
-	let query: Record<string, string> = {}
-	if (
-		filters.dateFrom !== getDefaultDateFrom() ||
-		filters.dateTo !== getDefaultDateTo()
-	) {
-		query = {
-			dateFrom: isoToKebabDate(filters.dateFrom),
-			dateTo: isoToKebabDate(filters.dateTo),
+/**
+ * The api filter for tasks whose dates reach into the range. It asks for a few days more
+ * on each side, where open-ended bars fade in from; the rows then trim to the range.
+ */
+export function ganttRangeFilter(range: GanttRange): string {
+	const from = `"${formatKebabDate(addDays(range.from, -OPEN_END_DAYS))}"`
+	const until = `"${formatKebabDate(addDays(range.to, OPEN_END_DAYS + 1))}"`
+	return [
+		`(start_date >= ${from} && start_date < ${until})`,
+		`(end_date >= ${from} && end_date < ${until})`,
+		`(due_date >= ${from} && due_date < ${until})`,
+		`(start_date < ${until} && end_date >= ${from})`,
+		`(start_date < ${until} && due_date >= ${from})`,
+	].join(' || ')
+}
+
+export interface GanttTaskParamsOptions {
+	timezone?: string
+	/** Off for the Favorites pseudo project, whose tasks come from many projects and can't nest. */
+	subtasks: boolean
+}
+
+export function ganttTaskParams(filters: GanttFilters, view: ViewFilters, options: GanttTaskParamsOptions): TaskListParams {
+	const range = `(${ganttRangeFilter(filters.range)})`
+	return {
+		q: view.q,
+		filter: view.filter ? `${range} && (${view.filter})` : range,
+		filter_timezone: options.timezone,
+		// With nulls every comparison on a missing date passes; the rows sort out what to show.
+		filter_include_nulls: filters.showTasksWithoutDates || view.filter_include_nulls,
+		sort_by: ['start_date', 'id'],
+		order_by: ['asc', 'asc'],
+		expand: options.subtasks ? ['subtasks'] : [],
+		per_page: GANTT_PAGE_SIZE,
+	}
+}
+
+function withoutEmpty(query: Record<string, unknown>): LocationQueryRaw {
+	return Object.fromEntries(Object.entries(query).filter(([, value]) => value !== undefined)) as LocationQueryRaw
+}
+
+/**
+ * The gantt's date range and "tasks without dates" toggle, kept in the url (dateFrom,
+ * dateTo, showTasksWithoutDates) next to the page's search and filter.
+ */
+export function useGanttFilters() {
+	const route = useRoute()
+	const router = useRouter()
+	// With a task open beside the chart the current route is the task, while the chart still
+	// shows the route it was opened from; RouterView hands that one down.
+	const shownRoute = inject(routerViewLocationKey, null)
+	const displayed = computed(() => shownRoute?.value ?? route)
+	const isCurrent = computed(() => displayed.value.fullPath === route.fullPath)
+
+	const {now} = useGlobalNow()
+	// The clock ticks every minute; the default range only moves once a day.
+	const today = computed(() => startOfDay(now.value).getTime())
+
+	// A change shows right away and holds until the url has it, so a second change made before
+	// the navigation lands builds on the first. Behind an open task it waits for the chart's route.
+	const pending = shallowRef<GanttFilters | null>(null)
+	const fromRoute = computed(() => ganttFiltersFromQuery(displayed.value.query, new Date(today.value)))
+	const filters = computed(() => pending.value ?? fromRoute.value)
+
+	function write(next: GanttFilters) {
+		pending.value = next
+		if (!isCurrent.value) {
+			return
 		}
-	}
-
-	if (filters.showTasksWithoutDates) {
-		query.showTasksWithoutDates = String(filters.showTasksWithoutDates)
-	}
-
-	return {
-		name: 'project.view',
-		params: {
-			projectId: filters.projectId,
-			viewId: filters.viewId,
-		},
-		query,
-	}
-}
-
-function ganttFiltersToApiParams(filters: GanttFilters): TaskFilterParams {
-	const dateFrom = isoToKebabDate(filters.dateFrom)
-	const dateTo = isoToKebabDate(filters.dateTo)
-
-	return {
-		sort_by: ['start_date', 'done', 'id'],
-		order_by: ['asc', 'asc', 'desc'],
-		filter: '(' +
-			'(start_date >= "' + dateFrom + '" && start_date <= "' + dateTo + '") || ' +
-			'(end_date >= "' + dateFrom + '" && end_date <= "' + dateTo + '") || ' +
-			'(due_date >= "' + dateFrom + '" && due_date <= "' + dateTo + '") || ' +
-			'(start_date <= "' + dateFrom + '" && end_date >= "' + dateTo + '")' +
-			')',
-		filter_include_nulls: filters.showTasksWithoutDates,
-		expand: 'subtasks',
-	}
-}
-
-export type UseGanttFiltersReturn =
-	UseRouteFiltersReturn<GanttFilters> &
-	UseGanttTaskListReturn
-
-export function useGanttFilters(
-	route: Ref<RouteLocationNormalized>,
-	projectId: Ref<number>,
-	viewId: Ref<number>,
-): UseGanttFiltersReturn {
-	const viewFiltersStore = useViewFiltersStore()
-
-	// Ids come from the props and not from the route: while the task detail modal is open, gantt
-	// renders as its backdrop and the current route is the task, without any project params.
-	const {
-		filters,
-		hasDefaultFilters,
-		setDefaultFilters,
-	} = useRouteFilters<GanttFilters>(
-		route,
-		() => ganttGetDefaultFilters(projectId.value, viewId.value),
-		r => ganttRouteToFilters(r, projectId.value, viewId.value),
-		ganttFiltersToRoute,
-		['project.view'],
-	)
-
-	// Sync filters to store whenever they change (for view tab navigation)
-	watch(
-		filters,
-		(newFilters) => {
-			const routeLocation = ganttFiltersToRoute(newFilters)
-			const query = routeLocation.query as LocationQueryRaw
-			if (query && Object.keys(query).length > 0) {
-				viewFiltersStore.setViewQuery(viewId.value, query)
-			} else {
-				viewFiltersStore.clearViewQuery(viewId.value)
+		void router.replace({
+			query: withoutEmpty({...route.query, ...ganttFiltersToQuery(next, new Date(today.value))}),
+		}).finally(() => {
+			if (pending.value === next) {
+				pending.value = null
 			}
-		},
-		{immediate: true, deep: true},
-	)
-
-	const {
-		tasks,
-		loadTasks,
-
-		isLoading,
-		addTask,
-		updateTask,
-	} = useGanttTaskList<GanttFilters>(filters, ganttFiltersToApiParams, viewId)
-
-	return {
-		filters,
-		hasDefaultFilters,
-		setDefaultFilters,
-
-		tasks,
-		loadTasks,
-
-		isLoading,
-		addTask,
-		updateTask,
+		})
 	}
+
+	watch(isCurrent, current => {
+		if (current && pending.value) {
+			write(pending.value)
+		}
+	})
+
+	const range = computed<GanttRange>({
+		get: () => filters.value.range,
+		set: value => write({...filters.value, range: value}),
+	})
+
+	const showTasksWithoutDates = computed<boolean>({
+		get: () => filters.value.showTasksWithoutDates,
+		set: value => write({...filters.value, showTasksWithoutDates: value}),
+	})
+
+	return {filters, range, showTasksWithoutDates, today}
 }

@@ -243,14 +243,6 @@
 			"empty": "Este proyecto está actualmente vacío.",
 			"editTask": "Editar Tarea"
 		},
-		"gantt": {
-			"title": "Gantt",
-			"size": "Tamaño",
-			"default": "Predeterminado",
-			"month": "Mes",
-			"day": "Día",
-			"hour": "Hora"
-		},
 		"table": {
 			"title": "Tabla",
 			"columns": "Columnas"
@@ -261,7 +253,7 @@
 			"doneBucket": "Contenedor completado",
 			"doneBucketHint": "Todas las tareas movidas a este contenedor se marcarán automáticamente como finalizadas.",
 			"doneBucketHintExtended": "Todas las tareas movidas al contenedor completado se marcarán como finalizadas automáticamente. Todas las tareas marcadas como finalizadas desde otro lugar también se moverán.",
-			"doneBucketSavedSuccess": "El contenedor completado se ha guardado correctamente.",
+			"doneBucketSavedSuccess": "Columna de completadas guardada",
 			"deleteLast": "No puedes eliminar el último contenedor.",
 			"addTaskPlaceholder": "Introduce el nuevo título de la tarea…",
 			"addTask": "Añadir una tarea",
@@ -270,10 +262,11 @@
 			"deleteHeaderBucket": "Eliminar el contenedor",
 			"deleteBucketText1": "¿Estás seguro de que quieres eliminar este contenedor?",
 			"deleteBucketText2": "Esto no eliminará ninguna tarea, sino que las moverá al contenedor por defecto.",
-			"deleteBucketSuccess": "El contenedor se ha eliminado con éxito.",
-			"bucketTitleSavedSuccess": "El título del contenedor se ha guardado con éxito.",
-			"bucketLimitSavedSuccess": "El límite del contenedor se ha guardado con éxito.",
-			"collapse": "Contraer este contenedor"
+			"deleteBucketSuccess": "Columna eliminada",
+			"bucketTitleSavedSuccess": "Columna renombrada",
+			"bucketLimitSavedSuccess": "Límite de la columna guardado",
+			"collapse": "Contraer este contenedor",
+			"defaultBucketSavedSuccess": "Columna por defecto guardada"
 		},
 		"pseudo": {
 			"favorites": {
@@ -841,6 +834,15 @@
 			"navigateDown": "Tarea siguiente",
 			"navigateUp": "Tarea anterior",
 			"open": "Abrir la tarea"
+		},
+		"gantt": {
+			"title": "Diagrama de Gantt",
+			"moveTaskLeft": "Mover la tarea a una fecha anterior",
+			"moveTaskRight": "Mover la tarea a una fecha posterior",
+			"expandTaskLeft": "Adelantar la fecha de inicio",
+			"expandTaskRight": "Retrasar la fecha de fin",
+			"shrinkTaskLeft": "Acortar la tarea desde el inicio",
+			"shrinkTaskRight": "Acortar la tarea desde el final"
 		}
 	},
 	"update": {
@@ -1525,5 +1527,151 @@
 		"undated": "Sin fecha",
 		"emptyTitle": "No viene nada",
 		"emptyDescription": "Aquí aparecerán las tareas que venzan en este rango."
+	},
+	"projectView": {
+		"title": "Proyecto",
+		"views": "Vistas",
+		"search": "Buscar tareas…",
+		"clearSearch": "Borrar la búsqueda",
+		"filter": "Filtrar",
+		"applyFilter": "Aplicar",
+		"favorite": "Añadir a favoritos",
+		"unfavorite": "Quitar de favoritos",
+		"notFound": "Este proyecto no existe",
+		"notFoundDescription": "Puede que se haya borrado o archivado, o que no tengas acceso.",
+		"list": {
+			"add": "Añadir una tarea…",
+			"count": "{count} tarea | {count} tareas",
+			"empty": "Aún no hay tareas",
+			"emptyDescription": "Añade la primera aquí arriba, o con N desde cualquier sitio.",
+			"noMatches": "Nada coincide",
+			"noMatchesDescription": "Prueba otra búsqueda o afloja el filtro."
+		},
+		"sort": {
+			"title": "Título",
+			"current": "Ordenado por {order}",
+			"position": "Manual",
+			"due_date": "Vencimiento",
+			"priority": "Prioridad",
+			"created": "Más recientes",
+			"updated": "Cambiadas hace poco",
+			"heading": "Ordenar por"
+		},
+		"table": {
+			"columns": "Columnas",
+			"page": "página {page} de {pages}",
+			"pagination": "Páginas",
+			"previous": "Anterior",
+			"next": "Siguiente",
+			"column": {
+				"done": "Hecha",
+				"identifier": "#",
+				"title": "Título",
+				"project": "Proyecto",
+				"priority": "Prioridad",
+				"labels": "Etiquetas",
+				"assignees": "Asignada a",
+				"due_date": "Vence",
+				"start_date": "Empieza",
+				"end_date": "Termina",
+				"percent_done": "Progreso",
+				"done_at": "Completada",
+				"created": "Creada",
+				"updated": "Actualizada",
+				"created_by": "Creada por",
+				"comments": "Comentarios"
+			}
+		},
+		"kinds": {
+			"list": "Lista",
+			"kanban": "Kanban",
+			"table": "Tabla",
+			"gantt": "Gantt"
+		},
+		"menu": {
+			"title": "Acciones del proyecto",
+			"edit": "Editar",
+			"views": "Vistas",
+			"background": "Fondo",
+			"share": "Compartir",
+			"webhooks": "Webhooks",
+			"duplicate": "Duplicar",
+			"archive": "Archivar",
+			"delete": "Borrar",
+			"editFilter": "Editar el filtro",
+			"deleteFilter": "Borrar el filtro"
+		},
+		"gantt": {
+			"chart": "Diagrama de Gantt",
+			"tasksColumn": "Tarea",
+			"range": "Rango de fechas",
+			"presets": {
+				"thisMonth": "Este mes",
+				"next3Months": "Próximos 3 meses",
+				"next6Months": "Próximos 6 meses",
+				"thisYear": "Este año"
+			},
+			"custom": "Rango personalizado",
+			"from": "Desde",
+			"to": "Hasta",
+			"previous": "Periodo anterior",
+			"next": "Periodo siguiente",
+			"today": "Hoy",
+			"scale": "Escala",
+			"scales": {
+				"day": "Días",
+				"week": "Semanas"
+			},
+			"showUndated": "Mostrar tareas sin fechas",
+			"undated": "Sin fechas",
+			"drawHint": "arrastra para planificar",
+			"empty": "No hay tareas con fechas en este rango",
+			"emptyDescription": "Pon fecha de inicio y de fin a las tareas, o amplía el rango.",
+			"bar": "{task}, del {start} al {end}",
+			"barStartOnly": "{task}, empieza el {start}, sin fecha de fin",
+			"barEndOnly": "{task}, termina el {end}, sin fecha de inicio",
+			"barDerived": "{task}, del {start} al {end} según sus subtareas",
+			"editHint": "Las flechas izquierda y derecha la mueven un día; con Mayús se alarga y con Ctrl se acorta.",
+			"expand": "Mostrar las subtareas de {task}",
+			"collapse": "Ocultar las subtareas de {task}",
+			"datesChanged": "Fechas cambiadas: {title}"
+		}
+	},
+	"kanban": {
+		"columns": "Columnas",
+		"loading": "Cargando el tablero",
+		"loadFailed": "No se ha podido cargar el tablero",
+		"loadFailedDescription": "Revisa la conexión e inténtalo de nuevo.",
+		"empty": "Aún no hay columnas",
+		"emptyDescription": "Añade una columna para empezar a ordenar las tareas por etapas.",
+		"emptyReadOnly": "Este tablero aún no tiene columnas.",
+		"columnEmpty": "Sin tareas",
+		"loadMore": "Cargar más",
+		"countOfLimit": "{count} de {limit} tareas",
+		"full": "Llena",
+		"fullHint": "Esta columna ha llegado a su límite. Saca una tarea o sube el límite para añadir más.",
+		"columnOptions": "Opciones de {title}",
+		"columnTitle": "Nombre de la columna",
+		"rename": "Renombrar",
+		"setLimit": "Poner límite…",
+		"doneColumn": "Columna de hechas",
+		"doneColumnHint": "Columna de hechas: las tareas que llegan aquí se completan",
+		"doneColumnSaved": "Columna de hechas guardada",
+		"defaultColumn": "Columna por defecto",
+		"defaultColumnSaved": "Columna por defecto guardada",
+		"collapse": "Plegar",
+		"expand": "Desplegar {title}",
+		"deleteTitle": "¿Eliminar «{title}»?",
+		"deleteDescription": "Sus tareas no se eliminan: pasan a la columna por defecto. No se puede deshacer.",
+		"limitTitle": "Límite de {title}",
+		"limitLabel": "Máximo de tareas",
+		"limitHint": "Déjalo vacío o en 0 para no poner límite.",
+		"limitInvalid": "Escribe un número entero.",
+		"noLimit": "Sin límite",
+		"addColumn": "Añadir columna",
+		"addColumnHint": "Intro la añade · Esc cierra",
+		"moveTo": "Mover a…",
+		"moveToTitle": "Mover a la columna",
+		"moved": "«{title}» se ha movido a {column}"
 	}
 }
