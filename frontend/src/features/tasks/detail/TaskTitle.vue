@@ -61,6 +61,10 @@ function revert() {
 			class="mt-1"
 			@update:modelValue="done => actions.setDone(task, done)"
 		/>
+		<!-- The page's heading for assistive tech: the field below is where the title is edited. -->
+		<h1 class="sr-only">
+			{{ task.title }}
+		</h1>
 		<!-- A textarea so long titles wrap; Enter still saves, as a title has one line. -->
 		<textarea
 			ref="input"

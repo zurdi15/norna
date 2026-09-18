@@ -31,6 +31,26 @@ test.describe('Task detail', () => {
 		await expect(page.getByRole('button', {name: /^Priority Urgent/})).toBeVisible()
 	})
 
+	test('links the selected words of the description', async ({authenticatedPage: page}) => {
+		await page.goto('/tasks/1')
+		const description = page.getByRole('textbox', {name: 'Add notes, a checklist, links… type / for more'})
+
+		await description.click()
+		await page.keyboard.type('See the wiki')
+		await page.keyboard.press('Shift+ArrowLeft')
+		await page.keyboard.press('Shift+ArrowLeft')
+		await page.keyboard.press('Shift+ArrowLeft')
+		await page.keyboard.press('Shift+ArrowLeft')
+		await page.getByRole('button', {name: 'Link', exact: true}).click()
+		const url = page.getByRole('dialog', {name: 'Link'}).getByRole('textbox', {name: 'URL'})
+		await url.fill('wiki.example.com')
+		await url.press('Enter')
+
+		await expect(description.getByRole('link', {name: 'wiki'})).toHaveAttribute('href', 'https://wiki.example.com')
+		// The focus is back in the text, ready to keep writing.
+		await expect(description).toBeFocused()
+	})
+
 	test('adds a subtask', async ({authenticatedPage: page}) => {
 		await page.goto('/tasks/1')
 

@@ -8,6 +8,7 @@ import UiPopover from './UiPopover.vue'
 /**
  * The picker overlay: an anchored popover from md up, a bottom sheet below.
  * Pickers render their content once in the default slot and it works in both.
+ * The popover opens from its `trigger`, or points at an `anchor` that doesn't open it.
  */
 withDefaults(defineProps<{
 	// Sheet heading on touch screens, popover name for assistive tech on pointer screens.
@@ -39,6 +40,12 @@ const {isMd} = useBreakpoints()
 			#trigger
 		>
 			<slot name="trigger" />
+		</template>
+		<template
+			v-else-if="$slots.anchor"
+			#anchor
+		>
+			<slot name="anchor" />
 		</template>
 		<template #default="{close}">
 			<slot :close="close" />

@@ -10,8 +10,8 @@ import UiInput from '@/ui/UiInput.vue'
 
 /**
  * A one-field form for the link url or the image alt text: a popover under the selection
- * from md up, a bottom sheet below. On close, the overlay hands the focus back to its
- * trigger, an invisible anchor that passes it on to the editor.
+ * from md up, a bottom sheet below. Submitting, removing or Escape hand the focus back to
+ * the editor; clicking elsewhere doesn't, so that click keeps it.
  */
 const props = withDefaults(defineProps<{
 	title: string
@@ -51,11 +51,13 @@ watch(open, isOpen => {
 function submit() {
 	emit('submit', value.value.trim())
 	open.value = false
+	emit('returnFocus')
 }
 
 function remove() {
 	emit('remove')
 	open.value = false
+	emit('returnFocus')
 }
 </script>
 
@@ -65,12 +67,10 @@ function remove() {
 		:title="title"
 		class="w-80"
 	>
-		<template #trigger>
+		<template #anchor>
 			<span
-				tabindex="-1"
 				class="pointer-events-none absolute w-px"
 				:style="{top: `${anchor.top}px`, left: `${anchor.left}px`, height: `${anchor.height}px`}"
-				@focus="emit('returnFocus')"
 			/>
 		</template>
 		<!-- novalidate: a bare "example.com" is fine, the editor adds the scheme itself. -->
@@ -78,6 +78,7 @@ function remove() {
 			class="grid gap-3 px-5 pt-1 pb-3 md:p-3"
 			novalidate
 			@submit.prevent="submit"
+			@keydown.esc="emit('returnFocus')"
 		>
 			<UiField :label="label">
 				<UiInput

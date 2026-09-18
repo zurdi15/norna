@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type {HTMLAttributes} from 'vue'
-import {PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger} from 'reka-ui'
+import {PopoverAnchor, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger} from 'reka-ui'
 
 import {cn} from './cn'
 
@@ -32,6 +32,13 @@ function close() {
 		>
 			<slot name="trigger" />
 		</PopoverTrigger>
+		<!-- Something to point at that doesn't open it (a text selection): no button semantics. -->
+		<PopoverAnchor
+			v-else-if="$slots.anchor"
+			as-child
+		>
+			<slot name="anchor" />
+		</PopoverAnchor>
 		<PopoverPortal>
 			<PopoverContent
 				:side="side"
