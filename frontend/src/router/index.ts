@@ -248,19 +248,22 @@ const router = createRouter({
 		{
 			path: '/projects/new',
 			name: 'project.create',
-			component: PagePending,
+			component: () => import('@/pages/projects/PageProjectCreate.vue'),
+			meta: {modal: true, title: 'projects.new'},
 		},
 		{
 			path: '/projects/:parentProjectId/new',
 			name: 'project.createFromParent',
-			component: PagePending,
+			component: () => import('@/pages/projects/PageProjectCreate.vue'),
 			props: route => ({ parentProjectId: Number(route.params.parentProjectId as string) }),
+			meta: {modal: true, title: 'projects.new'},
 		},
 		{
 			path: '/projects/:projectId(\\d+)/settings/edit',
 			name: 'project.settings.edit',
-			component: PagePending,
+			component: () => import('@/pages/projects/PageProjectEdit.vue'),
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
+			meta: {modal: true, title: 'projectSettings.editDialog'},
 		},
 		{
 			path: '/projects/:projectId/settings/background',
@@ -270,7 +273,9 @@ const router = createRouter({
 		{
 			path: '/projects/:projectId/settings/duplicate',
 			name: 'project.settings.duplicate',
-			component: PagePending,
+			component: () => import('@/pages/projects/PageProjectDuplicate.vue'),
+			props: route => ({ projectId: Number(route.params.projectId as string) }),
+			meta: {modal: true, title: 'projectSettings.duplicateTitle'},
 		},
 		{
 			path: '/projects/:projectId/settings/share',
@@ -285,18 +290,23 @@ const router = createRouter({
 		{
 			path: '/projects/:projectId(\\d+)/settings/delete',
 			name: 'project.settings.delete',
-			component: PagePending,
+			component: () => import('@/pages/projects/PageProjectDelete.vue'),
+			props: route => ({ projectId: Number(route.params.projectId as string) }),
+			meta: {modal: true, title: 'projectSettings.deleteTitle'},
 		},
 		{
 			path: '/projects/:projectId/settings/archive',
 			name: 'project.settings.archive',
-			component: PagePending,
+			component: () => import('@/pages/projects/PageProjectArchive.vue'),
+			props: route => ({ projectId: Number(route.params.projectId as string) }),
+			meta: {modal: true, title: 'projectSettings.archiveDialog'},
 		},
 		{
 			path: '/projects/:projectId/settings/views',
 			name: 'project.settings.views',
-			component: PagePending,
+			component: () => import('@/pages/projects/PageProjectViews.vue'),
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
+			meta: {modal: true, title: 'projectViews.title'},
 		},
 		{
 			// Saved-filter pseudo-projects use IDs <= -2; -1 is the Favorites pseudo-project.
