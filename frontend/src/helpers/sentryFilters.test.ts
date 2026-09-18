@@ -1,5 +1,4 @@
 import {describe, it, expect} from 'vitest'
-import {AxiosError} from 'axios'
 
 import {shouldDropEvent, stripNavigationFragment} from './sentryFilters'
 
@@ -10,16 +9,16 @@ function errorWithCause(message: string, cause: unknown): Error {
 }
 
 describe('shouldDropEvent', () => {
-	it('drops a plain AxiosError', () => {
-		expect(shouldDropEvent(new AxiosError('Request failed'))).toBe(true)
+	it('drops a network failure of fetch', () => {
+		expect(shouldDropEvent(new TypeError('Failed to fetch'))).toBe(true)
 	})
 
-	it('drops an error wrapping an AxiosError as cause', () => {
-		expect(shouldDropEvent(errorWithCause('Error renewing token: ', new AxiosError('Request failed')))).toBe(true)
+	it('drops an error wrapping a network failure as cause', () => {
+		expect(shouldDropEvent(errorWithCause('Error renewing token: ', new TypeError('Failed to fetch')))).toBe(true)
 	})
 
-	it('drops an error with an AxiosError two levels deep', () => {
-		const inner = errorWithCause('inner', new AxiosError('Request failed'))
+	it('drops a network failure two levels deep', () => {
+		const inner = errorWithCause('inner', new TypeError('Load failed'))
 
 		expect(shouldDropEvent(errorWithCause('outer', inner))).toBe(true)
 	})

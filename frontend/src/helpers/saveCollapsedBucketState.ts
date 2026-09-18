@@ -1,8 +1,6 @@
-import type {IBucket} from '@/modelTypes/IBucket'
-
 const key = 'collapsedBuckets'
 
-export type CollapsedBuckets = {[id: IBucket['id']]: boolean}
+export type CollapsedBuckets = {[bucketId: number]: boolean}
 
 function getAllState() {
 	const saved = localStorage.getItem(key)

@@ -28,7 +28,6 @@ import {
 	redirectToProvider,
 	redirectToProviderOnLogout,
 } from '@/helpers/redirectToProvider'
-import {clearTaskCache} from '@/helpers/taskCache'
 import {getBrowserLanguage, i18n, setLanguage, translate, type SupportedLocale} from '@/i18n'
 import {error, success} from '@/message'
 import {problemCode, problemStatus} from '@/modules/api/problem'
@@ -130,7 +129,6 @@ export const useAuthStore = defineStore('auth', () => {
 
 	// Identity-bound caches survive same-user object replacements.
 	watch(identityKey, () => {
-		clearTaskCache()
 		queryClient.clear()
 	}, {flush: 'sync'})
 
