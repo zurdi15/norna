@@ -2,6 +2,10 @@ import {i18n} from '@/i18n'
 import {toast, type ExternalToast} from 'vue-sonner'
 
 export function getErrorText(r): string {
+	if (typeof r === 'string') {
+		return r
+	}
+
 	const data = r?.reason?.response?.data || r?.response?.data || r
 
 	if (data?.code) {
@@ -26,7 +30,7 @@ export function getErrorText(r): string {
 		message += ' ' + causeMessage
 	}
 
-	return message
+	return message || i18n.global.t('error.error')
 }
 
 export function translatedError(key: string): Error {

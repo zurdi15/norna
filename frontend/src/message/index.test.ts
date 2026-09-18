@@ -77,4 +77,12 @@ describe('getErrorText', () => {
 
 		expect(text).toBe('direct problem detail')
 	})
+
+	it('returns a plain string error as is', () => {
+		expect(getErrorText('Something broke')).toBe('Something broke')
+	})
+
+	it('falls back to a generic message when nothing describes the error', () => {
+		expect(getErrorText({})).toBe('Error')
+	})
 })

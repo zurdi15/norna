@@ -892,5 +892,40 @@
 		"title": "Esta pantalla se está tejiendo de nuevo",
 		"description": "La nueva interfaz de Norna se construye pantalla a pantalla. La ruta ya existe; su página llega en una fase posterior.",
 		"route": "Ruta"
+	},
+	"ui": {
+		"close": "Cerrar",
+		"notifications": "Notificaciones",
+		"chip": {
+			"remove": "Quitar",
+			"removeNamed": "Quitar {label}"
+		},
+		"color": {
+			"none": "Sin color",
+			"custom": "Color personalizado",
+			"swatches": {
+				"fjord": "Fiordo",
+				"glacier": "Glaciar",
+				"sound": "Estrecho",
+				"aurora": "Aurora",
+				"moss": "Musgo",
+				"birch": "Abedul",
+				"ember": "Brasa",
+				"rust": "Óxido",
+				"lingon": "Arándano rojo",
+				"heather": "Brezo",
+				"violet": "Violeta",
+				"slate": "Pizarra"
+			}
+		},
+		"listbox": {
+			"search": "Buscar…",
+			"empty": "Sin resultados",
+			"create": "Crear «{query}»"
+		},
+		"calendar": {
+			"previous": "Mes anterior",
+			"next": "Mes siguiente"
+		}
 	}
 }

@@ -22,6 +22,11 @@
 	background-color: var(--color-line);
 }
 
+/* Long-press targets: keep iOS from showing its own link/image callout. */
+@utility touch-callout-none {
+	-webkit-touch-callout: none;
+}
+
 @utility pt-safe {
 	padding-block-start: env(safe-area-inset-top, 0);
 }

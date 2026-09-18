@@ -83,6 +83,52 @@
 
 	--ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 	--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+	/* Enter/exit pairs; Reka waits for the exit animation before unmounting (data-[state=closed]). */
+	--animate-fade-in: fade-in var(--duration-base) var(--ease-out);
+	--animate-fade-out: fade-out var(--duration-fast) var(--ease-in-out);
+	--animate-pop-in: pop-in var(--duration-base) var(--ease-out);
+	--animate-pop-out: pop-out var(--duration-fast) var(--ease-in-out);
+	--animate-sheet-in: sheet-in var(--duration-slow) var(--ease-out);
+	--animate-sheet-out: sheet-out var(--duration-base) var(--ease-in-out);
+
+	@keyframes fade-in {
+		from {
+			opacity: 0;
+		}
+	}
+
+	@keyframes fade-out {
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes pop-in {
+		from {
+			opacity: 0;
+			transform: scale(0.97);
+		}
+	}
+
+	@keyframes pop-out {
+		to {
+			opacity: 0;
+			transform: scale(0.97);
+		}
+	}
+
+	@keyframes sheet-in {
+		from {
+			transform: translateY(100%);
+		}
+	}
+
+	@keyframes sheet-out {
+		to {
+			transform: translateY(100%);
+		}
+	}
 }
 
 :root {

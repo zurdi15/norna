@@ -1776,5 +1776,40 @@
     "title": "This screen is being rewoven",
     "description": "Norna's new interface is built one screen at a time. This route already exists; its page arrives in a later phase.",
     "route": "Route"
+  },
+  "ui": {
+    "close": "Close",
+    "notifications": "Notifications",
+    "chip": {
+      "remove": "Remove",
+      "removeNamed": "Remove {label}"
+    },
+    "color": {
+      "none": "No color",
+      "custom": "Custom color",
+      "swatches": {
+        "fjord": "Fjord",
+        "glacier": "Glacier",
+        "sound": "Sound",
+        "aurora": "Aurora",
+        "moss": "Moss",
+        "birch": "Birch",
+        "ember": "Ember",
+        "rust": "Rust",
+        "lingon": "Lingonberry",
+        "heather": "Heather",
+        "violet": "Violet",
+        "slate": "Slate"
+      }
+    },
+    "listbox": {
+      "search": "Search…",
+      "empty": "Nothing found",
+      "create": "Create “{query}”"
+    },
+    "calendar": {
+      "previous": "Previous month",
+      "next": "Next month"
+    }
   }
 }

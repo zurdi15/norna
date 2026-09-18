@@ -2,13 +2,14 @@
 import {computed, watch} from 'vue'
 import {useRoute} from 'vue-router'
 import {useI18n} from 'vue-i18n'
-import {Toaster} from 'vue-sonner'
+import {TooltipProvider} from 'reka-ui'
 
 import {DEFAULT_LANGUAGE, setLanguage} from '@/i18n'
 import {useAuthStore} from '@/stores/auth'
 import {useColorScheme} from '@/composables/useColorScheme'
 import {useTimeTrackingFavicon} from '@/composables/useTimeTrackingFavicon'
 import {success} from '@/message'
+import UiToaster from '@/ui/UiToaster.vue'
 
 const importAccountDeleteService = () => import('@/services/accountDelete')
 
@@ -31,15 +32,13 @@ watch(accountDeletionConfirm, async (accountDeletionConfirm) => {
 }, {immediate: true})
 
 setLanguage(authStore.settings.language ?? DEFAULT_LANGUAGE)
-const {isDark} = useColorScheme()
+useColorScheme()
 useTimeTrackingFavicon()
 </script>
 
 <template>
-	<RouterView />
-	<Toaster
-		:theme="isDark ? 'dark' : 'light'"
-		position="bottom-center"
-		close-button
-	/>
+	<TooltipProvider :delay-duration="400">
+		<RouterView />
+	</TooltipProvider>
+	<UiToaster />
 </template>
