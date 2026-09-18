@@ -959,7 +959,11 @@
 		"0001": "No tienes permiso para hacer eso."
 	},
 	"about": {
-		"title": "Acerca de"
+		"title": "Acerca de Norna",
+		"tagline": "Tareas y proyectos, bien tejidos.",
+		"app": "App",
+		"server": "Servidor",
+		"basedOn": "Norna es un fork personal de"
 	},
 	"time": {
 		"units": {
@@ -1602,7 +1606,8 @@
 			"archive": "Archivar",
 			"delete": "Borrar",
 			"editFilter": "Editar el filtro",
-			"deleteFilter": "Borrar el filtro"
+			"deleteFilter": "Borrar el filtro",
+			"info": "Descripción"
 		},
 		"gantt": {
 			"chart": "Diagrama de Gantt",
@@ -1638,7 +1643,8 @@
 			"expand": "Mostrar las subtareas de {task}",
 			"collapse": "Ocultar las subtareas de {task}",
 			"datesChanged": "Fechas cambiadas: {title}"
-		}
+		},
+		"noDescription": "Este proyecto no tiene descripción."
 	},
 	"projects": {
 		"title": "Proyectos",
@@ -1956,6 +1962,23 @@
 			"deletion": "Borrar la cuenta"
 		},
 		"saved": "Guardado"
+	},
+	"oauth": {
+		"title": "¿Permitir el acceso?",
+		"question": "Una app quiere usar Norna como {user}. Podrá ver y cambiar tus proyectos y tareas.",
+		"app": "App",
+		"destination": "Vuelve a",
+		"grants": "Permite solo apps de confianza que hayas abierto tú. Puedes cerrar su sesión más tarde en Ajustes › Sesiones.",
+		"allow": "Permitir",
+		"decline": "No permitir",
+		"failed": "No se ha podido autorizar la app.",
+		"missingParams": "Este enlace está incompleto (falta: {params}). Vuelve a empezar desde la app.",
+		"redirectedTitle": "De vuelta a la app",
+		"redirectedDescription": "Ya puedes cerrar esta pestaña."
+	},
+	"quickEntry": {
+		"signedOut": "Inicia sesión en Norna en la ventana principal.",
+		"openNorna": "Abrir Norna"
 	},
 	"settingsIntegrations": {
 		"copied": "Copiado",

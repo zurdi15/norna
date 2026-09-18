@@ -6,9 +6,11 @@ import {TooltipProvider} from 'reka-ui'
 
 import {userDeletionConfirm} from '@/client/generated'
 import {useColorScheme} from '@/composables/useColorScheme'
+import {useQuickAddMode} from '@/composables/useQuickAddMode'
 import {useServiceWorkerUpdate} from '@/composables/useServiceWorkerUpdate'
 import {useTimeTrackingFavicon} from '@/composables/useTimeTrackingFavicon'
 import {AUTH_ROUTE_NAMES} from '@/constants/authRouteNames'
+import QuickEntry from '@/features/quick-entry/QuickEntry.vue'
 import AppReady from '@/features/shell/AppReady.vue'
 import AppShell from '@/features/shell/AppShell.vue'
 import LinkShareShell from '@/features/shell/LinkShareShell.vue'
@@ -20,12 +22,20 @@ import UiToaster from '@/ui/UiToaster.vue'
 
 const authStore = useAuthStore()
 const route = useRoute()
+
+// The desktop app's quick entry window loads the app with ?mode=quick-add: only the
+// composer, over a transparent window.
+const {isQuickAddMode} = useQuickAddMode()
+if (isQuickAddMode) {
+	document.documentElement.style.background = 'transparent'
+	document.body.style.background = 'transparent'
+}
 const {t} = useI18n({useScope: 'global'})
 
 // Auth pages and public routes render on their own; everything else needs a session.
 const standalone = computed(() => {
 	const name = typeof route.name === 'string' ? route.name : ''
-	return AUTH_ROUTE_NAMES.has(name) || route.meta.public === true
+	return AUTH_ROUTE_NAMES.has(name) || route.meta.public === true || route.meta.bare === true
 })
 
 // The deletion confirmation link from the email lands on any route with this query.
@@ -52,7 +62,8 @@ useServiceWorkerUpdate()
 <template>
 	<TooltipProvider :delay-duration="400">
 		<AppReady>
-			<RouterView v-if="standalone" />
+			<QuickEntry v-if="isQuickAddMode" />
+			<RouterView v-else-if="standalone" />
 			<AppShell v-else-if="authStore.authUser" />
 			<LinkShareShell v-else-if="authStore.authLinkShare" />
 		</AppReady>

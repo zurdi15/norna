@@ -3,7 +3,7 @@ import {computed, ref, watch} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useRouter} from 'vue-router'
 import {refDebounced} from '@vueuse/core'
-import {Archive, Copy, Ellipsis, Image, LayoutGrid, Pencil, Plus, Search, Share2, Star, Trash2, Webhook, X} from '@lucide/vue'
+import {Archive, Copy, Ellipsis, Image, Info, LayoutGrid, Pencil, Plus, Search, Share2, Star, Trash2, Webhook, X} from '@lucide/vue'
 
 import {sortProjectViewsByPosition} from '@/client/queries/projectViews'
 import {isSavedFilterProject, usePatchProjectFavoriteMutation} from '@/client/queries/projects'
@@ -125,6 +125,7 @@ const menuItems = computed<UiMenuEntry[]>(() => {
 	const write = permission >= PERMISSIONS.READ_WRITE
 	const admin = permission >= PERMISSIONS.ADMIN
 	const entries: (UiMenuEntry | false)[] = [
+		project.value.description !== '' && {label: t('projectView.menu.info'), icon: Info, onSelect: go('project.info')},
 		write && {label: t('projectView.menu.edit'), icon: Pencil, onSelect: go('project.settings.edit')},
 		admin && {label: t('projectView.menu.views'), icon: LayoutGrid, onSelect: go('project.settings.views')},
 		write && configStore.enabled_background_providers.length > 0
@@ -177,7 +178,7 @@ const VIEW_COMPONENTS = {
 				@click="favorite.mutate({id: project.id, isFavorite: !project.is_favorite})"
 			/>
 			<UiMenu
-				v-if="project.id !== -1 && (canWrite || isSavedFilterProject(project))"
+				v-if="project.id !== -1"
 				:items="menuItems"
 				:title="project.title"
 			>

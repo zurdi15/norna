@@ -1635,11 +1635,15 @@
     "14204": "Could not reach a Planka API at the given URL. Check the URL and that Vikunja can reach the instance."
   },
   "about": {
-    "title": "About",
+    "title": "About Norna",
     "version": "Version: {version}",
     "frontendVersion": "Frontend version: {version}",
     "apiVersion": "API version: {version}",
-    "proActive": "Pro active"
+    "proActive": "Pro active",
+    "tagline": "Tasks and projects, woven together.",
+    "app": "App",
+    "server": "Server",
+    "basedOn": "Norna is a personal fork of"
   },
   "timeTracking": {
     "title": "Time tracking",
@@ -2443,7 +2447,8 @@
       "archive": "Archive",
       "delete": "Delete",
       "editFilter": "Edit filter",
-      "deleteFilter": "Delete filter"
+      "deleteFilter": "Delete filter",
+      "info": "Description"
     },
     "gantt": {
       "chart": "Gantt chart",
@@ -2479,7 +2484,8 @@
       "expand": "Show the subtasks of {task}",
       "collapse": "Hide the subtasks of {task}",
       "datesChanged": "Dates changed: {title}"
-    }
+    },
+    "noDescription": "This project has no description."
   },
   "projects": {
     "title": "Projects",
@@ -2797,6 +2803,23 @@
       "deletion": "Delete account"
     },
     "saved": "Saved"
+  },
+  "oauth": {
+    "title": "Allow access?",
+    "question": "An app wants to use Norna as {user}. It will be able to read and change your projects and tasks.",
+    "app": "App",
+    "destination": "Returns to",
+    "grants": "Only allow apps you trust and started yourself. You can sign it out later from Settings › Sessions.",
+    "allow": "Allow",
+    "decline": "Don't allow",
+    "failed": "The app couldn't be authorized.",
+    "missingParams": "This link is incomplete (missing: {params}). Start again from the app.",
+    "redirectedTitle": "Back to the app",
+    "redirectedDescription": "You can close this tab."
+  },
+  "quickEntry": {
+    "signedOut": "Sign in to Norna in the main window first.",
+    "openNorna": "Open Norna"
   },
   "settingsIntegrations": {
     "copied": "Copied",

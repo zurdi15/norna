@@ -13,6 +13,8 @@ declare module 'vue-router' {
 		modal?: boolean
 		// The translation key naming the page (tab title, dialog title).
 		title?: string
+		// Renders on its own, without the app's navigation, though it still needs a session.
+		bare?: boolean
 	}
 }
 
