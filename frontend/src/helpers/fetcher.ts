@@ -3,26 +3,10 @@ import type {AxiosRequestConfig} from 'axios'
 import {getToken, getTokenType, refreshToken} from '@/helpers/auth'
 import {AUTH_TYPES} from '@/modelTypes/IUser'
 
-/**
- * Returns the API base URL with a guaranteed trailing slash.
- */
-export function getApiBaseUrl(): string {
-	const url = window.API_URL
-	return url?.endsWith('/') ? url : url + '/'
-}
+import {apiV2Url, getApiBaseUrl, getApiV2BaseUrl} from '@/helpers/apiUrl'
 
-export function getApiV2BaseUrl(): string {
-	return getApiBaseUrl().replace(/\/api\/v1\/$/, '/api/v2/')
-}
-
-/**
- * Returns an absolute URL for an /api/v2 path. The shared axios instances pin
- * baseURL to /api/v1; v2 callers hand axios absolute URLs to bypass that —
- * to be folded into the service layer once the frontend moves fully onto v2.
- */
-export function apiV2Url(path: string): string {
-	return new URL(getApiV2BaseUrl() + path, window.location.origin).toString()
-}
+// Legacy v1 services still import these from here.
+export {apiV2Url, getApiBaseUrl, getApiV2BaseUrl}
 
 export function HTTPFactory() {
 	const instance = axios.create({
