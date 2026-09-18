@@ -2130,6 +2130,207 @@
 		},
 		"copy": "Copiar"
 	},
+	"migration": {
+		"description": "Trae proyectos y tareas desde otra app. Lo importado se suma a lo que ya tienes; no se reemplaza nada.",
+		"empty": {
+			"title": "Este servidor no tiene importaciones",
+			"description": "La administración no ha activado ninguna."
+		},
+		"services": {
+			"todoist": "Inicia sesión en Todoist y trae tus proyectos, tareas y etiquetas.",
+			"trello": "Inicia sesión en Trello y trae tus tableros, listas y tarjetas.",
+			"microsoftTodo": "Inicia sesión con Microsoft y trae tus listas y tareas.",
+			"vikunjaFile": "Sube un .zip exportado desde Norna o Vikunja.",
+			"ticktick": "Sube la copia de seguridad que te da TickTick.",
+			"wekan": "Sube un tablero exportado desde WeKan.",
+			"planka": "Conéctate a tu servidor de Planka con una clave de API o tu usuario.",
+			"csv": "Cualquier hoja de cálculo guardada como CSV. Tú eliges qué es cada columna."
+		},
+		"unavailable": {
+			"title": "Esta importación no está disponible",
+			"description": "Este servidor no la ofrece. Elige otra de la lista."
+		},
+		"allImporters": "Todas las importaciones",
+		"start": "Empezar a importar",
+		"service": {
+			"title": "Importar desde {name}",
+			"intro": "Norna copia lo que tienes en {name}: proyectos, tareas y todo lo que contienen. Lo que ya tienes aquí se queda como está.",
+			"lastFailed": "Tu última importación ({date}) no terminó."
+		},
+		"again": {
+			"title": "¿Importar otra vez?",
+			"description": "Ya importaste desde {name} el {date}. Si importas otra vez, puede haber duplicados.",
+			"confirm": "Importar otra vez"
+		},
+		"oauth": {
+			"description": "Inicia sesión en {name} y permite que Norna lea tus datos. Volverás aquí enseguida y la importación empezará.",
+			"connect": "Conectar {name}",
+			"starting": "Empezando la importación desde {name}…"
+		},
+		"file": {
+			"choose": "Elegir archivo",
+			"drop": "o suéltalo aquí",
+			"dropHere": "Suelta el archivo aquí",
+			"change": "Cambiar",
+			"hints": {
+				"vikunjaFile": "En Norna o Vikunja, abre Ajustes → Exportar, pide una exportación y descarga el .zip.",
+				"ticktick": "En TickTick, ve a Ajustes → Cuenta → Copia de seguridad y descarga el archivo .csv.",
+				"wekan": "En WeKan, abre el menú del tablero, elige Exportar tablero y guarda el archivo .json."
+			}
+		},
+		"credentials": {
+			"description": "Norna inicia sesión en tu servidor de {name} para leer tus proyectos. Lo que escribas solo se usa para esta importación y no se guarda.",
+			"url": "Dirección de {name}",
+			"urlRequired": "Escribe la dirección de tu servidor.",
+			"urlInvalid": "Escribe la dirección completa, empezando por https://",
+			"method": "Iniciar sesión con",
+			"apiKey": "Clave de API",
+			"login": "Usuario y contraseña",
+			"apiKeyRequired": "Escribe una clave de API.",
+			"username": "Usuario o email",
+			"usernameRequired": "Escribe tu usuario o email.",
+			"password": "Contraseña",
+			"passwordRequired": "Escribe tu contraseña.",
+			"planka": {
+				"apiKeyHint": "Tiene que crearla para tu cuenta alguien que administre Planka. El token que usa tu navegador no sirve.",
+				"passwordHint": "Solo para cuentas locales de Planka sin verificación en dos pasos que hayan iniciado sesión al menos una vez. Las cuentas con inicio de sesión único necesitan una clave de API."
+			}
+		},
+		"state": {
+			"running": "Importando desde {name}…",
+			"runningDescription": "Puede tardar un rato. Puedes salir de esta página: la importación sigue y te avisaremos por email cuando termine.",
+			"startedAt": "Empezó",
+			"done": "Importación terminada",
+			"doneDescription": "Lo importado desde {name} ya está en tus proyectos.",
+			"importMore": "Importar más",
+			"toProjects": "Ir a proyectos",
+			"failed": "La importación no terminó",
+			"tryAgain": "Intentar otra vez"
+		},
+		"failure": {
+			"reported": "Algo falló al importar desde {service}. El error ha quedado registrado.",
+			"interrupted": "La importación desde {service} se detuvo antes de terminar. Vuelve a empezarla.",
+			"credentials": "{service} no aceptó el inicio de sesión. Vuelve a conectarlo.",
+			"queue": "No se pudo poner en cola la importación desde {service}. Vuelve a empezarla.",
+			"upload": "No se pudo guardar el archivo. Vuelve a subirlo.",
+			"detail": "La importación desde {service} falló: {reason}"
+		},
+		"csv": {
+			"title": "Importar un archivo CSV",
+			"description": "Convierte las filas de una hoja de cálculo en tareas.",
+			"steps": {
+				"file": "Archivo",
+				"columns": "Columnas",
+				"preview": "Vista previa"
+			},
+			"stepOf": "Paso {current} de {total}",
+			"file": {
+				"description": "Un archivo CSV con una fila de encabezados. Cada fila será una tarea.",
+				"reading": "Leyendo el archivo…"
+			},
+			"next": "Siguiente",
+			"back": "Atrás",
+			"toPreview": "Vista previa",
+			"import": "Importar {count} tarea | Importar {count} tareas",
+			"importPending": "Importar",
+			"columns": {
+				"title": "Columnas",
+				"description": "Elige qué contiene cada columna. Lo hemos deducido de los encabezados.",
+				"example": "p. ej. {value}",
+				"noExample": "Vacía en las primeras filas",
+				"unnamed": "Columna {number}",
+				"titleRequired": "Elige la columna con los títulos de las tareas para seguir."
+			},
+			"format": {
+				"title": "Formato del archivo",
+				"delimiter": "Separador",
+				"dateFormat": "Fechas",
+				"dateFormatDescription": "Cómo están escritas las fechas en el archivo.",
+				"skipRows": "Saltar filas",
+				"skipRowsDescription": "Filas bajo los encabezados que no se importan."
+			},
+			"attributes": {
+				"title": "Título",
+				"description": "Descripción",
+				"dueDate": "Fecha de vencimiento",
+				"startDate": "Fecha de inicio",
+				"endDate": "Fecha de fin",
+				"done": "Hecha",
+				"priority": "Prioridad",
+				"labels": "Etiquetas",
+				"project": "Proyecto",
+				"reminder": "Recordatorio",
+				"ignore": "No importar"
+			},
+			"delimiters": {
+				"comma": "Coma (,)",
+				"semicolon": "Punto y coma (;)",
+				"tab": "Tabulador",
+				"pipe": "Barra vertical (|)"
+			},
+			"preview": {
+				"description": "Las primeras tareas, tal como se crearán. Comprueba que se ven bien antes de importar.",
+				"count": "{count} tarea en el archivo | {count} tareas en el archivo",
+				"none": "Con estos ajustes no hay filas que importar.",
+				"untitled": "Sin título",
+				"done": "Hecha",
+				"more": "y {count} más",
+				"loading": "Actualizando la vista previa…"
+			}
+		}
+	},
+	"settingsData": {
+		"password": {
+			"label": "Tu contraseña",
+			"required": "Escribe tu contraseña para confirmar.",
+			"wrong": "Esa contraseña no es correcta."
+		},
+		"export": {
+			"description": "Una copia de todo lo que hay en tu cuenta: proyectos, tareas, comentarios y archivos. Puedes importarla en Norna o Vikunja.",
+			"currentTitle": "Tu exportación",
+			"preparing": "Preparando tu exportación…",
+			"preparingDescription": "Puede tardar unos minutos. También te avisaremos por email cuando esté lista.",
+			"none": "Aún no hay ninguna exportación.",
+			"until": "disponible hasta el",
+			"newTitle": "Nueva exportación",
+			"newDescription": "La preparamos en segundo plano y te enviamos un enlace por email cuando esté lista.",
+			"replaces": "Una nueva exportación sustituye a la actual.",
+			"request": "Pedir exportación",
+			"requested": "Exportación pedida. Te avisaremos por email cuando esté lista.",
+			"ready": "Tu exportación está lista."
+		},
+		"download": {
+			"title": "Descargar tu exportación",
+			"dialogDescription": "Confirma con tu contraseña para descargarla.",
+			"submit": "Descargar",
+			"description": "Todo lo de tu cuenta en un archivo .zip. Las exportaciones se borran a los 7 días.",
+			"noneTitle": "No hay ninguna exportación que descargar",
+			"noneDescription": "Las exportaciones se borran 7 días después de crearse. Pide una nueva en tus ajustes.",
+			"requestNew": "Pedir una nueva exportación"
+		},
+		"deletion": {
+			"description": "Cierra tu cuenta y borra lo que contiene.",
+			"disabledTitle": "El borrado de cuentas está desactivado",
+			"disabledDescription": "Este servidor no permite que las cuentas se borren a sí mismas. Pregunta a la administración.",
+			"scheduledTitle": "Tu cuenta se va a borrar",
+			"scheduled": "Se borrará el {date} ({relative}), con todo lo que contiene.",
+			"keepTitle": "Conservar tu cuenta",
+			"keepDescription": "Cancela el borrado y todo seguirá como está.",
+			"keep": "Conservar mi cuenta",
+			"emailSent": "Revisa tu email: abre el enlace que te hemos enviado para confirmar. No se borra nada hasta que lo hagas.",
+			"title": "Borrar tu cuenta",
+			"consequences": {
+				"projects": "Los proyectos que solo usas tú se borran, con sus tareas, comentarios y archivos.",
+				"shared": "Los proyectos que compartes se quedan; pasan a alguien con permisos de administración.",
+				"rest": "También se borran tus filtros guardados, tokens de API, bots y tu pertenencia a equipos.",
+				"confirm": "Te enviaremos un enlace por email para confirmar. La cuenta se borra 3 días después de confirmar y, hasta entonces, puedes cancelarlo aquí."
+			},
+			"exportFirst": "¿Quieres una copia antes?",
+			"exportLink": "Exporta tus datos",
+			"submit": "Borrar mi cuenta",
+			"cancelled": "Tu cuenta se queda."
+		}
+	},
 	"settingsAccount": {
 		"currentPassword": "Contraseña actual",
 		"passwordRequired": "Escribe tu contraseña.",

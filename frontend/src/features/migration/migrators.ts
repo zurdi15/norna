@@ -1,77 +1,84 @@
-import wunderlistIcon from './icons/wunderlist.jpg'
+import type {RouteLocationRaw} from 'vue-router'
+
+import type {
+	CredentialsMigratorId,
+	FileMigratorId,
+	MigrationStatus,
+	MigratorId,
+	OAuthMigratorId,
+} from '@/client/queries/migration'
+
+import csvIcon from './icons/csv.svg?url'
+import microsoftTodoIcon from './icons/microsoft-todo.svg?url'
+import plankaIcon from './icons/planka.png?url'
+import tickTickIcon from './icons/ticktick.svg?url'
 import todoistIcon from './icons/todoist.svg?url'
 import trelloIcon from './icons/trello.svg?url'
-import microsoftTodoIcon from './icons/microsoft-todo.svg?url'
 import vikunjaFileIcon from './icons/vikunja-file.png?url'
-import tickTickIcon from './icons/ticktick.svg?url'
 import wekanIcon from './icons/wekan.png?url'
-import csvIcon from './icons/csv.svg?url'
-import plankaIcon from './icons/planka.png?url'
 
-export interface Migrator {
-	id: string
+interface MigratorBase {
 	name: string
-	isFileMigrator?: boolean
-	isCSVMigrator?: boolean
-	// Takes url + credentials in the migrate request instead of an OAuth code or a file
-	isCredentialsMigrator?: boolean
 	icon: string
+	// Under migration.services.* and migration.file.hints.*
+	i18nKey: string
 }
 
-interface IMigratorRecord {
-	[key: Migrator['id']]: Migrator
- }
+/** How an importer gets at the data: signing in elsewhere, an uploaded file, a login, or a mapped CSV. */
+export type Migrator = MigratorBase & (
+	| {kind: 'oauth', id: OAuthMigratorId}
+	| {kind: 'file', id: FileMigratorId, accept: string}
+	| {kind: 'credentials', id: CredentialsMigratorId}
+	| {kind: 'csv', id: 'csv', accept: string}
+)
 
-export const MIGRATORS = {
-	wunderlist: {
-		id: 'wunderlist',
-		name: 'Wunderlist',
-		icon: wunderlistIcon,
-	},
-	todoist: {
-		id: 'todoist',
-		name: 'Todoist',
-		icon: todoistIcon as string,
-	},
-	trello: {
-		id: 'trello',
-		name: 'Trello',
-		icon: trelloIcon as string,
-	},
-	'microsoft-todo': {
-		id: 'microsoft-todo',
-		name: 'Microsoft Todo',
-		icon: microsoftTodoIcon as string,
-	},
-	'vikunja-file': {
-		id: 'vikunja-file',
-		name: 'Vikunja Export',
-		icon: vikunjaFileIcon,
-		isFileMigrator: true,
-	},
-	ticktick: {
-		id: 'ticktick',
-		name: 'TickTick',
-		icon: tickTickIcon as string,
-		isFileMigrator: true,
-	},
-	wekan: {
-		id: 'wekan',
-		name: 'WeKan ®',
-		icon: wekanIcon,
-		isFileMigrator: true,
-	},
-	csv: {
-		id: 'csv',
-		name: 'CSV',
-		icon: csvIcon as string,
-		isFileMigrator: true,
-		isCSVMigrator: true,
-	},
-	planka: {
-		id: 'planka',
-		name: 'Planka',
-		icon: plankaIcon,
-		isCredentialsMigrator: true,
-	},
-} as const satisfies IMigratorRecord
+export const MIGRATORS: {[Id in MigratorId]: Migrator & {id: Id}} = {
+	'todoist': {id: 'todoist', kind: 'oauth', name: 'Todoist', icon: todoistIcon, i18nKey: 'todoist'},
+	'trello': {id: 'trello', kind: 'oauth', name: 'Trello', icon: trelloIcon, i18nKey: 'trello'},
+	'microsoft-todo': {id: 'microsoft-todo', kind: 'oauth', name: 'Microsoft To Do', icon: microsoftTodoIcon, i18nKey: 'microsoftTodo'},
+	'vikunja-file': {id: 'vikunja-file', kind: 'file', name: 'Vikunja', icon: vikunjaFileIcon, i18nKey: 'vikunjaFile', accept: '.zip'},
+	'ticktick': {id: 'ticktick', kind: 'file', name: 'TickTick', icon: tickTickIcon, i18nKey: 'ticktick', accept: '.csv'},
+	'wekan': {id: 'wekan', kind: 'file', name: 'WeKan', icon: wekanIcon, i18nKey: 'wekan', accept: '.json'},
+	'planka': {id: 'planka', kind: 'credentials', name: 'Planka', icon: plankaIcon, i18nKey: 'planka'},
+	'csv': {id: 'csv', kind: 'csv', name: 'CSV', icon: csvIcon, i18nKey: 'csv', accept: '.csv,.txt'},
+}
+
+export function getMigrator(id: string): Migrator | undefined {
+	return Object.hasOwn(MIGRATORS, id) ? MIGRATORS[id as MigratorId] : undefined
+}
+
+/** The importers the server offers, in its order; ids this app doesn't know are left out. */
+export function availableMigrators(ids: readonly string[]): Migrator[] {
+	return ids.map(getMigrator).filter(migrator => migrator !== undefined)
+}
+
+export function migratorRoute(migrator: Migrator): RouteLocationRaw {
+	return migrator.kind === 'csv'
+		? {name: 'migrate.csv'}
+		: {name: 'migrate.service', params: {service: migrator.id}}
+}
+
+const FAILURE_KINDS = ['reported', 'interrupted', 'credentials', 'queue', 'upload'] as const
+
+/**
+ * The i18n key (under migration.failure) for why an import failed. A kind this app doesn't
+ * know, a newer server's for instance, falls back to the generic text.
+ */
+export function failureKey(status: Pick<MigrationStatus, 'errorKind' | 'errorMessage'>): string {
+	if (status.errorKind === 'detail' && status.errorMessage !== '') {
+		return 'migration.failure.detail'
+	}
+	const kind = FAILURE_KINDS.find(known => known === status.errorKind) ?? 'reported'
+	return `migration.failure.${kind}`
+}
+
+// Trello answers the authorization with the token in the url hash instead of a code.
+const TOKEN_HASH_PREFIX = '#token='
+
+/** The code (or Trello's token) an OAuth service sent back, if this is its redirect. */
+export function oauthCode(code: string | undefined, hash: string): string {
+	if (hash.startsWith(TOKEN_HASH_PREFIX)) {
+		return hash.slice(TOKEN_HASH_PREFIX.length)
+	}
+	return code ?? ''
+}

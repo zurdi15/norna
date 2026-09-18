@@ -2924,6 +2924,207 @@
     },
     "copy": "Copy"
   },
+  "migration": {
+    "description": "Bring projects and tasks over from another app. Imports add to what you have; nothing is replaced.",
+    "empty": {
+      "title": "No imports on this server",
+      "description": "The administrator hasn't turned any on."
+    },
+    "services": {
+      "todoist": "Sign in to Todoist and bring your projects, tasks and labels.",
+      "trello": "Sign in to Trello and bring your boards, lists and cards.",
+      "microsoftTodo": "Sign in with Microsoft and bring your lists and tasks.",
+      "vikunjaFile": "Upload a .zip exported from Norna or Vikunja.",
+      "ticktick": "Upload the backup file TickTick gives you.",
+      "wekan": "Upload a board exported from WeKan.",
+      "planka": "Connect to your Planka server with an API key or your login.",
+      "csv": "Any spreadsheet saved as CSV. You pick what each column is."
+    },
+    "unavailable": {
+      "title": "This import isn't available",
+      "description": "This server doesn't offer it. Pick another one from the list."
+    },
+    "allImporters": "All imports",
+    "start": "Start import",
+    "service": {
+      "title": "Import from {name}",
+      "intro": "Norna copies what you have in {name}: projects, tasks and everything in them. What you already have here stays as it is.",
+      "lastFailed": "Your last import ({date}) didn't finish."
+    },
+    "again": {
+      "title": "Import again?",
+      "description": "You already imported from {name} on {date}. Importing again can create duplicates.",
+      "confirm": "Import again"
+    },
+    "oauth": {
+      "description": "Sign in to {name} and allow Norna to read your data. You'll come straight back here and the import starts.",
+      "connect": "Connect {name}",
+      "starting": "Starting the import from {name}…"
+    },
+    "file": {
+      "choose": "Choose file",
+      "drop": "or drop it here",
+      "dropHere": "Drop the file here",
+      "change": "Change",
+      "hints": {
+        "vikunjaFile": "In Norna or Vikunja, open Settings → Export, request an export and download the .zip.",
+        "ticktick": "In TickTick, go to Settings → Account → Backup and download the .csv file.",
+        "wekan": "In WeKan, open the board menu, choose Export board and save the .json file."
+      }
+    },
+    "credentials": {
+      "description": "Norna signs in to your {name} server to read your projects. What you enter is only used for this import and isn't stored.",
+      "url": "{name} address",
+      "urlRequired": "Enter the address of your server.",
+      "urlInvalid": "Enter the full address, starting with https://",
+      "method": "Sign in with",
+      "apiKey": "API key",
+      "login": "Username and password",
+      "apiKeyRequired": "Enter an API key.",
+      "username": "Username or email",
+      "usernameRequired": "Enter your username or email.",
+      "password": "Password",
+      "passwordRequired": "Enter your password.",
+      "planka": {
+        "apiKeyHint": "A Planka administrator has to create it for your account. The token your browser uses won't work.",
+        "passwordHint": "Only for local Planka accounts without two-factor authentication that have signed in at least once. Single sign-on accounts need an API key."
+      }
+    },
+    "state": {
+      "running": "Importing from {name}…",
+      "runningDescription": "This can take a while. You can leave this page: the import keeps going and we'll email you when it's done.",
+      "startedAt": "Started",
+      "done": "Import finished",
+      "doneDescription": "What you imported from {name} is now in your projects.",
+      "importMore": "Import more",
+      "toProjects": "Go to projects",
+      "failed": "The import didn't finish",
+      "tryAgain": "Try again"
+    },
+    "failure": {
+      "reported": "Something went wrong while importing from {service}. The error was reported.",
+      "interrupted": "The import from {service} stopped before it finished. Start it again.",
+      "credentials": "{service} didn't accept the sign-in. Connect it again.",
+      "queue": "The import from {service} couldn't be queued. Start it again.",
+      "upload": "The file couldn't be stored. Upload it again.",
+      "detail": "The import from {service} failed: {reason}"
+    },
+    "csv": {
+      "title": "Import a CSV file",
+      "description": "Turn the rows of a spreadsheet into tasks.",
+      "steps": {
+        "file": "File",
+        "columns": "Columns",
+        "preview": "Preview"
+      },
+      "stepOf": "Step {current} of {total}",
+      "file": {
+        "description": "A CSV file with a header row. Each row becomes a task.",
+        "reading": "Reading the file…"
+      },
+      "next": "Next",
+      "back": "Back",
+      "toPreview": "Preview",
+      "import": "Import {count} task | Import {count} tasks",
+      "importPending": "Import",
+      "columns": {
+        "title": "Columns",
+        "description": "Choose what each column holds. We guessed from the headers.",
+        "example": "e.g. {value}",
+        "noExample": "Empty in the first rows",
+        "unnamed": "Column {number}",
+        "titleRequired": "Pick the column with the task titles to continue."
+      },
+      "format": {
+        "title": "File format",
+        "delimiter": "Separator",
+        "dateFormat": "Dates",
+        "dateFormatDescription": "How the dates in the file are written.",
+        "skipRows": "Skip rows",
+        "skipRowsDescription": "Rows below the header to leave out."
+      },
+      "attributes": {
+        "title": "Title",
+        "description": "Description",
+        "dueDate": "Due date",
+        "startDate": "Start date",
+        "endDate": "End date",
+        "done": "Done",
+        "priority": "Priority",
+        "labels": "Labels",
+        "project": "Project",
+        "reminder": "Reminder",
+        "ignore": "Don't import"
+      },
+      "delimiters": {
+        "comma": "Comma (,)",
+        "semicolon": "Semicolon (;)",
+        "tab": "Tab",
+        "pipe": "Pipe (|)"
+      },
+      "preview": {
+        "description": "The first tasks, as they'll be created. Check they look right before importing.",
+        "count": "{count} task in the file | {count} tasks in the file",
+        "none": "No rows to import with these settings.",
+        "untitled": "Untitled",
+        "done": "Done",
+        "more": "and {count} more",
+        "loading": "Updating the preview…"
+      }
+    }
+  },
+  "settingsData": {
+    "password": {
+      "label": "Your password",
+      "required": "Enter your password to confirm.",
+      "wrong": "That password isn't right."
+    },
+    "export": {
+      "description": "A copy of everything in your account: projects, tasks, comments and files. You can import it into Norna or Vikunja.",
+      "currentTitle": "Your export",
+      "preparing": "Preparing your export…",
+      "preparingDescription": "It can take a few minutes. We'll also email you when it's ready.",
+      "none": "No export yet.",
+      "until": "available until",
+      "newTitle": "New export",
+      "newDescription": "We'll put it together in the background and email you a link when it's ready.",
+      "replaces": "A new export replaces the current one.",
+      "request": "Request export",
+      "requested": "Export requested. We'll email you when it's ready.",
+      "ready": "Your export is ready."
+    },
+    "download": {
+      "title": "Download your export",
+      "dialogDescription": "Confirm with your password to download it.",
+      "submit": "Download",
+      "description": "Everything in your account in one .zip file. Exports are deleted after 7 days.",
+      "noneTitle": "No export to download",
+      "noneDescription": "Exports are deleted 7 days after they're made. Request a new one in your settings.",
+      "requestNew": "Request a new export"
+    },
+    "deletion": {
+      "description": "Close your account and delete what's in it.",
+      "disabledTitle": "Account deletion is turned off",
+      "disabledDescription": "This server doesn't let accounts delete themselves. Ask the administrator.",
+      "scheduledTitle": "Your account is set to be deleted",
+      "scheduled": "It will be deleted on {date} ({relative}), with everything in it.",
+      "keepTitle": "Keep your account",
+      "keepDescription": "Cancel the deletion and everything stays as it is.",
+      "keep": "Keep my account",
+      "emailSent": "Check your email: open the link we sent you to confirm. Nothing is deleted until you do.",
+      "title": "Delete your account",
+      "consequences": {
+        "projects": "Projects only you use are deleted, with their tasks, comments and files.",
+        "shared": "Projects you share with others stay; someone with admin access takes them over.",
+        "rest": "Your saved filters, API tokens, bots and team memberships go too.",
+        "confirm": "We'll email you a link to confirm. The account is deleted 3 days after you confirm, and until then you can cancel here."
+      },
+      "exportFirst": "Want a copy first?",
+      "exportLink": "Export your data",
+      "submit": "Delete my account",
+      "cancelled": "Your account stays."
+    }
+  },
   "settingsAccount": {
     "currentPassword": "Current password",
     "passwordRequired": "Enter your password.",
