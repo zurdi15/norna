@@ -25,18 +25,16 @@ export function caldavTokensQuery() {
 }
 
 export function createCaldavTokenMutationOptions() {
-	return {
-		...contextMutationOptions<Token, void>({
-			// Resolves with the cleartext token for the caller to show once.
-			mutationFn: async () => (await caldavTokensCreate()).data,
-			onSuccess: (created, _input, client) => {
-				client.setQueryData<Token[]>(caldavTokenKeys.all, current => current ? [...current, toCaldavToken(created)] : current)
-			},
-			onSettled: (_input, client) => client.invalidateQueries({queryKey: caldavTokenKeys.all}),
-		}),
+	return contextMutationOptions<Token, void>({
+		// Resolves with the cleartext token for the caller to show once.
+		mutationFn: async () => (await caldavTokensCreate()).data,
+		onSuccess: (created, _input, client) => {
+			client.setQueryData<Token[]>(caldavTokenKeys.all, current => current ? [...current, toCaldavToken(created)] : current)
+		},
+		onSettled: (_input, client) => client.invalidateQueries({queryKey: caldavTokenKeys.all}),
 		// The result holds the cleartext token: callers read it and reset() right away.
 		gcTime: 0,
-	}
+	})
 }
 
 export function deleteCaldavTokenMutationOptions() {

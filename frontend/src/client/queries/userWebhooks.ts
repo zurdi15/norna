@@ -37,18 +37,16 @@ export function userWebhookEventsQuery() {
 }
 
 export function createUserWebhookMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async (webhook: WebhookDraft) => toUserWebhook((await userWebhooksCreate({body: webhookBody(webhook)})).data),
-			onSuccess: (created, _webhook, client) => {
-				client.setQueryData<Webhook[]>(userWebhookKeys.list, current => current ? [...current, created] : current)
-			},
-			onSettled: (_webhook, client) => client.invalidateQueries({queryKey: userWebhookKeys.list}),
-			successMessage: () => translate('projectWebhooks.created'),
-		}),
+	return contextMutationOptions({
+		mutationFn: async (webhook: WebhookDraft) => toUserWebhook((await userWebhooksCreate({body: webhookBody(webhook)})).data),
+		onSuccess: (created, _webhook, client) => {
+			client.setQueryData<Webhook[]>(userWebhookKeys.list, current => current ? [...current, created] : current)
+		},
+		onSettled: (_webhook, client) => client.invalidateQueries({queryKey: userWebhookKeys.list}),
+		successMessage: () => translate('projectWebhooks.created'),
 		// Input holds the signing secret and the basic-auth password.
 		gcTime: 0,
-	}
+	})
 }
 
 export function updateUserWebhookMutationOptions() {

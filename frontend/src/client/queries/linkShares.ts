@@ -26,18 +26,16 @@ function invalidateLinkShares(client: QueryClient, projectId: number) {
 }
 
 export function createLinkShareMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async ({projectId, share}: {projectId: number, share: LinkSharingWritable}) => (await sharesCreate({path: {project: projectId}, body: createLinkShareDraft(share)})).data,
-			onSuccess: (created, {projectId}, client) => {
-				client.setQueryData<LinkSharing[]>(linkShareKeys.list(projectId), current => current ? [...current, created] : current)
-			},
-			onSettled: ({projectId}, client) => invalidateLinkShares(client, projectId),
-			successMessage: () => translate('projectShare.toasts.linkCreated'),
-		}),
+	return contextMutationOptions({
+		mutationFn: async ({projectId, share}: {projectId: number, share: LinkSharingWritable}) => (await sharesCreate({path: {project: projectId}, body: createLinkShareDraft(share)})).data,
+		onSuccess: (created, {projectId}, client) => {
+			client.setQueryData<LinkSharing[]>(linkShareKeys.list(projectId), current => current ? [...current, created] : current)
+		},
+		onSettled: ({projectId}, client) => invalidateLinkShares(client, projectId),
+		successMessage: () => translate('projectShare.toasts.linkCreated'),
 		// Input holds the plaintext password.
 		gcTime: 0,
-	}
+	})
 }
 
 export function deleteLinkShareMutationOptions() {

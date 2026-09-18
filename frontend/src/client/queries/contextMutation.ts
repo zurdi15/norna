@@ -12,8 +12,13 @@ export function contextMutationOptions<TData, TInput, TOptimistic = undefined>(o
 	onSettled?: (input: TInput, client: QueryClient) => Promise<unknown>
 	successMessage?: (data: TData, input: TInput) => string | undefined
 	toastError?: (input: TInput) => boolean
+	// 0 for mutations whose input or result holds a password, secret or file: nothing keeps it.
+	gcTime?: number
+	retry?: boolean
 }) {
 	return mutationOptions({
+		gcTime: options.gcTime,
+		retry: options.retry,
 		onMutate: async (input: TInput, {client}) => {
 			const request = captureClientRequestContext()
 			if (!options.optimistic) {

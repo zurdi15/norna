@@ -61,19 +61,17 @@ function invalidateWebhooks(client: QueryClient, projectId: number) {
 }
 
 export function createProjectWebhookMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async ({projectId, webhook}: {projectId: number, webhook: WebhookDraft}) =>
-				toWebhook((await webhooksCreate({path: {project: projectId}, body: webhookBody(webhook)})).data),
-			onSuccess: (created, {projectId}, client) => {
-				client.setQueryData<Webhook[]>(projectWebhookKeys.list(projectId), current => current ? [...current, created] : current)
-			},
-			onSettled: ({projectId}, client) => invalidateWebhooks(client, projectId),
-			successMessage: () => translate('projectWebhooks.created'),
-		}),
+	return contextMutationOptions({
+		mutationFn: async ({projectId, webhook}: {projectId: number, webhook: WebhookDraft}) =>
+			toWebhook((await webhooksCreate({path: {project: projectId}, body: webhookBody(webhook)})).data),
+		onSuccess: (created, {projectId}, client) => {
+			client.setQueryData<Webhook[]>(projectWebhookKeys.list(projectId), current => current ? [...current, created] : current)
+		},
+		onSettled: ({projectId}, client) => invalidateWebhooks(client, projectId),
+		successMessage: () => translate('projectWebhooks.created'),
 		// Input holds the signing secret and the basic-auth password.
 		gcTime: 0,
-	}
+	})
 }
 
 type UpdateWebhookInput = {projectId: number, id: number, target_url: string, events: string[]}

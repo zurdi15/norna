@@ -225,18 +225,16 @@ function startMigration(input: StartMigrationInput) {
 }
 
 export function startMigrationMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async (input: StartMigrationInput) => {
-				await startMigration(input)
-			},
-			onSuccess: (_data, {service}, client) => markStarted(client, service),
-			// The page shows it next to the form, which is what has to change.
-			toastError: () => false,
-		}),
+	return contextMutationOptions({
+		mutationFn: async (input: StartMigrationInput) => {
+			await startMigration(input)
+		},
+		onSuccess: (_data, {service}, client) => markStarted(client, service),
+		// The page shows it next to the form, which is what has to change.
+		toastError: () => false,
 		// Input holds the uploaded file or the credentials of another service.
 		gcTime: 0,
-	}
+	})
 }
 
 export type CsvAttribute = NonNullable<ColumnMapping['attribute']>
@@ -301,13 +299,11 @@ function fileId(file: File): number {
 }
 
 export function detectCsvMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async (file: File) => toCsvDetection((await migrationCsvDetect({body: {import: file}})).data),
-			toastError: () => false,
-		}),
+	return contextMutationOptions({
+		mutationFn: async (file: File) => toCsvDetection((await migrationCsvDetect({body: {import: file}})).data),
+		toastError: () => false,
 		gcTime: 0,
-	}
+	})
 }
 
 // A plain copy: the key must not change under the request while the form is edited.
@@ -329,16 +325,14 @@ export function csvPreviewQuery(file: File, config: CsvImportConfig) {
 }
 
 export function startCsvImportMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async ({file, config}: {file: File, config: CsvImportConfig}) => {
-				await migrationCsvMigrate({body: csvBody(file, config)})
-			},
-			onSuccess: (_data, _input, client) => markStarted(client, 'csv'),
-			toastError: () => false,
-		}),
+	return contextMutationOptions({
+		mutationFn: async ({file, config}: {file: File, config: CsvImportConfig}) => {
+			await migrationCsvMigrate({body: csvBody(file, config)})
+		},
+		onSuccess: (_data, _input, client) => markStarted(client, 'csv'),
+		toastError: () => false,
 		gcTime: 0,
-	}
+	})
 }
 
 export function useMigrationStatus(service: MaybeRefOrGetter<MigratorId>) {

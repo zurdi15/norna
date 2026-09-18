@@ -87,17 +87,15 @@ export interface EmailUpdateInput {
 }
 
 export function updateEmailMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async ({new_email, password}: EmailUpdateInput) => {
-				await userUpdateEmail({body: {new_email: new_email.trim(), password}})
-			},
-			// The form shows what went wrong next to the field.
-			toastError: () => false,
-		}),
+	return contextMutationOptions({
+		mutationFn: async ({new_email, password}: EmailUpdateInput) => {
+			await userUpdateEmail({body: {new_email: new_email.trim(), password}})
+		},
+		// The form shows what went wrong next to the field.
+		toastError: () => false,
 		// Input holds the password.
 		gcTime: 0,
-	}
+	})
 }
 
 export function resendEmailConfirmationMutationOptions() {
@@ -124,16 +122,14 @@ export interface PasswordChangeInput {
 }
 
 export function changePasswordMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async ({old_password, new_password}: PasswordChangeInput) => {
-				await userChangePassword({body: {old_password, new_password}})
-			},
-			toastError: () => false,
-		}),
+	return contextMutationOptions({
+		mutationFn: async ({old_password, new_password}: PasswordChangeInput) => {
+			await userChangePassword({body: {old_password, new_password}})
+		},
+		toastError: () => false,
 		// Input holds both passwords.
 		gcTime: 0,
-	}
+	})
 }
 
 export const useUpdateEmailMutation = () => useMutation(updateEmailMutationOptions())

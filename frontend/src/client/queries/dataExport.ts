@@ -76,18 +76,16 @@ export function dataExportFileName(dataExport: Pick<DataExport, 'created'>): str
 }
 
 export function requestDataExportMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async (password: string) => {
-				await userExportRequest({body: {password}})
-			},
-			successMessage: () => translate('settingsData.export.requested'),
-			// A wrong password is shown at the field, anything else by the page.
-			toastError: () => false,
-		}),
+	return contextMutationOptions({
+		mutationFn: async (password: string) => {
+			await userExportRequest({body: {password}})
+		},
+		successMessage: () => translate('settingsData.export.requested'),
+		// A wrong password is shown at the field, anything else by the page.
+		toastError: () => false,
 		// Input is the password.
 		gcTime: 0,
-	}
+	})
 }
 
 export interface DownloadDataExportInput {
@@ -96,20 +94,18 @@ export interface DownloadDataExportInput {
 }
 
 export function downloadDataExportMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async ({password, fileName}: DownloadDataExportInput) => {
-				const {data} = await userExportDownload({body: {password}, parseAs: 'blob'})
-				// Firefox hands back null instead of an empty blob when the response has no body.
-				if (!(data instanceof Blob)) {
-					throw new Error('Did not get the export file')
-				}
-				downloadBlob(window.URL.createObjectURL(data), fileName)
-			},
-			toastError: () => false,
-		}),
+	return contextMutationOptions({
+		mutationFn: async ({password, fileName}: DownloadDataExportInput) => {
+			const {data} = await userExportDownload({body: {password}, parseAs: 'blob'})
+			// Firefox hands back null instead of an empty blob when the response has no body.
+			if (!(data instanceof Blob)) {
+				throw new Error('Did not get the export file')
+			}
+			downloadBlob(window.URL.createObjectURL(data), fileName)
+		},
+		toastError: () => false,
 		gcTime: 0,
-	}
+	})
 }
 
 export const useRequestDataExportMutation = () => useMutation(requestDataExportMutationOptions())

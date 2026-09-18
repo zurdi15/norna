@@ -7,7 +7,7 @@ import {createSuggestionRenderer, type SuggestionRenderProps} from '../suggestio
 
 export const EmojiSuggestionPluginKey = new PluginKey('emojiSuggestion')
 
-interface EmojiRenderProps extends SuggestionRenderProps {
+export interface EmojiRenderProps extends SuggestionRenderProps {
 	items: EmojiEntry[]
 }
 

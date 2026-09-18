@@ -15,6 +15,15 @@ function setDefaultDueTime(defaultDueTime?: string) {
 	authStore.setSettings({frontend_settings: {default_due_time: defaultDueTime}})
 }
 
+// "2021-6-24" and "2021-6-24 13:0", the way the cases below are written; null when nothing was parsed.
+function dateStamp(date: Date | null): string | null {
+	return date && `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+}
+
+function dateTimeStamp(date: Date | null): string | null {
+	return date && `${dateStamp(date)} ${date.getHours()}:${date.getMinutes()}`
+}
+
 describe('Parse Task Text', () => {
 	beforeEach(() => {
 		vi.useFakeTimers()
@@ -697,7 +706,7 @@ describe('Parse Task Text', () => {
 						return
 					}
 
-					expect(`${date?.getFullYear()}-${date?.getMonth() + 1}-${date?.getDate()}`).toBe(cases[c])
+					expect(dateStamp(date)).toBe(cases[c])
 					expect(text.trim()).toBe('Lorem Ipsum')
 				}
 				
@@ -760,21 +769,21 @@ describe('Parse Task Text', () => {
 						return
 					}
 
-					expect(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`).toBe(cases[c])
+					expect(dateTimeStamp(date)).toBe(cases[c])
 				})
 			}
 
 			it('should replace the text in title case', () => {
 				const {date, newText} = parseDate('Some task Mar 8th', now)
 
-				expect(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`).toBe('2021-3-8 12:0')
+				expect(dateTimeStamp(date)).toBe('2021-3-8 12:0')
 				expect(newText).toBe('Some task')
 			})
 
 			it('should replace the text in lowercase', () => {
 				const {date, newText} = parseDate('Some task mar 8th', now)
 
-				expect(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`).toBe('2021-3-8 12:0')
+				expect(dateTimeStamp(date)).toBe('2021-3-8 12:0')
 				expect(newText).toBe('Some task')
 			})
 		})

@@ -277,7 +277,7 @@ export function moveTaskMutationOptions() {
 			restartCancelledTaskLoads(client),
 		]),
 	})
-	return {
+	const withBoardRefresh: typeof options = {
 		...options,
 		onError: (...args: Parameters<NonNullable<typeof options.onError>>) => {
 			const [, move, context, {client}] = args
@@ -288,6 +288,7 @@ export function moveTaskMutationOptions() {
 			}
 		},
 	}
+	return withBoardRefresh
 }
 
 export interface CreateBucketInput {

@@ -63,23 +63,21 @@ export function tokenRoutesQuery() {
 }
 
 export function createApiTokenMutationOptions() {
-	return {
-		...contextMutationOptions({
-			// Resolves with the cleartext token for the caller to show once.
-			mutationFn: async ({title, expiresAt, permissions, ownerId}: ApiTokenDraft) => (await tokensCreate({body: {
-				title: title.trim(),
-				expires_at: expiresAt.toISOString(),
-				permissions,
-				...(ownerId ? {owner_id: ownerId} : {}),
-			}})).data,
-			onSuccess: (created, {ownerId}, client) => {
-				client.setQueryData<ApiToken[]>(apiTokenKeys.list(ownerId), current => current ? [...current, toApiToken(created)] : current)
-			},
-			onSettled: ({ownerId}, client) => client.invalidateQueries({queryKey: apiTokenKeys.list(ownerId)}),
-		}),
+	return contextMutationOptions({
+		// Resolves with the cleartext token for the caller to show once.
+		mutationFn: async ({title, expiresAt, permissions, ownerId}: ApiTokenDraft) => (await tokensCreate({body: {
+			title: title.trim(),
+			expires_at: expiresAt.toISOString(),
+			permissions,
+			...(ownerId ? {owner_id: ownerId} : {}),
+		}})).data,
+		onSuccess: (created, {ownerId}, client) => {
+			client.setQueryData<ApiToken[]>(apiTokenKeys.list(ownerId), current => current ? [...current, toApiToken(created)] : current)
+		},
+		onSettled: ({ownerId}, client) => client.invalidateQueries({queryKey: apiTokenKeys.list(ownerId)}),
 		// The result holds the cleartext token: callers read it and reset() right away.
 		gcTime: 0,
-	}
+	})
 }
 
 export function deleteApiTokenMutationOptions() {

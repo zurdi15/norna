@@ -111,7 +111,7 @@ export const parseDate = (text: string, now: Date = new Date()): dateParseResult
 		}
 
 		return {
-			newText: replaceAll(text, parsed.foundText, ''),
+			newText: parsed.foundText === null ? text : replaceAll(text, parsed.foundText, ''),
 			date: parsed.date,
 		}
 	}

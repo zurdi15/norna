@@ -57,49 +57,43 @@ export function totpQrCodeQuery() {
 }
 
 export function enrollTotpMutationOptions() {
-	return {
-		...contextMutationOptions<TotpStatus, void>({
-			mutationFn: async () => toTotpStatus((await totpEnroll()).data),
-			onSuccess: (status, _input, client) => {
-				client.setQueryData(totpKeys.status, status)
-				client.removeQueries({queryKey: totpKeys.qrCode})
-			},
-		}),
+	return contextMutationOptions<TotpStatus, void>({
+		mutationFn: async () => toTotpStatus((await totpEnroll()).data),
+		onSuccess: (status, _input, client) => {
+			client.setQueryData(totpKeys.status, status)
+			client.removeQueries({queryKey: totpKeys.qrCode})
+		},
 		// The result holds the new secret.
 		gcTime: 0,
-	}
+	})
 }
 
 /** Confirms the setup. The server then signs out every session, this one included. */
 export function enableTotpMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async (passcode: string) => {
-				await totpEnable({body: {passcode: passcode.replace(/\s/g, '')}})
-			},
-			onSuccess: (_data, _passcode, client) => {
-				client.setQueryData<TotpStatus>(totpKeys.status, {state: 'on'})
-				client.removeQueries({queryKey: totpKeys.qrCode})
-			},
-			// The form shows a wrong code next to the field.
-			toastError: () => false,
-		}),
+	return contextMutationOptions({
+		mutationFn: async (passcode: string) => {
+			await totpEnable({body: {passcode: passcode.replace(/\s/g, '')}})
+		},
+		onSuccess: (_data, _passcode, client) => {
+			client.setQueryData<TotpStatus>(totpKeys.status, {state: 'on'})
+			client.removeQueries({queryKey: totpKeys.qrCode})
+		},
+		// The form shows a wrong code next to the field.
+		toastError: () => false,
 		gcTime: 0,
-	}
+	})
 }
 
 export function disableTotpMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async (password: string) => {
-				await totpDisable({body: {password}})
-			},
-			onSuccess: (_data, _password, client) => client.setQueryData<TotpStatus>(totpKeys.status, {state: 'off'}),
-			toastError: () => false,
-		}),
+	return contextMutationOptions({
+		mutationFn: async (password: string) => {
+			await totpDisable({body: {password}})
+		},
+		onSuccess: (_data, _password, client) => client.setQueryData<TotpStatus>(totpKeys.status, {state: 'off'}),
+		toastError: () => false,
 		// Input holds the password.
 		gcTime: 0,
-	}
+	})
 }
 
 export const useEnrollTotpMutation = () => useMutation(enrollTotpMutationOptions())

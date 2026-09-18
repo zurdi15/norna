@@ -161,15 +161,13 @@ const invalidateUsers = (client: QueryClient) => Promise.all([
 ])
 
 export function createAdminUserMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async (body: CreateUserBodyWritable) => (await adminUsersCreate({body})).data,
-			onSettled: (_body, client) => invalidateUsers(client),
-			successMessage: user => translate('admin.users.created', {username: user.username ?? ''}),
-		}),
+	return contextMutationOptions({
+		mutationFn: async (body: CreateUserBodyWritable) => (await adminUsersCreate({body})).data,
+		onSettled: (_body, client) => invalidateUsers(client),
+		successMessage: user => translate('admin.users.created', {username: user.username ?? ''}),
 		// The input holds the new account's password.
 		gcTime: 0,
-	}
+	})
 }
 
 export function setUserAdminMutationOptions() {
@@ -193,16 +191,14 @@ export function setUserStatusMutationOptions() {
 }
 
 export function setUserPasswordMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async ({id, password}: {id: number, password: string}) =>
-				(await adminUsersSetPassword({path: {id}, body: {new_password: password}})).data,
-			onSuccess: (user, _input, client) => replaceAdminUser(client, user),
-			successMessage: user => translate('admin.users.passwordSet', {username: user.username ?? ''}),
-		}),
+	return contextMutationOptions({
+		mutationFn: async ({id, password}: {id: number, password: string}) =>
+			(await adminUsersSetPassword({path: {id}, body: {new_password: password}})).data,
+		onSuccess: (user, _input, client) => replaceAdminUser(client, user),
+		successMessage: user => translate('admin.users.passwordSet', {username: user.username ?? ''}),
 		// The input holds the new password.
 		gcTime: 0,
-	}
+	})
 }
 
 export function sendPasswordResetMutationOptions() {
@@ -252,17 +248,15 @@ export function changeProjectOwnerMutationOptions() {
 }
 
 export function createInviteLinkMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async (body: CreateInviteLinkBodyWritable) => (await adminInviteLinksCreate({body})).data,
-			onSuccess: (link, _body, client) => {
-				client.setQueryData<UserInviteLink[]>(adminKeys.inviteLinks(), current => current && [toInviteLink(link), ...current])
-			},
-			onSettled: (_body, client) => client.invalidateQueries({queryKey: adminKeys.inviteLinks()}),
-		}),
+	return contextMutationOptions({
+		mutationFn: async (body: CreateInviteLinkBodyWritable) => (await adminInviteLinksCreate({body})).data,
+		onSuccess: (link, _body, client) => {
+			client.setQueryData<UserInviteLink[]>(adminKeys.inviteLinks(), current => current && [toInviteLink(link), ...current])
+		},
+		onSettled: (_body, client) => client.invalidateQueries({queryKey: adminKeys.inviteLinks()}),
 		// The result holds the secret token: callers read it and reset the mutation.
 		gcTime: 0,
-	}
+	})
 }
 
 export function deleteInviteLinkMutationOptions() {
