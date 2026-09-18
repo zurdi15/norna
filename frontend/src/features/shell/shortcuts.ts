@@ -186,7 +186,7 @@ export const KEYBOARD_SHORTCUTS: ShortcutGroup[] = [
 			},
 			{
 				title: 'keyboardShortcuts.task.description',
-				keys: ['e'],
+				...shortcutBindingToDisplay(SHORTCUTS.taskDetail.description),
 			},
 			{
 				title: 'keyboardShortcuts.task.priority',

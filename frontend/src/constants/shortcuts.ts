@@ -24,6 +24,7 @@ export const SHORTCUTS = {
 		assignees: 'KeyA',
 		attachments: 'KeyF',
 		relatedTasks: 'KeyR',
+		description: 'KeyE',
 		moveProject: 'KeyM',
 		dueDate: 'KeyD',
 		reminder: isAppleDevice() ? 'Shift+KeyR' : 'Alt+KeyR',

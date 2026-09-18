@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, watch} from 'vue'
+import {ref, useTemplateRef, watch} from 'vue'
 import {useI18n} from 'vue-i18n'
 
 import type {TaskDetail} from '@/client/queries/tasks'
@@ -19,6 +19,7 @@ const {t} = useI18n()
 const actions = useTaskActionsStore()
 
 const draft = ref('')
+const editor = useTemplateRef<InstanceType<typeof TaskEditor>>('editor')
 const status = ref<'idle' | 'saving' | 'saved'>('idle')
 let editing = false
 
@@ -32,6 +33,10 @@ watch(() => props.task.description, description => {
 function markEditing() {
 	editing = true
 }
+
+defineExpose({
+	focus: () => editor.value?.focus('end'),
+})
 
 async function save(value: string) {
 	editing = false
@@ -64,6 +69,7 @@ async function save(value: string) {
 			>{{ status === 'saving' ? t('taskDetail.description.saving') : t('taskDetail.description.saved') }}</span>
 		</template>
 		<TaskEditor
+			ref="editor"
 			v-model="draft"
 			:task-id="task.id"
 			:editable="editable"

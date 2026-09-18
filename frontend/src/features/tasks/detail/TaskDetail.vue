@@ -40,6 +40,7 @@ const actions = useTaskActionsStore()
 const properties = useTemplateRef<InstanceType<typeof TaskProperties>>('properties')
 const relations = useTemplateRef<InstanceType<typeof TaskRelations>>('relations')
 const attachments = useTemplateRef<InstanceType<typeof TaskAttachments>>('attachments')
+const description = useTemplateRef<InstanceType<typeof TaskDescription>>('description')
 
 const editable = computed(() => (props.task.max_permission ?? PERMISSIONS.READ_WRITE) >= PERMISSIONS.READ_WRITE)
 
@@ -78,6 +79,7 @@ useTaskDetailShortcuts({
 	moveProject: editing(() => properties.value?.openProperty('project')),
 	attachments: editing(() => attachments.value?.pick()),
 	relatedTasks: editing(() => relations.value?.link()),
+	description: editing(() => description.value?.focus()),
 	openProject: () => void router.push({name: 'project.index', params: {projectId: props.task.project_id}}),
 	delete: editing(() => void remove()),
 })
@@ -117,6 +119,7 @@ const updatedLine = computed(() => props.task.updated && props.task.updated !== 
 			class="pt-1"
 		/>
 		<TaskDescription
+			ref="description"
 			:task="task"
 			:editable="editable"
 		/>
