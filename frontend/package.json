@@ -46,10 +46,7 @@
     "fonts:update": "pnpm fonts:download && pnpm fonts:subset",
     "fonts:download": "./scripts/fonts-download.sh",
     "fonts:subset": "./scripts/fonts-subset.sh",
-    "generate:api-client": "openapi-ts",
-    "story:dev": "histoire dev",
-    "story:build": "histoire build",
-    "story:preview": "histoire preview"
+    "generate:api-client": "openapi-ts"
   },
   "dependencies": {
     "@floating-ui/dom": "1.8.0",
@@ -110,8 +107,6 @@
     "@eslint/js": "10.0.1",
     "@faker-js/faker": "10.6.0",
     "@hey-api/openapi-ts": "0.99.0",
-    "@histoire/plugin-screenshot": "1.0.0-beta.1",
-    "@histoire/plugin-vue": "1.0.0-beta.1",
     "@playwright/test": "1.63.0",
     "@sentry/vite-plugin": "5.4.0",
     "@tailwindcss/vite": "4.3.3",
@@ -134,7 +129,6 @@
     "eslint-plugin-depend": "1.5.0",
     "eslint-plugin-vue": "10.11.0",
     "happy-dom": "20.14.5",
-    "histoire": "1.0.0-beta.1",
     "otplib": "13.5.0",
     "postcss": "8.5.28",
     "postcss-html": "1.8.1",
