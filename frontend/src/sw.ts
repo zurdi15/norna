@@ -14,15 +14,9 @@ workbox.setConfig({
 import { precacheAndRoute } from 'workbox-precaching'
 precacheAndRoute(self.__WB_MANIFEST)
 
-// Cache assets
-workbox.routing.registerRoute(
-	// This regexp matches all files in precache-manifest
-	new RegExp('.+\\.(css|json|js|svg|woff2|png|html|txt|wav)$'),
-	new workbox.strategies.StaleWhileRevalidate(),
-)
-
-// Construct pattern with full base URL
-const apiRoutePattern = new RegExp(`${fullBaseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}api\\/v1\\/.*$`)
+// Registered before the asset route: Workbox takes the first match, and an API path
+// ending in .json or .png must never be served stale.
+const apiRoutePattern = new RegExp(`${fullBaseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}api\\/v[12]\\/.*$`)
 // Always send api requests through the network and bypass the browser's HTTP cache
 workbox.routing.registerRoute(
 	apiRoutePattern,
@@ -31,6 +25,13 @@ workbox.routing.registerRoute(
 			cache: 'no-store',
 		},
 	}),
+)
+
+// Cache assets
+workbox.routing.registerRoute(
+	// This regexp matches all files in precache-manifest
+	new RegExp('.+\\.(css|json|js|svg|woff2|png|html|txt|wav)$'),
+	new workbox.strategies.StaleWhileRevalidate(),
 )
 
 // This code listens for the user's confirmation to update the app.
