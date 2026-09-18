@@ -3,7 +3,7 @@ import {beforeEach, describe, expect, it, vi} from 'vitest'
 
 import {queryClient} from '@/client/queryClient'
 import {labelKeys} from '@/client/queries/labels'
-import {AUTH_TYPES, type AuthType} from '@/modelTypes/IUser'
+import {AUTH_TYPES, type AuthType} from '@/constants/authTypes'
 
 const auth = vi.hoisted(() => ({
 	token: null as string | null,
@@ -21,22 +21,11 @@ vi.mock('@/helpers/auth', () => ({
 	}),
 }))
 
-vi.mock('@/helpers/fetcher', () => ({
-	AuthenticatedHTTPFactory: () => fakeHttp(),
-	HTTPFactory: () => fakeHttp(),
+vi.mock('@/client/generated', async (importOriginal) => ({
+	...await importOriginal<typeof import('@/client/generated')>(),
+	authLinkShare: (...args: unknown[]) => auth.post(...args),
+	tokenRenew: (...args: unknown[]) => auth.post(...args),
 }))
-
-function fakeHttp() {
-	return {
-		post: auth.post,
-		get: vi.fn(),
-		request: vi.fn(),
-		interceptors: {
-			request: {use: vi.fn()},
-			response: {use: vi.fn()},
-		},
-	}
-}
 
 vi.mock('@/router', () => ({
 	default: {push: vi.fn()},
@@ -74,7 +63,7 @@ describe('link share auth query lifecycle', () => {
 	it('removes the previous user query cache when entering a link share', async () => {
 		const store = useAuthStore()
 		store.setAuthenticated(true)
-		store.setUser({id: 1, type: AUTH_TYPES.USER} as never, false)
+		store.setUser({id: 1, type: AUTH_TYPES.USER} as never)
 		queryClient.setQueryData(labelKeys.all, [{id: 1, title: 'private'}])
 		queryClient.setQueryData(['projects'], [{id: 1, title: 'private'}])
 		const linkToken = jwt(AUTH_TYPES.LINK_SHARE, 2)

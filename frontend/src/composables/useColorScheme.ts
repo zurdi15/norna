@@ -15,7 +15,7 @@ const THEME_COLOR = {
 // result on <html data-theme>, which sets color-scheme and so every light-dark() token.
 export const useColorScheme = createSharedComposable(() => {
 	const authStore = useAuthStore()
-	const store = computed(() => authStore.settings.frontendSettings.colorSchema)
+	const store = computed(() => authStore.settings.frontend_settings.color_schema)
 
 	const preferredColorScheme = usePreferredColorScheme()
 

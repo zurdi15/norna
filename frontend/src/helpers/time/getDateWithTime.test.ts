@@ -6,13 +6,7 @@ import {useAuthStore} from '@/stores/auth'
 
 function setDefaultDueTime(defaultDueTime?: string) {
 	const authStore = useAuthStore()
-	authStore.setUserSettings({
-		...authStore.settings,
-		frontendSettings: {
-			...authStore.settings.frontendSettings,
-			defaultDueTime,
-		},
-	})
+	authStore.setSettings({frontend_settings: {default_due_time: defaultDueTime}})
 }
 
 describe('getDateWithTime', () => {

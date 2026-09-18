@@ -433,7 +433,7 @@ export const useTaskStore = defineStore('task', () => {
 		}
 
 		const labels = await ensureLabelsExist(parsedLabels)
-		await runWrites(labels, l => addLabelToTask(task, l), configStore.concurrentWrites)
+		await runWrites(labels, l => addLabelToTask(task, l), configStore.concurrent_writes)
 		return task
 	}
 
@@ -485,7 +485,7 @@ export const useTaskStore = defineStore('task', () => {
 	} :
 		Partial<ITask>,
 	): Promise<{task: TaskModel, parsedLabels: string[]}> {
-		const quickAddMagicMode = authStore.settings.frontendSettings.quickAddMagicMode
+		const quickAddMagicMode = authStore.settings.frontend_settings.quick_add_magic_mode
 		const parsedTask = parseTaskText(title, quickAddMagicMode)
 
 		if(parsedTask.text === '') {
@@ -534,7 +534,10 @@ export const useTaskStore = defineStore('task', () => {
 		})
 		task.repeatAfter = parsedTask.repeats
 		task.reminders = buildDefaultRemindersForQuickAdd(
-			authStore.settings.frontendSettings.quickAddDefaultReminders,
+			authStore.settings.frontend_settings.quick_add_default_reminders.map(r => ({
+				relativePeriod: r.relative_period,
+				relativeTo: r.relative_to,
+			}) as ITaskReminder),
 			dueDate,
 		)
 
@@ -596,7 +599,7 @@ export const useTaskStore = defineStore('task', () => {
 				await runWrites(
 					withLabels,
 					c => addLabelsToTask({task: c.task as ITask, parsedLabels: c.parsedLabels}),
-					configStore.concurrentWrites,
+					configStore.concurrent_writes,
 				)
 			} catch (e) {
 				// The tasks exist by now, so failing here must not look like the

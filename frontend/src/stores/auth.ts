@@ -1,68 +1,85 @@
 import {computed, readonly, ref, watch} from 'vue'
 import {acceptHMRUpdate, defineStore} from 'pinia'
 
-import {AuthenticatedHTTPFactory, HTTPFactory} from '@/helpers/fetcher'
-import {getBrowserLanguage, i18n, setLanguage} from '@/i18n'
-import {objectToSnakeCase} from '@/helpers/case'
-import UserModel, {getDisplayName, invalidateAvatarCache} from '@/models/user'
-import AvatarService from '@/services/avatar'
-import type {RegisterUserRequestWritable} from '@/client/generated'
+import {
+	authConfirmEmail,
+	authLinkShare as requestLinkShareToken,
+	authLogin,
+	authLogout,
+	authOpenidCallback,
+	authRegister,
+	tokenRenew,
+	userGetAvatarProvider,
+	userShow,
+	userUpdateSettings,
+	type LoginWritable,
+	type RegisterUserRequestWritable,
+	type UserGeneralSettings,
+	type UserInfoBody,
+} from '@/client/generated'
 import {registerViaInviteLink} from '@/client/inviteLink'
-import {parseValidationErrors} from '@/helpers/parseValidationErrors'
-import UserSettingsService from '@/services/userSettings'
-import {getToken, refreshToken, removeToken, saveToken} from '@/helpers/auth'
-import {clearTaskCache} from '@/helpers/taskCache'
+import {queryClient} from '@/client/queryClient'
 import {useWebSocket} from '@/composables/useWebSocket'
-import {setModuleLoading} from '@/stores/helper'
-import {success, error} from '@/message'
+import {AUTH_TYPES} from '@/constants/authTypes'
+import {getToken, refreshToken, removeToken, saveToken} from '@/helpers/auth'
+import {parseValidationErrors} from '@/helpers/parseValidationErrors'
 import {
 	getRedirectUrlFromCurrentFrontendPath,
 	redirectToProvider,
 	redirectToProviderOnLogout,
 } from '@/helpers/redirectToProvider'
-import {AUTH_TYPES, type IUser} from '@/modelTypes/IUser'
-import type {IUserSettings} from '@/modelTypes/IUserSettings'
+import {clearTaskCache} from '@/helpers/taskCache'
+import {getBrowserLanguage, i18n, setLanguage, type SupportedLocale} from '@/i18n'
+import {error, success} from '@/message'
+import {problemCode, problemStatus} from '@/modules/api/problem'
+import {identityFromToken, isExpired, type SessionIdentity} from '@/modules/session/identity'
+import {
+	mergeFrontendSettings,
+	parseUserSettings,
+	type FrontendSettings,
+	type UserSettings,
+} from '@/modules/settings/userSettings'
+import {invalidateAvatarCache} from '@/modules/user/avatar'
+import {getDisplayName} from '@/modules/user/displayName'
 import router from '@/router'
 import {useConfigStore} from '@/stores/config'
-import UserSettingsModel from '@/models/userSettings'
-import {MILLISECONDS_A_SECOND} from '@/constants/date'
-import {PrefixMode} from '@/modules/quickAddMagic'
-import {DATE_DISPLAY} from '@/constants/dateDisplay'
-import {TIME_FORMAT} from '@/constants/timeFormat'
-import {RELATION_KIND} from '@/types/IRelationKind'
-import type {IProvider} from '@/types/IProvider'
-import {queryClient} from '@/client/queryClient'
 
 // Set on explicit logout so the login page won't immediately bounce the user
 // back to the OIDC provider. Lives in sessionStorage so it survives the
 // round-trip to the IdP within the tab and isn't wiped by localStorage.clear().
 export const JUST_LOGGED_OUT_KEY = 'justLoggedOut'
 
+// The signed-in identity: JWT claims, completed with the /user profile for users.
+export type CurrentUser = Omit<UserInfoBody, '$schema' | 'settings' | 'id' | 'username' | 'is_admin'> & SessionIdentity
+
+const TOTP_REQUIRED = 1017
+const INVALID_FIELDS = 2002
+
 function redirectToSpecifiedProvider() {
-
 	const {auth} = useConfigStore()
+	const providers = auth.openid_connect.providers
 	const searchParams = new URLSearchParams(window.location.search)
-	if (searchParams.has('redirectToProvider')) {
-
-		const redirectToProviderValue = searchParams.get('redirectToProvider')
-
-		if (
-			auth.openidConnect.providers?.length === 1
-			&& (window.location.pathname.startsWith('/login') || window.location.pathname === '/') // Kinda hacky, but prevents an endless loop.
-			&& (redirectToProviderValue === null
-				|| redirectToProviderValue === 'true'
-				|| redirectToProviderValue === '1')
- 		) {
-			redirectToProvider(auth.openidConnect.providers[0])
-		}
-
-		// let's try to find the provider to logon to !
-		const wantedProvider = auth.openidConnect.providers?.find(p => p.key === redirectToProviderValue)
-		if (wantedProvider) {
-			redirectToProvider(wantedProvider)
-		}
-		console.warn(`Could not find provider to redirect to.\nWanted: ${wantedProvider}\nAvailable: ${auth.openidConnect.providers?.map(p => p.key)}`)
+	if (!searchParams.has('redirectToProvider')) {
+		return
 	}
+
+	const redirectToProviderValue = searchParams.get('redirectToProvider')
+
+	if (
+		providers.length === 1
+		&& (window.location.pathname.startsWith('/login') || window.location.pathname === '/') // Kinda hacky, but prevents an endless loop.
+		&& (redirectToProviderValue === null
+			|| redirectToProviderValue === 'true'
+			|| redirectToProviderValue === '1')
+	) {
+		redirectToProvider(providers[0]!)
+	}
+
+	const wantedProvider = providers.find(p => p.key === redirectToProviderValue)
+	if (wantedProvider) {
+		redirectToProvider(wantedProvider)
+	}
+	console.warn(`Could not find provider to redirect to.\nWanted: ${redirectToProviderValue}\nAvailable: ${providers.map(p => p.key)}`)
 }
 
 // A race-loser's refresh fails but the rotated cookie is already valid, so a
@@ -90,36 +107,25 @@ function setLoggedInVia(provider: string | null): void {
 
 export const useAuthStore = defineStore('auth', () => {
 	const configStore = useConfigStore()
-	
+
 	const authenticated = ref(false)
 	const needsTotpPasscode = ref(false)
-	
-	const info = ref<IUser | null>(null)
-	const settings = ref<IUserSettings>(new UserSettingsModel())
-	
+
+	const info = ref<CurrentUser | null>(null)
+	const settings = ref<UserSettings>(parseUserSettings(undefined))
+	// The frontend_settings blob exactly as the server last sent it: saving merges into it
+	// so keys this frontend doesn't know survive.
+	let storedFrontendSettings: unknown = undefined
+
 	const currentSessionId = ref<string | null>(null)
 	const lastUserInfoRefresh = ref<Date | null>(null)
 	const isLoading = ref(false)
 	const isLoadingGeneralSettings = ref(false)
 
-	const authUser = computed(() => {
-		return authenticated.value && (
-			info.value &&
-			info.value.type === AUTH_TYPES.USER
-		)
-	})
-
-	const authLinkShare = computed(() => {
-		return authenticated.value && (
-			info.value &&
-			info.value.type === AUTH_TYPES.LINK_SHARE
-		)
-	})
-
+	const authUser = computed(() => authenticated.value && info.value?.type === AUTH_TYPES.USER)
+	const authLinkShare = computed(() => authenticated.value && info.value?.type === AUTH_TYPES.LINK_SHARE)
 	const userDisplayName = computed(() => info.value ? getDisplayName(info.value) : undefined)
-	
 	const isLinkShareAuth = computed(() => info.value?.type === AUTH_TYPES.LINK_SHARE)
-
 	const identityKey = computed(() => `${info.value?.id ?? ''}:${info.value?.type ?? ''}`)
 
 	// Identity-bound caches survive same-user object replacements.
@@ -129,14 +135,14 @@ export const useAuthStore = defineStore('auth', () => {
 	}, {flush: 'sync'})
 
 	function setIsLoading(newIsLoading: boolean) {
-		isLoading.value = newIsLoading 
+		isLoading.value = newIsLoading
 	}
 
-	function setIsLoadingGeneralSettings(isLoading: boolean) {
-		isLoadingGeneralSettings.value = isLoading 
+	function setIsLoadingGeneralSettings(newIsLoading: boolean) {
+		isLoadingGeneralSettings.value = newIsLoading
 	}
 
-	function setUser(newUser: IUser | null, saveSettings = true) {
+	function setUser(newUser: CurrentUser | null, rawSettings?: UserGeneralSettings) {
 		// checkAuth() calls this on every navigation; only drop the avatar cache on an actual account change.
 		const userChanged = info.value?.username !== newUser?.username
 		info.value = newUser
@@ -144,90 +150,50 @@ export const useAuthStore = defineStore('auth', () => {
 			if (userChanged) {
 				invalidateAvatar()
 			}
-
-			if (saveSettings && newUser.settings) {
-				loadSettings(newUser.settings)
+			if (rawSettings) {
+				loadSettings(rawSettings)
 			}
 		}
 	}
 
-	function setUserSettings(newSettings: IUserSettings) {
-		loadSettings(newSettings)
-		info.value = new UserModel({
-			...info.value !== null ? info.value : {},
-			name: newSettings.name,
-		})
-	}
-	
-	function loadSettings(newSettings: IUserSettings) {
-		settings.value = new UserSettingsModel({
-			...newSettings,
-			frontendSettings: {
-				// Need to set default settings here in case the user does not have any saved in the api already
-				playSoundWhenDone: true,
-				quickAddMagicMode: PrefixMode.Default,
-				colorSchema: 'auto',
-				allowIconChanges: true,
-				dateDisplay: DATE_DISPLAY.RELATIVE,
-				timeFormat: TIME_FORMAT.HOURS_24,
-				defaultTaskRelationType: RELATION_KIND.RELATED,
-				backgroundBrightness: 100,
-				showLastViewed: true,
-				sidebarWidth: null,
-				commentSortOrder: 'asc',
-				desktopQuickEntryShortcut: 'CmdOrCtrl+Shift+A',
-				defaultDueTime: undefined,
-				...newSettings.frontendSettings,
-			},
-		})
+	function loadSettings(raw: UserGeneralSettings) {
+		storedFrontendSettings = raw.frontend_settings
+		settings.value = parseUserSettings(raw)
 
 		// Sync the quick entry shortcut to the desktop app when settings are loaded
-		window.vikunjaDesktop?.updateQuickEntryShortcut(
-			settings.value.frontendSettings.desktopQuickEntryShortcut || '',
-		)
+		window.vikunjaDesktop?.updateQuickEntryShortcut(settings.value.frontend_settings.desktop_quick_entry_shortcut || '')
 	}
 
 	function setAuthenticated(newAuthenticated: boolean) {
 		authenticated.value = newAuthenticated
 	}
 
-
 	function setNeedsTotpPasscode(newNeedsTotpPasscode: boolean) {
 		needsTotpPasscode.value = newNeedsTotpPasscode
 	}
 
 	function invalidateAvatar() {
-		if (!info.value || !info.value.username) {
-			return
-		}
-		invalidateAvatarCache(info.value)
+		invalidateAvatarCache(info.value?.username)
 	}
 
 	function updateLastUserRefresh() {
 		lastUserInfoRefresh.value = new Date()
 	}
 
-	// Logs a user in with a set of credentials.
-	async function login(credentials) {
-		const HTTP = HTTPFactory()
+	async function login(credentials: LoginWritable) {
 		setIsLoading(true)
 
 		// Delete an eventually preexisting old token
 		removeToken()
 
 		try {
-			const response = await HTTP.post('login', objectToSnakeCase(credentials))
-			// Save the token to local storage for later use
-			saveToken(response.data.token, true)
+			const {data} = await authLogin({body: credentials})
+			saveToken(data.token ?? '', true)
 
 			// Tell others the user is authenticated
 			await checkAuth()
 		} catch (e) {
-			if (
-				e.response &&
-				e.response.data.code === 1017 &&
-				!credentials.totpPasscode
-			) {
+			if (problemCode(e) === TOTP_REQUIRED && !credentials.totp_passcode) {
 				setNeedsTotpPasscode(true)
 			}
 
@@ -239,36 +205,28 @@ export const useAuthStore = defineStore('auth', () => {
 
 	/**
 	 * Registers a new user and logs them in.
-	 * Not sure if this is the right place to put the logic in, maybe a separate js component would be better suited. 
 	 */
-	async function register(credentials, language: string|null = null, viaInvite = false) {
-		const HTTP = HTTPFactory()
+	async function register(credentials: RegisterUserRequestWritable, language: string | null = null, viaInvite = false): Promise<void> {
 		setIsLoading(true)
-		
-		if (!language) {
-			language = i18n.global.locale.value ?? getBrowserLanguage()
-		}
-		
+
+		const lang = language ?? i18n.global.locale.value ?? getBrowserLanguage()
+
 		try {
 			if (viaInvite) {
-				await registerViaInviteLink({...credentials, language})
+				await registerViaInviteLink({...credentials, language: lang})
 			} else {
-				await HTTP.post('register', {...credentials, language})
+				await authRegister({body: {...credentials, language: lang}})
 			}
-			return await login(credentials)
+			return await login({username: credentials.username, password: credentials.password})
 		} catch (e) {
-			const problem = e.response?.data ?? e
-			if (problem.code === 2002 && parseValidationErrors(problem).language) {
+			// An instance without our UI language rejects it; English always exists.
+			if (problemCode(e) === INVALID_FIELDS && parseValidationErrors(e as never).language) {
 				return register(credentials, 'en', viaInvite)
 			}
-
-			if (problem.detail) {
+			const problem = e as {detail?: string, message?: string}
+			if (problem?.detail) {
 				throw {...problem, message: problem.detail}
 			}
-			if (problem.message) {
-				throw problem
-			}
-
 			throw e
 		} finally {
 			setIsLoading(false)
@@ -280,26 +238,23 @@ export const useAuthStore = defineStore('auth', () => {
 	}
 
 	async function openIdAuth({provider, code, totpPasscode}: {provider: string, code: string, totpPasscode?: string}) {
-		const HTTP = HTTPFactory()
 		setIsLoading(true)
 		setLoggedInVia(null)
 
-		const fullProvider: IProvider = configStore.auth.openidConnect.providers.find((p: IProvider) => p.key === provider)
-
-		const data: Record<string, string> = {
-			code: code,
-			redirect_url: getRedirectUrlFromCurrentFrontendPath(fullProvider),
-		}
-		if (totpPasscode) {
-			data.totp_passcode = totpPasscode
-		}
+		const fullProvider = configStore.auth.openid_connect.providers.find(p => p.key === provider)
 
 		// Delete an eventually preexisting old token
 		removeToken()
 		try {
-			const response = await HTTP.post(`/auth/openid/${provider}/callback`, data)
-			// Save the token to local storage for later use
-			saveToken(response.data.token, true)
+			const {data} = await authOpenidCallback({
+				path: {provider},
+				body: {
+					code,
+					redirect_url: fullProvider ? getRedirectUrlFromCurrentFrontendPath(fullProvider) : undefined,
+					totp_passcode: totpPasscode,
+				},
+			})
+			saveToken(data.token ?? '', true)
 			setLoggedInVia(provider)
 
 			// Tell others the user is authenticated
@@ -321,107 +276,76 @@ export const useAuthStore = defineStore('auth', () => {
 		}
 	}
 
-	async function linkShareAuth({hash, password}) {
-		const HTTP = HTTPFactory()
-		const response = await HTTP.post('/shares/' + hash + '/auth', {
-			password: password,
-		})
-		saveToken(response.data.token, false)
+	async function linkShareAuth({hash, password}: {hash: string, password?: string}) {
+		const {data} = await requestLinkShareToken({path: {share: hash}, body: {password}})
+		saveToken(data.token ?? '', false)
 		// Reset the debounce so checkAuth() actually parses the new link share
 		// JWT instead of silently returning due to the 1-minute throttle.
 		lastUserInfoRefresh.value = null
 		await checkAuth()
-		return response.data
+		return data
 	}
 
 	/**
-	 * Populates user information from jwt token saved in local storage in store
+	 * Populates user information from the jwt token saved in local storage.
 	 */
 	async function checkAuth() {
 		const now = new Date()
 		const oneMinuteAgo = new Date(new Date().setMinutes(now.getMinutes() - 1))
 		// This function can be called from multiple places at the same time and shortly after one another.
 		// To prevent hitting the api too frequently or race conditions, we check at most once per minute.
-		if (
-			lastUserInfoRefresh.value !== null &&
-			lastUserInfoRefresh.value > oneMinuteAgo
-		) {
+		if (lastUserInfoRefresh.value !== null && lastUserInfoRefresh.value > oneMinuteAgo) {
 			return
 		}
 
 		const jwt = getToken()
 		let isAuthenticated = false
-		let jwtUserType: number | undefined
 		if (jwt) {
-			try {
-				const base64 = jwt
-					.split('.')[1]
-					.replace(/-/g, '+')
-					.replace(/_/g, '/')
-				const payload = JSON.parse(atob(base64))
-				const jwtUser = new UserModel(payload)
-				jwtUserType = jwtUser.type
-				const ts = Math.round((new Date()).getTime() / MILLISECONDS_A_SECOND)
-
-				isAuthenticated = jwtUser.exp >= ts
-				currentSessionId.value = payload.sid ?? null
-
-				if (isAuthenticated) {
-					// Only set user from JWT if we don't already have a fully loaded
-					// user with the same ID *and* type. The JWT lacks fields like
-					// `name`, so overwriting a complete user object causes a visible
-					// flash where the display name briefly reverts to the username.
-					// Comparing on type as well is essential: regular users and link
-					// shares share the same numeric ID space, so a USER and a
-					// LINK_SHARE can have the same `id`. Without the type check, a
-					// logged-in user opening a link share whose id collides with
-					// their user id would keep the USER `info.value` and never flip
-					// `authLinkShare` to true, causing the router guard to bounce
-					// between /share/:hash/auth and the project view forever.
-					if (
-						info.value === null ||
-						info.value.id !== jwtUser.id ||
-						info.value.type !== jwtUser.type
-					) {
-						setUser(jwtUser, false)
-					} else {
-						// Always keep exp in sync so token renewal checks stay accurate
-						info.value.exp = jwtUser.exp
-					}
-				} else if (jwtUser.type === AUTH_TYPES.USER) {
-					// JWT expired but this is a user session — attempt a cookie-based
-					// refresh before giving up. This lets users who reopen the app
-					// after the short JWT TTL seamlessly resume their session.
-					try {
-						await refreshTokenWithRetry(true)
-						const freshJwt = getToken()
-						if (freshJwt) {
-							const b64 = freshJwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
-							const p = JSON.parse(atob(b64))
-							const freshUser = new UserModel(p)
-							isAuthenticated = freshUser.exp >= ts
-							currentSessionId.value = p.sid ?? null
-							if (info.value === null || info.value.id !== freshUser.id) {
-								setUser(freshUser, false)
-							} else {
-								info.value.exp = freshUser.exp
-							}
-						}
-					} catch {
-						// Refresh failed — stay unauthenticated
-					}
-				}
-			} catch (_) {
-				logout()
+			let identity = identityFromToken(jwt)
+			if (identity === null) {
+				// Unreadable token: drop it and carry on logged out. A full logout() would
+				// call back into checkAuth() while the token is still there.
+				removeToken()
 			}
 
-			if (isAuthenticated && jwtUserType !== AUTH_TYPES.LINK_SHARE) {
+			isAuthenticated = identity !== null && !isExpired(identity)
+			currentSessionId.value = identity?.sid ?? null
+
+			if (identity !== null && !isAuthenticated && identity.type === AUTH_TYPES.USER) {
+				// JWT expired but this is a user session: try a cookie-based refresh before
+				// giving up, so reopening the app after the short JWT TTL resumes the session.
+				try {
+					await refreshTokenWithRetry(true)
+					const fresh = identityFromToken(getToken())
+					if (fresh) {
+						identity = fresh
+						isAuthenticated = !isExpired(fresh)
+						currentSessionId.value = fresh.sid ?? null
+					}
+				} catch {
+					// Refresh failed — stay unauthenticated
+				}
+			}
+
+			if (isAuthenticated && identity !== null) {
+				// Keep an already loaded profile for the same identity: the JWT lacks fields
+				// like `name`, and swapping them out flashes the username in its place. Type
+				// matters as well as id: users and link shares share the numeric id space, and
+				// matching on id alone once kept a user session while a colliding link share
+				// was opened, bouncing the router guard forever.
+				if (info.value === null || info.value.id !== identity.id || info.value.type !== identity.type) {
+					setUser({...identity})
+				} else {
+					// Always keep exp in sync so token renewal checks stay accurate
+					info.value.exp = identity.exp
+				}
+			}
+
+			if (isAuthenticated && identity?.type !== AUTH_TYPES.LINK_SHARE) {
 				const user = await refreshUserInfo()
 				if (!user) {
-					// refreshUserInfo() did not return a user — either the
-					// token vanished or a 4xx triggered logout(). Bail out
-					// so the stale local `isAuthenticated` doesn't override
-					// the auth state that logout() already set.
+					// No user came back: the token vanished or a 4xx triggered logout(),
+					// which already set the auth state.
 					return
 				}
 			}
@@ -432,40 +356,42 @@ export const useAuthStore = defineStore('auth', () => {
 			setUser(null)
 			redirectToSpecifiedProvider()
 		}
-		
-		return Promise.resolve(authenticated)
+
+		return authenticated
 	}
 
-	async function refreshUserInfo() {
+	async function refreshUserInfo(): Promise<CurrentUser | undefined> {
 		const jwt = getToken()
 		if (!jwt) {
 			return
 		}
 
-		const HTTP = AuthenticatedHTTPFactory()
 		try {
-			const response = await HTTP.get('user')
-			const newUser = new UserModel({
-				...response.data,
-				...(info.value?.type && {type: info.value?.type}),
-				...(info.value?.exp && {exp: info.value?.exp}),
-			})
-
-			if (newUser.settings.language) {
-				await setLanguage(newUser.settings.language)
+			const {data} = await userShow()
+			const current = info.value ?? identityFromToken(jwt)
+			const newUser: CurrentUser = {
+				...data,
+				id: data.id ?? current?.id ?? 0,
+				type: current?.type ?? AUTH_TYPES.USER,
+				exp: current?.exp ?? 0,
+				sid: current?.sid,
 			}
 
-			setUser(newUser)
+			if (data.settings?.language) {
+				await setLanguage(data.settings.language as SupportedLocale)
+			}
+
+			setUser(newUser, data.settings)
 			updateLastUserRefresh()
 
 			return newUser
 		} catch (e) {
-			if((e?.response?.status >= 400 && e?.response?.status < 500) ||
-				e?.response?.data?.message === 'missing, malformed, expired or otherwise invalid token provided') {
+			const status = problemStatus(e)
+			if (status !== undefined && status >= 400 && status < 500) {
 				await logout()
 				return
 			}
-			
+
 			console.error('Error refreshing user info:', e)
 
 			throw new Error('Error while refreshing user info:', {cause: e})
@@ -473,50 +399,59 @@ export const useAuthStore = defineStore('auth', () => {
 	}
 
 	/**
-	 * Try to verify the email
+	 * Confirms the email address from the link in the confirmation email.
 	 */
 	async function verifyEmail(token = localStorage.getItem('emailConfirmToken')): Promise<boolean> {
-		if (token) {
-			const stopLoading = setModuleLoading(setIsLoading)
-			try {
-				await HTTPFactory().post('user/confirm', {token})
-				return true
-			} catch(e) {
-				throw new Error(e.response.data.message, {cause: e})
-			} finally {
-				localStorage.removeItem('emailConfirmToken')
-				stopLoading()
-			}
+		if (!token) {
+			return false
 		}
-		return false
+		setIsLoading(true)
+		try {
+			await authConfirmEmail({body: {token}})
+			return true
+		} catch (e) {
+			const problem = e as {detail?: string, message?: string}
+			throw new Error(problem?.detail ?? problem?.message ?? '', {cause: e})
+		} finally {
+			localStorage.removeItem('emailConfirmToken')
+			setIsLoading(false)
+		}
 	}
 
+	/**
+	 * Saves the general settings. The store updates first so the UI reflects the change
+	 * right away; frontend settings are merged into the stored blob before sending.
+	 */
 	async function saveUserSettings({
-		settings,
+		settings: newSettings,
 		showMessage = true,
 	}: {
-		settings: IUserSettings,
-		showMessage: boolean,
+		settings: UserSettings,
+		showMessage?: boolean,
 	}) {
-		const userSettingsService = new UserSettingsService()
-
-		const cancel = setModuleLoading(setIsLoadingGeneralSettings)
+		setIsLoadingGeneralSettings(true)
 		try {
 			const oldName = info.value?.name
-			let settingsUpdate = {...settings}
-			if (configStore.demoModeEnabled) {
-				settingsUpdate = {
-					...settingsUpdate,
-					language: null,
-				}
+			const frontendSettings = mergeFrontendSettings(storedFrontendSettings, newSettings.frontend_settings)
+			const {extra_settings_links: _links, ...writable} = newSettings
+			const body = {
+				...writable,
+				frontend_settings: frontendSettings,
+				// The demo instance resets users regularly; don't pin a language there.
+				language: configStore.demo_mode_enabled ? undefined : writable.language,
 			}
-			const updateSettingsPromise = userSettingsService.update(settingsUpdate)
-			setUserSettings(settingsUpdate)
-			await setLanguage(settings.language)
-			await updateSettingsPromise
-			if (oldName !== undefined && oldName !== settingsUpdate.name) {
-				const {avatarProvider} = await (new AvatarService()).get({})
-				if (avatarProvider === 'initials') {
+
+			settings.value = {...newSettings}
+			if (info.value) {
+				info.value = {...info.value, name: newSettings.name}
+			}
+			await setLanguage(newSettings.language as SupportedLocale)
+			await userUpdateSettings({body})
+			storedFrontendSettings = frontendSettings
+
+			if (oldName !== undefined && oldName !== newSettings.name) {
+				const {data} = await userGetAvatarProvider()
+				if (data.avatar_provider === 'initials') {
 					invalidateAvatar()
 				}
 			}
@@ -526,8 +461,19 @@ export const useAuthStore = defineStore('auth', () => {
 		} catch (e) {
 			error(e)
 		} finally {
-			cancel()
+			setIsLoadingGeneralSettings(false)
 		}
+	}
+
+	// Saves one or more frontend settings without touching the rest.
+	function saveFrontendSettings(patch: Partial<FrontendSettings>, showMessage = false) {
+		return saveUserSettings({
+			settings: {
+				...settings.value,
+				frontend_settings: {...settings.value.frontend_settings, ...patch},
+			},
+			showMessage,
+		})
 	}
 
 	/**
@@ -541,9 +487,8 @@ export const useAuthStore = defineStore('auth', () => {
 		try {
 			if (isLinkShareAuth.value) {
 				// Link shares renew via the dedicated link-share endpoint (JWT-based).
-				const HTTP = AuthenticatedHTTPFactory()
-				const response = await HTTP.post('user/token')
-				saveToken(response.data.token, false)
+				const {data} = await tokenRenew()
+				saveToken(data.token ?? '', false)
 			} else {
 				// User sessions renew via the refresh-token cookie.
 				await refreshTokenWithRetry(true)
@@ -553,9 +498,9 @@ export const useAuthStore = defineStore('auth', () => {
 			// Only logout if the JWT has actually expired and we can't refresh.
 			// If the JWT is still valid, the proactive refresh failure is harmless
 			// — the 401 interceptor will handle it when the token really expires.
-			const nowInSeconds = Date.now() / MILLISECONDS_A_SECOND
-			const isExpired = !info.value?.exp || info.value.exp < nowInSeconds
-			if (isExpired && (e?.cause?.request?.status || e?.cause?.response?.status)) {
+			const expired = !info.value?.exp || isExpired(info.value)
+			const status = (e as {cause?: {response?: {status?: number}}})?.cause?.response?.status ?? problemStatus(e)
+			if (expired && status) {
 				await logout()
 			}
 		}
@@ -569,10 +514,9 @@ export const useAuthStore = defineStore('auth', () => {
 		// Best-effort: if the network call fails, still clean up locally.
 		let oidcLogoutUrl = ''
 		try {
-			const HTTP = AuthenticatedHTTPFactory()
-			const {data} = await HTTP.post('user/logout')
+			const {data} = await authLogout()
 			oidcLogoutUrl = data?.oidc_logout_url ?? ''
-		} catch (_e) {
+		} catch {
 			// Ignore — session will expire naturally
 		}
 
@@ -594,7 +538,7 @@ export const useAuthStore = defineStore('auth', () => {
 			window.location.href = oidcLogoutUrl
 			return
 		}
-		const fullProvider: IProvider|undefined = configStore.auth.openidConnect.providers?.find((p: IProvider) => p.key === loggedInVia)
+		const fullProvider = configStore.auth.openid_connect.providers.find(p => p.key === loggedInVia)
 		if (fullProvider && redirectToProviderOnLogout(fullProvider)) {
 			return
 		}
@@ -627,7 +571,7 @@ export const useAuthStore = defineStore('auth', () => {
 		setIsLoadingGeneralSettings,
 
 		setUser,
-		setUserSettings,
+		setSettings: loadSettings,
 		setAuthenticated,
 		setNeedsTotpPasscode,
 
@@ -644,6 +588,7 @@ export const useAuthStore = defineStore('auth', () => {
 		refreshUserInfo,
 		verifyEmail,
 		saveUserSettings,
+		saveFrontendSettings,
 		renewToken,
 		logout,
 	}

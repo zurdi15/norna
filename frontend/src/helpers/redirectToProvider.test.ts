@@ -1,9 +1,9 @@
-import {describe, it, expect} from 'vitest'
+import {describe, it, expect, vi} from 'vitest'
 
 import {getAutoRedirectProvider} from './redirectToProvider'
-import type {IProvider} from '@/types/IProvider'
+import type {Provider} from '@/client/generated'
 
-const provider = {key: 'authentik', name: 'Authentik'} as IProvider
+const provider = {key: 'authentik', name: 'Authentik'} as Provider
 
 const soleProviderContext = {
 	localAuthEnabled: false,
@@ -40,12 +40,36 @@ describe('getAutoRedirectProvider', () => {
 	it('does not redirect when there is a choice of providers', () => {
 		expect(getAutoRedirectProvider({
 			...soleProviderContext,
-			providers: [provider, {key: 'other', name: 'Other'} as IProvider],
+			providers: [provider, {key: 'other', name: 'Other'} as Provider],
 		})).toBeUndefined()
 	})
 
 	it('does not redirect when openid is disabled or has no providers', () => {
 		expect(getAutoRedirectProvider({...soleProviderContext, openIdEnabled: false})).toBeUndefined()
 		expect(getAutoRedirectProvider({...soleProviderContext, providers: []})).toBeUndefined()
+	})
+})
+
+describe('redirectToProvider', () => {
+	it('builds an encoded authorization URL and keeps the provider query', async () => {
+		const {redirectToProvider} = await import('./redirectToProvider')
+		const location = {href: 'https://norna.example/login'}
+		vi.stubGlobal('location', location)
+
+		redirectToProvider({
+			key: 'authentik',
+			auth_url: 'https://id.example/authorize?prompt=login',
+			client_id: 'norna',
+			scope: '',
+		} as Provider)
+
+		const url = new URL(location.href)
+		expect(url.origin + url.pathname).toBe('https://id.example/authorize')
+		expect(url.searchParams.get('prompt')).toBe('login')
+		expect(url.searchParams.get('client_id')).toBe('norna')
+		expect(url.searchParams.get('scope')).toBe('openid email profile')
+		expect(url.searchParams.get('redirect_uri')).toMatch(/\/auth\/openid\/authentik$/)
+		expect(url.searchParams.get('state')).toBe(localStorage.getItem('state'))
+		vi.unstubAllGlobals()
 	})
 })
