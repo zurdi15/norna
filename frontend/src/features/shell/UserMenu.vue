@@ -2,8 +2,9 @@
 import {computed} from 'vue'
 import {useRouter} from 'vue-router'
 import {useI18n} from 'vue-i18n'
-import {ChevronsUpDown, Info, Keyboard, LogOut, Monitor, Moon, Settings, Sun} from '@lucide/vue'
+import {ChevronsUpDown, Info, Keyboard, LogOut, Monitor, Moon, Settings, Shield, Sun} from '@lucide/vue'
 
+import {useAdminAccess} from '@/features/admin/useAdminAccess'
 import {useAuthStore} from '@/stores/auth'
 import {useShellStore} from '@/stores/shell'
 import {cn} from '@/ui/cn'
@@ -12,6 +13,7 @@ import type {UiMenuEntry} from '@/ui/menu'
 import UiIcon from '@/ui/UiIcon.vue'
 import UiMenu from '@/ui/UiMenu.vue'
 
+import {useBackdropLink} from './useRouteBackdrop'
 import UserAvatar from './UserAvatar.vue'
 
 // row: the sidebar's account row; icon: just the avatar, for phone headers.
@@ -27,6 +29,8 @@ const {t} = useI18n()
 const router = useRouter()
 const authStore = useAuthStore()
 const shell = useShellStore()
+const backdropLink = useBackdropLink()
+const canAdminister = useAdminAccess()
 const {hasFinePointer} = useBreakpoints()
 
 const colorScheme = computed(() => authStore.settings.frontend_settings.color_schema)
@@ -37,6 +41,9 @@ function setColorScheme(value: 'auto' | 'light' | 'dark') {
 
 const items = computed<UiMenuEntry[]>(() => [
 	{label: t('shell.user.settings'), icon: Settings, onSelect: () => router.push({name: 'user.settings'})},
+	...(canAdminister.value
+		? [{label: t('shell.user.admin'), icon: Shield, onSelect: () => router.push({name: 'admin.overview'})}]
+		: []),
 	{type: 'separator'},
 	{type: 'label', label: t('shell.user.theme')},
 	{label: t('shell.user.themeSystem'), icon: Monitor, checked: colorScheme.value === 'auto', onSelect: () => setColorScheme('auto')},
@@ -46,7 +53,7 @@ const items = computed<UiMenuEntry[]>(() => [
 	...(hasFinePointer.value
 		? [{label: t('shell.shortcuts.title'), icon: Keyboard, shortcut: 'Shift+Slash', onSelect: () => shell.shortcutsOpen = true}]
 		: []),
-	{label: t('shell.user.about'), icon: Info, onSelect: () => router.push({name: 'about'})},
+	{label: t('shell.user.about'), icon: Info, onSelect: () => router.push(backdropLink({name: 'about'}))},
 	{type: 'separator'},
 	{label: t('shell.user.logout'), icon: LogOut, tone: 'danger', onSelect: () => authStore.logout()},
 ])

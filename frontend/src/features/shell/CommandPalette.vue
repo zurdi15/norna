@@ -13,12 +13,17 @@ import {
 	Moon,
 	Search,
 	Settings,
+	Shield,
 	Sun,
 	Tag,
+	Timer,
 	Users,
 } from '@lucide/vue'
 
+import {PRO_FEATURE} from '@/constants/proFeatures'
 import {SHORTCUTS} from '@/constants/shortcuts'
+import {useAdminAccess} from '@/features/admin/useAdminAccess'
+import {useConfigStore} from '@/stores/config'
 import {useProjects} from '@/composables/useProjects'
 import {getHistory} from '@/modules/projectHistory'
 import {useBackdropLink} from './useRouteBackdrop'
@@ -58,6 +63,8 @@ const {t} = useI18n()
 const router = useRouter()
 const shell = useShellStore()
 const authStore = useAuthStore()
+const configStore = useConfigStore()
+const canAdminister = useAdminAccess()
 const projects = useProjects()
 const {isDark} = useColorScheme()
 
@@ -99,7 +106,13 @@ const navigation = computed<Command[]>(() => [
 	{key: 'projects', label: t('shell.nav.projects'), icon: FolderKanban, shortcut: SHORTCUTS.navigation.projects, run: go('projects.index')},
 	{key: 'labels', label: t('shell.nav.labels'), icon: Tag, shortcut: SHORTCUTS.navigation.labels, run: go('labels.index')},
 	{key: 'teams', label: t('shell.nav.teams'), icon: Users, shortcut: SHORTCUTS.navigation.teams, run: go('teams.index')},
+	...(configStore.isProFeatureEnabled(PRO_FEATURE.TIME_TRACKING)
+		? [{key: 'time-tracking', label: t('shell.nav.timeTracking'), icon: Timer, run: go('time-tracking')}]
+		: []),
 	{key: 'settings', label: t('shell.user.settings'), icon: Settings, run: go('user.settings')},
+	...(canAdminister.value
+		? [{key: 'admin', label: t('shell.user.admin'), icon: Shield, keywords: 'users invite', run: go('admin.overview')}]
+		: []),
 ])
 
 const projectCommands = computed<Command[]>(() => {
