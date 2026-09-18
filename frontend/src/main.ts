@@ -2,15 +2,21 @@ import './client/inviteLink'
 import {createApp} from 'vue'
 import {VueQueryPlugin} from '@tanstack/vue-query'
 
+import '@fontsource-variable/ibm-plex-sans/wght.css'
+import '@fontsource-variable/ibm-plex-sans/wght-italic.css'
+import '@fontsource/ibm-plex-mono/latin-400.css'
+import '@fontsource/ibm-plex-mono/latin-ext-400.css'
+import '@fontsource/ibm-plex-mono/latin-500.css'
+import '@fontsource/ibm-plex-mono/latin-ext-500.css'
+import 'vue-sonner/style.css'
+import './styles/main.css'
+
 import pinia from './pinia'
 import router from './router'
 import App from './App.vue'
 import {error, success} from './message'
 import {configureApiClient} from './client/http'
 import {queryClient} from './client/queryClient'
-
-// Notifications
-import Notifications from '@kyvg/vue3-notification'
 
 // PWA
 import './registerServiceWorker'
@@ -43,24 +49,14 @@ configureApiClient()
 
 // directives
 import focus from '@/directives/focus'
-import tooltip from '@/directives/tooltip'
-import 'floating-vue/dist/style.css'
 import shortcut from '@/directives/shortcut'
 import testid from '@/directives/testid'
 
-// global components
-import FontAwesomeIcon from '@/components/misc/Icon'
-import Button from '@/components/input/Button.vue'
-import Modal from '@/components/misc/Modal.vue'
-import Card from '@/components/misc/Card.vue'
-
-import {setupKeyboardModality} from '@/helpers/keyboardModality'
 import {handleChunkLoadErrors} from '@/helpers/handleChunkLoadErrors'
 
-setupKeyboardModality()
 handleChunkLoadErrors()
 
-// We're loading the language before creating the app so that it won't fail to load when the user's 
+// We're loading the language before creating the app so that it won't fail to load when the user's
 // language file is not yet loaded.
 const browserLanguage = getBrowserLanguage()
 setLanguage(browserLanguage).then(() => {
@@ -74,18 +70,11 @@ setLanguage(browserLanguage).then(() => {
 		}
 	}
 
-	app.use(Notifications)
 	app.use(VueQueryPlugin, {queryClient})
 
 	app.directive('focus', focus)
-	app.directive('tooltip', tooltip)
 	app.directive('shortcut', shortcut)
 	app.directive('cy', testid)
-
-	app.component('Icon', FontAwesomeIcon)
-	app.component('XButton', Button)
-	app.component('Modal', Modal)
-	app.component('Card', Card)
 
 	app.config.errorHandler = (err, vm, info) => {
 		if (import.meta.env.DEV) {

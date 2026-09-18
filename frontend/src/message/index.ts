@@ -1,5 +1,5 @@
 import {i18n} from '@/i18n'
-import {notify} from '@kyvg/vue3-notification'
+import {toast, type ExternalToast} from 'vue-sonner'
 
 export function getErrorText(r): string {
 	const data = r?.reason?.response?.data || r?.response?.data || r
@@ -38,26 +38,23 @@ export interface Action {
 	callback: () => void,
 }
 
+// Sonner renders one primary action and one secondary (cancel) button.
+function toastOptions(text: string, actions: Action[]): ExternalToast {
+	const [primary, secondary] = actions
+	return {
+		// Same text, same id: sonner updates the visible toast instead of stacking a duplicate.
+		id: text,
+		action: primary ? {label: primary.title, onClick: primary.callback} : undefined,
+		cancel: secondary ? {label: secondary.title, onClick: secondary.callback} : undefined,
+	}
+}
+
 export function error(e, actions: Action[] = []) {
-	notify({
-		type: 'error',
-		title: i18n.global.t('error.error'),
-		text: getErrorText(e),
-		ignoreDuplicates: true,
-		data: {
-			actions: actions,
-		},
-	})
+	const text = getErrorText(e)
+	toast.error(text, toastOptions(text, actions))
 }
 
 export function success(e, actions: Action[] = []) {
-	notify({
-		type: 'success',
-		title: i18n.global.t('error.success'),
-		text: getErrorText(e),
-		ignoreDuplicates: true,
-		data: {
-			actions: actions,
-		},
-	})
+	const text = getErrorText(e)
+	toast.success(text, toastOptions(text, actions))
 }

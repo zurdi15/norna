@@ -16,13 +16,8 @@ import {useAuthStore} from '@/stores/auth'
 import {useBaseStore} from '@/stores/base'
 import {useConfigStore} from '@/stores/config'
 
-import Login from '@/views/user/Login.vue'
-import Register from '@/views/user/Register.vue'
-import LinkSharingAuth from '@/views/sharing/LinkSharingAuth.vue'
-import OpenIdAuth from '@/views/user/OpenIdAuth.vue'
-import UpcomingTasks from '@/views/tasks/ShowTasks.vue'
-
-import NotFoundComponent from '@/views/404.vue'
+// Every route renders this until its page is rebuilt; phases swap in the real page one route at a time.
+const PagePending = () => import('@/pages/PagePending.vue')
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,23 +42,23 @@ const router = createRouter({
 		{
 			path: '/',
 			name: 'home',
-			component: () => import('@/views/Home.vue'),
+			component: PagePending,
 		},
 		{
 			path: '/:pathMatch(.*)*',
 			name: 'not-found',
-			component: NotFoundComponent,
+			component: PagePending,
 		},
 		// if you omit the last `*`, the `/` character in params will be encoded when resolving or pushing
 		{
 			path: '/:pathMatch(.*)',
 			name: 'bad-not-found',
-			component: NotFoundComponent,
+			component: PagePending,
 		},
 		{
 			path: '/login',
 			name: 'user.login',
-			component: Login,
+			component: PagePending,
 			meta: {
 				title: 'user.auth.login',
 			},
@@ -71,7 +66,7 @@ const router = createRouter({
 		{
 			path: '/get-password-reset',
 			name: 'user.password-reset.request',
-			component: () => import('@/views/user/RequestPasswordReset.vue'),
+			component: PagePending,
 			meta: {
 				title: 'user.auth.resetPassword',
 			},
@@ -79,7 +74,7 @@ const router = createRouter({
 		{
 			path: '/password-reset',
 			name: 'user.password-reset.reset',
-			component: () => import('@/views/user/PasswordReset.vue'),
+			component: PagePending,
 			meta: {
 				title: 'user.auth.resetPassword',
 			},
@@ -88,8 +83,8 @@ const router = createRouter({
 			path: '/register',
 			name: 'user.register',
 			// FIXME: use dynamic imports
-			// component: () => import('@/views/user/Register.vue'),
-			component: Register,
+			// component: PagePending,
+			component: PagePending,
 			meta: {
 				title: 'user.auth.createAccount',
 			},
@@ -97,18 +92,18 @@ const router = createRouter({
 		{
 			path: '/user/settings',
 			name: 'user.settings',
-			component: () => import('@/views/user/Settings.vue'),
+			component: PagePending,
 			redirect: {name: 'user.settings.general'},
 			children: [
 				{
 					path: '/user/settings/avatar',
 					name: 'user.settings.avatar',
-					component: () => import('@/views/user/settings/Avatar.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/caldav',
 					name: 'user.settings.caldav',
-					component: () => import('@/views/user/settings/Caldav.vue'),
+					component: PagePending,
 					beforeEnter: async () => {
 						const {useConfigStore} = await import('@/stores/config')
 						if (!useConfigStore().caldavEnabled) {
@@ -119,42 +114,42 @@ const router = createRouter({
 				{
 					path: '/user/settings/mcp',
 					name: 'user.settings.mcp',
-					component: () => import('@/views/user/settings/Mcp.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/data-export',
 					name: 'user.settings.data-export',
-					component: () => import('@/views/user/settings/DataExport.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/feeds',
 					name: 'user.settings.feeds',
-					component: () => import('@/views/user/settings/AtomFeed.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/deletion',
 					name: 'user.settings.deletion',
-					component: () => import('@/views/user/settings/Deletion.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/email-update',
 					name: 'user.settings.email-update',
-					component: () => import('@/views/user/settings/EmailUpdate.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/general',
 					name: 'user.settings.general',
-					component: () => import('@/views/user/settings/General.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/password-update',
 					name: 'user.settings.password-update',
-					component: () => import('@/views/user/settings/PasswordUpdate.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/totp',
 					name: 'user.settings.totp',
-					component: () => import('@/views/user/settings/TOTP.vue'),
+					component: PagePending,
 					beforeEnter: async () => {
 						const {useConfigStore} = await import('@/stores/config')
 						if (!useConfigStore().totpEnabled || !useAuthStore().info?.isLocalUser) {
@@ -165,37 +160,37 @@ const router = createRouter({
 				{
 					path: '/user/settings/api-tokens',
 					name: 'user.settings.apiTokens',
-					component: () => import('@/views/user/settings/ApiTokens.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/sessions',
 					name: 'user.settings.sessions',
-					component: () => import('@/views/user/settings/Sessions.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/webhooks',
 					name: 'user.settings.webhooks',
-					component: () => import('@/views/user/settings/Webhooks.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/bots',
 					name: 'user.settings.bots',
-					component: () => import('@/views/user/settings/BotUsers.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/user/settings/migrate',
 					name: 'migrate.start',
-					component: () => import('@/views/migrate/Migration.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/migrate/csv',
 					name: 'migrate.csv',
-					component: () => import('@/views/migrate/MigrationCSV.vue'),
+					component: PagePending,
 				},
 				{
 					path: '/migrate/:service',
 					name: 'migrate.service',
-					component: () => import('@/views/migrate/MigrationHandler.vue'),
+					component: PagePending,
 					props: route => ({
 						service: route.params.service as string,
 						code: route.query.code as string,
@@ -206,25 +201,25 @@ const router = createRouter({
 		{
 			path: '/user/export/download',
 			name: 'user.export.download',
-			component: () => import('@/views/user/DataExportDownload.vue'),
+			component: PagePending,
 		},
 		{
 			path: '/share/:share/auth',
 			name: 'link-share.auth',
 			// FIXME: use dynamic imports
-			// component: () => import('@/views/sharing/LinkSharingAuth.vue'),
-			component: LinkSharingAuth,
+			// component: PagePending,
+			component: PagePending,
 		},
 		{
 			path: '/tasks/:id',
 			name: 'task.detail',
-			component: () => import('@/views/tasks/TaskDetailView.vue'),
+			component: PagePending,
 			props: route => ({ taskId: Number(route.params.id as string) }),
 		},
 		{
 			path: '/tasks/by/upcoming',
 			name: 'tasks.range',
-			component: UpcomingTasks,
+			component: PagePending,
 			props: route => ({
 				dateFrom: parseDateOrString(route.query.from as string, new Date()),
 				dateTo: parseDateOrString(route.query.to as string, getNextWeekDate()),
@@ -248,117 +243,78 @@ const router = createRouter({
 		{
 			path: '/projects',
 			name: 'projects.index',
-			component: () => import('@/views/project/ListProjects.vue'),
+			component: PagePending,
 		},
 		{
 			path: '/projects/new',
 			name: 'project.create',
-			component: () => import('@/views/project/NewProject.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 		},
 		{
 			path: '/projects/:parentProjectId/new',
 			name: 'project.createFromParent',
-			component: () => import('@/views/project/NewProject.vue'),
+			component: PagePending,
 			props: route => ({ parentProjectId: Number(route.params.parentProjectId as string) }),
-			meta: {
-				showAsModal: true,
-			},
 		},
 		{
 			path: '/projects/:projectId(\\d+)/settings/edit',
 			name: 'project.settings.edit',
-			component: () => import('@/views/project/settings/ProjectSettingsEdit.vue'),
+			component: PagePending,
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
-			meta: {
-				showAsModal: true,
-			},
 		},
 		{
 			path: '/projects/:projectId/settings/background',
 			name: 'project.settings.background',
-			component: () => import('@/views/project/settings/ProjectSettingsBackground.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 		},
 		{
 			path: '/projects/:projectId/settings/duplicate',
 			name: 'project.settings.duplicate',
-			component: () => import('@/views/project/settings/ProjectSettingsDuplicate.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 		},
 		{
 			path: '/projects/:projectId/settings/share',
 			name: 'project.settings.share',
-			component: () => import('@/views/project/settings/ProjectSettingsShare.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 		},
 		{
 			path: '/projects/:projectId/settings/webhooks',
 			name: 'project.settings.webhooks',
-			component: () => import('@/views/project/settings/ProjectSettingsWebhooks.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 		},
 		{
 			path: '/projects/:projectId(\\d+)/settings/delete',
 			name: 'project.settings.delete',
-			component: () => import('@/views/project/settings/ProjectSettingsDelete.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 		},
 		{
 			path: '/projects/:projectId/settings/archive',
 			name: 'project.settings.archive',
-			component: () => import('@/views/project/settings/ProjectSettingsArchive.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 		},
 		{
 			path: '/projects/:projectId/settings/views',
 			name: 'project.settings.views',
-			component: () =>  import('@/views/project/settings/ProjectSettingsViews.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
 		},
 		{
 			// Saved-filter pseudo-projects use IDs <= -2; -1 is the Favorites pseudo-project.
 			path: '/projects/:projectId(-[2-9]\\d*|-1\\d+)/settings/edit',
 			name: 'filter.settings.edit',
-			component: () => import('@/views/filters/FilterEdit.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
 		},
 		{
 			path: '/projects/:projectId(-[2-9]\\d*|-1\\d+)/settings/delete',
 			name: 'filter.settings.delete',
-			component: () => import('@/views/filters/FilterDelete.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
 		},
 		{
 			path: '/projects/:projectId/info',
 			name: 'project.info',
-			component: () => import('@/views/project/ProjectInfo.vue')			,
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
 		},
 		{
@@ -383,7 +339,7 @@ const router = createRouter({
 		{
 			path: '/projects/:projectId/:viewId',
 			name: 'project.view',
-			component: () => import('@/views/project/ProjectView.vue'),
+			component: PagePending,
 			props: route => ({ 
 				projectId: parseInt(route.params.projectId as string),
 				viewId: route.params.viewId ? parseInt(route.params.viewId as string): undefined,
@@ -392,61 +348,52 @@ const router = createRouter({
 		{
 			path: '/teams',
 			name: 'teams.index',
-			component: () => import('@/views/teams/ListTeams.vue'),
+			component: PagePending,
 		},
 		{
 			path: '/teams/new',
 			name: 'teams.create',
-			component: () =>  import('@/views/teams/NewTeam.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 		},
 		{
 			path: '/teams/:id/edit',
 			name: 'teams.edit',
-			component: () => import('@/views/teams/EditTeam.vue'),
+			component: PagePending,
 		},
 		{
 			path: '/labels',
 			name: 'labels.index',
-			component: () => import('@/views/labels/ListLabels.vue'),
+			component: PagePending,
 		},
 		{
 			path: '/labels/new',
 			name: 'labels.create',
-			component: () => import('@/views/labels/NewLabel.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 		},
 		{
 			path: '/filters/new',
 			name: 'filters.create',
-			component: () => import('@/views/filters/FilterNew.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: PagePending,
 		},
 		{
 			path: '/auth/openid/:provider',
 			name: 'openid.auth',
-			component: OpenIdAuth,
+			component: PagePending,
 		},
 		{
 			path: '/oauth/authorize',
 			name: 'oauth.authorize',
-			component: () => import('@/views/user/OAuthAuthorize.vue'),
+			component: PagePending,
 		},
 		{
 			path: '/about',
 			name: 'about',
-			component: () => import('@/views/About.vue'),
+			component: PagePending,
 		},
 		{
 			path: '/time-tracking',
 			name: 'time-tracking',
-			component: () => import('@/views/time-tracking/TimeTracking.vue'),
+			component: PagePending,
 			meta: {
 				requiresTimeTracking: true,
 				title: 'timeTracking.title',
@@ -454,7 +401,7 @@ const router = createRouter({
 		},
 		{
 			path: '/admin',
-			component: () => import('@/views/admin/AdminShell.vue'),
+			component: PagePending,
 			meta: {
 				requiresAdminPanel: true,
 				adminMode: true,
@@ -463,22 +410,22 @@ const router = createRouter({
 				{
 					path: '',
 					name: 'admin.overview',
-					component: () => import('@/views/admin/OverviewView.vue'),
+					component: PagePending,
 				},
 				{
 					path: 'users',
 					name: 'admin.users',
-					component: () => import('@/views/admin/UsersView.vue'),
+					component: PagePending,
 				},
 				{
 					path: 'projects',
 					name: 'admin.projects',
-					component: () => import('@/views/admin/ProjectsView.vue'),
+					component: PagePending,
 				},
 				{
 					path: 'invite-links',
 					name: 'admin.inviteLinks',
-					component: () => import('@/views/admin/InviteLinksView.vue'),
+					component: PagePending,
 					meta: {
 						requiresUserInvites: true,
 					},

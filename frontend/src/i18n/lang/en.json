@@ -178,9 +178,9 @@
           "mm-dd-yyyy": "MM-DD-YYYY",
           "dd-mm-yyyy": "DD-MM-YYYY",
           "yyyy-mm-dd": "YYYY-MM-DD",
-          "mm\/dd\/yyyy": "MM\/DD\/YYYY",
-          "dd\/mm\/yyyy": "DD\/MM\/YYYY",
-          "yyyy\/mm\/dd": "YYYY\/MM\/DD"
+          "mm/dd/yyyy": "MM/DD/YYYY",
+          "dd/mm/yyyy": "DD/MM/YYYY",
+          "yyyy/mm/dd": "YYYY/MM/DD"
         },
         "timeFormat": "Time format",
         "defaultDueTime": "Default due time",
@@ -1770,5 +1770,11 @@
       "empty": "No invite links yet. Create a link to invite people to this instance.",
       "futureExpiry": "Choose an expiry in the future."
     }
+  },
+  "pending": {
+    "caption": "Under construction",
+    "title": "This screen is being rewoven",
+    "description": "Norna's new interface is built one screen at a time. This route already exists; its page arrives in a later phase.",
+    "route": "Route"
   }
 }

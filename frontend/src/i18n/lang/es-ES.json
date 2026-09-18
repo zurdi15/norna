@@ -886,5 +886,11 @@
 			"weeks": "semana|semanas",
 			"years": "año|años"
 		}
+	},
+	"pending": {
+		"caption": "En construcción",
+		"title": "Esta pantalla se está tejiendo de nuevo",
+		"description": "La nueva interfaz de Norna se construye pantalla a pantalla. La ruta ya existe; su página llega en una fase posterior.",
+		"route": "Ruta"
 	}
 }

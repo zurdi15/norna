@@ -1,29 +1,12 @@
 import {defineSetupVue3} from '@histoire/plugin-vue'
+
+import '@fontsource-variable/ibm-plex-sans/wght.css'
+import '@fontsource/ibm-plex-mono/latin-400.css'
+import '@fontsource/ibm-plex-mono/latin-500.css'
+import './styles/main.css'
+
 import {i18n} from './i18n'
 
-// import './histoire.css' // Import global CSS
-import './styles/tailwind.css'
-import './styles/global.scss'
-
-import {createPinia} from 'pinia'
-
-import testid from '@/directives/testid'
-
-import FontAwesomeIcon from '@/components/misc/Icon'
-import XButton from '@/components/input/button.vue'
-import Modal from '@/components/misc/Modal.vue'
-import Card from '@/components/misc/Card.vue'
-
-export const setupVue3 = defineSetupVue3(({ app }) => {
-	// Add Pinia store
-	const pinia = createPinia()
-	app.use(pinia)
+export const setupVue3 = defineSetupVue3(({app}) => {
 	app.use(i18n)
-
-	app.directive('cy', testid)
-
-	app.component('Icon', FontAwesomeIcon)
-	app.component('XButton', XButton)
-	app.component('Modal', Modal)
-	app.component('Card', Card)
 })

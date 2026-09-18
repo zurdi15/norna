@@ -11,7 +11,7 @@ import {useGlobalNow} from '@/composables/useGlobalNow'
 import {useTimeFormat} from '@/composables/useTimeFormat'
 import {DATE_DISPLAY, type DateDisplay} from '@/constants/dateDisplay'
 import {TIME_FORMAT, type TimeFormat} from '@/constants/timeFormat'
-import {DAYJS_LOCALE_MAPPING} from '@/i18n/useDayjsLanguageSync.ts'
+import {getDayjsLocale} from '@/i18n/useDayjsLanguageSync.ts'
 
 export function dateIsValid(date: Date | string | null | undefined): boolean {
 	return toDate(date) !== null
@@ -31,7 +31,7 @@ export const formatDate = (date: Date | string | null | undefined, f: string) =>
 		return ''
 	}
 
-	const locale = DAYJS_LOCALE_MAPPING[i18n.global.locale.value.toLowerCase()] ?? 'en'
+	const locale = getDayjsLocale(i18n.global.locale.value)
 
 	return dayjs(parsed).locale(locale).format(f)
 }
@@ -50,7 +50,7 @@ export const formatDateSince = (date: Date | string | null | undefined) => {
 		return ''
 	}
 
-	const locale = DAYJS_LOCALE_MAPPING[i18n.global.locale.value.toLowerCase()] ?? 'en'
+	const locale = getDayjsLocale(i18n.global.locale.value)
 
 	// Computing the relative string against the shared, ticking `now` (instead of fromNow's
 	// internal Date.now()) makes every reactive caller re-render on the 60s tick, so open views
