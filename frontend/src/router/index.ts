@@ -358,27 +358,30 @@ const router = createRouter({
 		{
 			path: '/teams',
 			name: 'teams.index',
-			component: PagePending,
+			component: () => import('@/pages/teams/PageTeams.vue'),
 		},
 		{
 			path: '/teams/new',
 			name: 'teams.create',
-			component: PagePending,
+			component: () => import('@/pages/teams/PageTeamCreate.vue'),
+			meta: {modal: true, title: 'teams.new'},
 		},
 		{
 			path: '/teams/:id/edit',
 			name: 'teams.edit',
-			component: PagePending,
+			component: () => import('@/pages/teams/PageTeamEdit.vue'),
+			props: route => ({teamId: Number(route.params.id as string)}),
 		},
 		{
 			path: '/labels',
 			name: 'labels.index',
-			component: PagePending,
+			component: () => import('@/pages/labels/PageLabels.vue'),
 		},
 		{
 			path: '/labels/new',
 			name: 'labels.create',
-			component: PagePending,
+			component: () => import('@/pages/labels/PageLabelCreate.vue'),
+			meta: {modal: true, title: 'labels.new'},
 		},
 		{
 			path: '/filters/new',
