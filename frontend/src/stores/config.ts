@@ -103,8 +103,9 @@ export const useConfigStore = defineStore('config', () => {
 
 	async function update(): Promise<boolean> {
 		// checkAndSetApiUrl() probes candidate URLs before the client is reconfigured,
-		// so the base comes from the current window.API_URL on every call.
-		const {data} = await info({baseUrl: getApiV2BaseUrl()})
+		// so the base comes from the current window.API_URL on every call. Without the
+		// trailing slash, as the client is configured (client/requestContext compares them).
+		const {data} = await info({baseUrl: getApiV2BaseUrl().replace(/\/$/, '')})
 
 		if (typeof data?.version === 'undefined') {
 			throw new InvalidApiUrlProvidedError()
