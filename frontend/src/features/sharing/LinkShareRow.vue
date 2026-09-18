@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import {computed, onBeforeUnmount, ref} from 'vue'
+import {computed} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {Check, Copy, Link2, Lock, Trash2} from '@lucide/vue'
 
-import {useCopyToClipboard} from '@/composables/useCopyToClipboard'
+import {useCopyFeedback} from '@/composables/useCopyToClipboard'
 import UserAvatar from '@/features/shell/UserAvatar.vue'
 import {formatDateSince, formatDisplayDate} from '@/helpers/time/formatDate'
 import {getDisplayName} from '@/modules/user/displayName'
@@ -30,21 +30,16 @@ const WITH_PASSWORD = 2
 
 const {t} = useI18n()
 const permissions = usePermissions()
-const copyToClipboard = useCopyToClipboard()
 
 const title = computed(() => props.share.name || t('projectShare.links.unnamed'))
 const author = computed(() => props.share.shared_by ? getDisplayName(props.share.shared_by) : '')
 
 // The copy button turns into a check for a moment instead of toasting.
-const copied = ref(false)
-let resetTimer: ReturnType<typeof setTimeout> | undefined
-async function copy() {
-	await copyToClipboard(props.url)
-	copied.value = true
-	clearTimeout(resetTimer)
-	resetTimer = setTimeout(() => copied.value = false, 1600)
+const {copied, copy: copyText} = useCopyFeedback()
+
+function copy() {
+	void copyText(props.url)
 }
-onBeforeUnmount(() => clearTimeout(resetTimer))
 </script>
 
 <template>
