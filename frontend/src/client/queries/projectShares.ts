@@ -26,11 +26,13 @@ async function invalidateShares(client: QueryClient, projectId: number, kind: 'u
 	])
 }
 
-function shareSuccess(kind: 'users' | 'teams', action: 'addedSuccess' | 'updatedSuccess' | 'removeSuccess') {
-	return translate(`project.share.userTeam.${action}`, {
-		type: translate(kind === 'users' ? 'project.share.userTeam.typeUser' : 'project.share.userTeam.typeTeam', 1),
-		sharable: translate('project.list.title'),
-	})
+const SHARE_MESSAGES = {
+	users: {added: 'projectShare.toasts.personAdded', updated: 'projectShare.toasts.accessChanged', removed: 'projectShare.toasts.personRemoved'},
+	teams: {added: 'projectShare.toasts.teamAdded', updated: 'projectShare.toasts.accessChanged', removed: 'projectShare.toasts.teamRemoved'},
+} as const
+
+function shareSuccess(kind: 'users' | 'teams', action: 'added' | 'updated' | 'removed') {
+	return translate(SHARE_MESSAGES[kind][action])
 }
 
 type UserShareInput = {projectId: number, username: string}
@@ -47,7 +49,7 @@ export function createProjectUserShareMutationOptions() {
 	return contextMutationOptions({
 		mutationFn: async ({projectId, username}: UserShareInput) => (await projectUsersCreate({path: {project: projectId}, body: {username}})).data,
 		onSettled: ({projectId}, client) => invalidateShares(client, projectId, 'users'),
-		successMessage: () => shareSuccess('users', 'addedSuccess'),
+		successMessage: () => shareSuccess('users', 'added'),
 	})
 }
 export const useCreateProjectUserShareMutation = () => useMutation(createProjectUserShareMutationOptions())
@@ -59,7 +61,7 @@ export function updateProjectUserShareMutationOptions() {
 			client.setQueryData<UserWithPermission[]>(projectShareKeys.users(projectId), current => current?.map(item => item.username === username ? {...item, permission: updated.permission} : item))
 		},
 		onSettled: ({projectId}, client) => invalidateShares(client, projectId, 'users'),
-		successMessage: () => shareSuccess('users', 'updatedSuccess'),
+		successMessage: () => shareSuccess('users', 'updated'),
 	})
 }
 export const useUpdateProjectUserShareMutation = () => useMutation(updateProjectUserShareMutationOptions())
@@ -71,7 +73,7 @@ export function deleteProjectUserShareMutationOptions() {
 			client.setQueryData<UserWithPermission[]>(projectShareKeys.users(projectId), current => current?.filter(item => item.username !== username))
 		},
 		onSettled: ({projectId}, client) => invalidateShares(client, projectId, 'users'),
-		successMessage: () => shareSuccess('users', 'removeSuccess'),
+		successMessage: () => shareSuccess('users', 'removed'),
 	})
 }
 export const useDeleteProjectUserShareMutation = () => useMutation(deleteProjectUserShareMutationOptions())
@@ -87,7 +89,7 @@ export function createProjectTeamShareMutationOptions() {
 	return contextMutationOptions({
 		mutationFn: async ({projectId, teamId}: TeamShareInput) => (await projectTeamsCreate({path: {project: projectId}, body: {team_id: teamId}})).data,
 		onSettled: ({projectId}, client) => invalidateShares(client, projectId, 'teams'),
-		successMessage: () => shareSuccess('teams', 'addedSuccess'),
+		successMessage: () => shareSuccess('teams', 'added'),
 	})
 }
 export const useCreateProjectTeamShareMutation = () => useMutation(createProjectTeamShareMutationOptions())
@@ -99,7 +101,7 @@ export function updateProjectTeamShareMutationOptions() {
 			client.setQueryData<TeamWithPermission[]>(projectShareKeys.teams(projectId), current => current?.map(item => item.id === teamId ? {...item, permission: updated.permission} : item))
 		},
 		onSettled: ({projectId}, client) => invalidateShares(client, projectId, 'teams'),
-		successMessage: () => shareSuccess('teams', 'updatedSuccess'),
+		successMessage: () => shareSuccess('teams', 'updated'),
 	})
 }
 export const useUpdateProjectTeamShareMutation = () => useMutation(updateProjectTeamShareMutationOptions())
@@ -111,7 +113,7 @@ export function deleteProjectTeamShareMutationOptions() {
 			client.setQueryData<TeamWithPermission[]>(projectShareKeys.teams(projectId), current => current?.filter(item => item.id !== teamId))
 		},
 		onSettled: ({projectId}, client) => invalidateShares(client, projectId, 'teams'),
-		successMessage: () => shareSuccess('teams', 'removeSuccess'),
+		successMessage: () => shareSuccess('teams', 'removed'),
 	})
 }
 export const useDeleteProjectTeamShareMutation = () => useMutation(deleteProjectTeamShareMutationOptions())

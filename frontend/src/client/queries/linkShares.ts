@@ -33,7 +33,7 @@ export function createLinkShareMutationOptions() {
 				client.setQueryData<LinkSharing[]>(linkShareKeys.list(projectId), current => current ? [...current, created] : current)
 			},
 			onSettled: ({projectId}, client) => invalidateLinkShares(client, projectId),
-			successMessage: () => translate('project.share.links.createSuccess'),
+			successMessage: () => translate('projectShare.toasts.linkCreated'),
 		}),
 		// Input holds the plaintext password.
 		gcTime: 0,
@@ -47,7 +47,7 @@ export function deleteLinkShareMutationOptions() {
 			client.setQueryData<LinkSharing[]>(linkShareKeys.list(projectId), current => current?.filter(share => share.id !== id))
 		},
 		onSettled: ({projectId}, client) => invalidateLinkShares(client, projectId),
-		successMessage: () => translate('project.share.links.deleteSuccess'),
+		successMessage: () => translate('projectShare.toasts.linkDeleted'),
 	})
 }
 

@@ -25,6 +25,7 @@ import {saveProjectView} from '@/helpers/projectView'
 import {saveProjectToHistory} from '@/modules/projectHistory'
 import {useAuthStore} from '@/stores/auth'
 import {useBaseStore} from '@/stores/base'
+import {useConfigStore} from '@/stores/config'
 import {useShellStore} from '@/stores/shell'
 import {useBreakpoints} from '@/ui/composables/useBreakpoints'
 import type {UiMenuEntry} from '@/ui/menu'
@@ -49,6 +50,7 @@ defineOptions({inheritAttrs: false})
 
 const {t} = useI18n()
 const router = useRouter()
+const configStore = useConfigStore()
 const authStore = useAuthStore()
 const baseStore = useBaseStore()
 const shell = useShellStore()
@@ -117,16 +119,23 @@ const menuItems = computed<UiMenuEntry[]>(() => {
 			{label: t('projectView.menu.deleteFilter'), icon: Trash2, tone: 'danger', onSelect: go('filter.settings.delete')},
 		]
 	}
-	const admin = (project.value.max_permission ?? 0) >= PERMISSIONS.ADMIN
-	return [
-		{label: t('projectView.menu.edit'), icon: Pencil, onSelect: go('project.settings.edit')},
-		{label: t('projectView.menu.views'), icon: LayoutGrid, onSelect: go('project.settings.views')},
-		{label: t('projectView.menu.background'), icon: Image, onSelect: go('project.settings.background')},
-		...(admin ? [
-			{label: t('projectView.menu.share'), icon: Share2, onSelect: go('project.settings.share')},
-			{label: t('projectView.menu.webhooks'), icon: Webhook, onSelect: go('project.settings.webhooks')},
-		] : []),
+	// What the api allows: editing, the background and webhooks take write access;
+	// views, archiving and deleting take admin. Anyone can see who it's shared with.
+	const permission = project.value.max_permission ?? PERMISSIONS.READ
+	const write = permission >= PERMISSIONS.READ_WRITE
+	const admin = permission >= PERMISSIONS.ADMIN
+	const entries: (UiMenuEntry | false)[] = [
+		write && {label: t('projectView.menu.edit'), icon: Pencil, onSelect: go('project.settings.edit')},
+		admin && {label: t('projectView.menu.views'), icon: LayoutGrid, onSelect: go('project.settings.views')},
+		write && configStore.enabled_background_providers.length > 0
+			&& {label: t('projectView.menu.background'), icon: Image, onSelect: go('project.settings.background')},
+		{label: t('projectView.menu.share'), icon: Share2, onSelect: go('project.settings.share')},
+		write && configStore.webhooks_enabled
+			&& {label: t('projectView.menu.webhooks'), icon: Webhook, onSelect: go('project.settings.webhooks')},
 		{label: t('projectView.menu.duplicate'), icon: Copy, onSelect: go('project.settings.duplicate')},
+	]
+	return [
+		...entries.filter(entry => entry !== false),
 		...(admin ? [
 			{type: 'separator' as const},
 			{label: t('projectView.menu.archive'), icon: Archive, onSelect: go('project.settings.archive')},

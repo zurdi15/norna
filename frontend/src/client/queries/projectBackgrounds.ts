@@ -122,7 +122,7 @@ export function setUnsplashProjectBackgroundMutationOptions(shouldNotify: Should
 			body: {id: imageId},
 		})).data,
 		shouldNotify,
-		() => translate('project.background.success'),
+		() => translate('projectBackground.toasts.set'),
 	)
 }
 
@@ -133,7 +133,7 @@ export function uploadProjectBackgroundMutationOptions(shouldNotify: ShouldNotif
 			body: {background: file},
 		})).data,
 		shouldNotify,
-		() => translate('project.background.success'),
+		() => translate('projectBackground.toasts.set'),
 	)
 }
 
@@ -141,7 +141,7 @@ export function deleteProjectBackgroundMutationOptions(shouldNotify: ShouldNotif
 	return backgroundMutationOptions(
 		async ({projectId}: {projectId: number}) => (await projectsBackgroundDelete({path: {project: projectId}})).data,
 		shouldNotify,
-		() => translate('project.background.removeSuccess'),
+		() => translate('projectBackground.toasts.removed'),
 	)
 }
 

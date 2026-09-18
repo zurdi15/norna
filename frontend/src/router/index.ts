@@ -268,7 +268,9 @@ const router = createRouter({
 		{
 			path: '/projects/:projectId/settings/background',
 			name: 'project.settings.background',
-			component: PagePending,
+			component: () => import('@/pages/projects/PageProjectBackground.vue'),
+			props: route => ({projectId: Number(route.params.projectId as string)}),
+			meta: {modal: true, title: 'projectBackground.title'},
 		},
 		{
 			path: '/projects/:projectId/settings/duplicate',
@@ -280,12 +282,16 @@ const router = createRouter({
 		{
 			path: '/projects/:projectId/settings/share',
 			name: 'project.settings.share',
-			component: PagePending,
+			component: () => import('@/pages/projects/PageProjectShare.vue'),
+			props: route => ({projectId: Number(route.params.projectId as string)}),
+			meta: {modal: true, title: 'projectShare.title'},
 		},
 		{
 			path: '/projects/:projectId/settings/webhooks',
 			name: 'project.settings.webhooks',
-			component: PagePending,
+			component: () => import('@/pages/projects/PageProjectWebhooks.vue'),
+			props: route => ({projectId: Number(route.params.projectId as string)}),
+			meta: {modal: true, title: 'projectView.menu.webhooks'},
 		},
 		{
 			path: '/projects/:projectId(\\d+)/settings/delete',
