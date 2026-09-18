@@ -1,0 +1,101 @@
+/*
+ * Norna design tokens: the only source of color, type, radius, elevation and motion.
+ *
+ * Colors resolve per theme with light-dark(). The theme is picked by `color-scheme`,
+ * which follows the OS until useColorScheme() stamps data-theme on <html> (base.css).
+ * The default Tailwind palette is wiped, so a utility can only use a color defined here.
+ */
+@theme {
+	--color-*: initial;
+	--font-*: initial;
+	--text-*: initial;
+	--radius-*: initial;
+	--shadow-*: initial;
+	--ease-*: initial;
+
+	/* Surfaces: snow in light, polar night in dark */
+	--color-canvas: light-dark(oklch(0.985 0.003 250), oklch(0.163 0.011 258));
+	--color-canvas-subtle: light-dark(oklch(0.966 0.005 250), oklch(0.188 0.012 258));
+	--color-surface: light-dark(oklch(1 0 0), oklch(0.203 0.013 258));
+	--color-surface-raised: light-dark(oklch(1 0 0), oklch(0.238 0.014 258));
+	--color-line: light-dark(oklch(0.918 0.006 250), oklch(0.285 0.014 258));
+	--color-line-strong: light-dark(oklch(0.855 0.01 250), oklch(0.365 0.016 258));
+
+	/* Text. Faint is tuned to stay at AA (>= 4.5:1) on canvas and surface in both themes. */
+	--color-ink: light-dark(oklch(0.225 0.02 258), oklch(0.945 0.005 250));
+	--color-ink-muted: light-dark(oklch(0.47 0.02 256), oklch(0.735 0.014 252));
+	--color-ink-faint: light-dark(oklch(0.55 0.015 255), oklch(0.62 0.014 255));
+
+	/* Accent: Fjord, steel tone */
+	--color-accent: light-dark(oklch(0.47 0.065 248), oklch(0.74 0.055 244));
+	--color-accent-hover: color-mix(in oklch, var(--color-accent), var(--color-ink) 14%);
+	--color-accent-subtle: color-mix(in oklch, var(--color-accent) 11%, var(--color-surface));
+	--color-accent-line: color-mix(in oklch, var(--color-accent) 38%, var(--color-surface));
+	--color-on-accent: light-dark(oklch(0.99 0 0), oklch(0.17 0.02 258));
+
+	/* State: aurora, ember, lingon */
+	--color-success: light-dark(oklch(0.56 0.115 165), oklch(0.76 0.12 165));
+	--color-warning: light-dark(oklch(0.56 0.14 62), oklch(0.8 0.13 72));
+	--color-danger: light-dark(oklch(0.55 0.18 25), oklch(0.7 0.16 22));
+	--color-success-subtle: color-mix(in oklch, var(--color-success) 10%, var(--color-surface));
+	--color-warning-subtle: color-mix(in oklch, var(--color-warning) 12%, var(--color-surface));
+	--color-danger-subtle: color-mix(in oklch, var(--color-danger) 9%, var(--color-surface));
+	--color-on-state: light-dark(oklch(0.99 0 0), oklch(0.17 0.02 258));
+
+	--color-scrim: light-dark(oklch(0.22 0.02 258 / 0.32), oklch(0.05 0.01 258 / 0.62));
+
+	--font-sans: "IBM Plex Sans Variable", ui-sans-serif, system-ui, sans-serif;
+	--font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+	/* Type scale. md is the touch body size; base is the pointer body size. */
+	--text-3xs: 0.625rem;
+	--text-3xs--line-height: 1rem;
+	--text-2xs: 0.6875rem;
+	--text-2xs--line-height: 1rem;
+	--text-xs: 0.75rem;
+	--text-xs--line-height: 1.1rem;
+	--text-sm: 0.8125rem;
+	--text-sm--line-height: 1.25rem;
+	--text-base: 0.875rem;
+	--text-base--line-height: 1.35rem;
+	--text-md: 0.9375rem;
+	--text-md--line-height: 1.4rem;
+	--text-lg: 1rem;
+	--text-lg--line-height: 1.5rem;
+	--text-xl: 1.125rem;
+	--text-xl--line-height: 1.55rem;
+	--text-2xl: 1.375rem;
+	--text-2xl--line-height: 1.75rem;
+	--text-3xl: 1.75rem;
+	--text-3xl--line-height: 2rem;
+
+	/* Runic radii: straight, carved edges */
+	--radius-sm: 3px;
+	--radius-md: 5px;
+	--radius-lg: 8px;
+	--radius-sheet: 14px;
+
+	/* Borders first; shadows only lift overlays */
+	--shadow-raised: 0 1px 2px light-dark(oklch(0.25 0.03 258 / 0.06), oklch(0 0 0 / 0.3));
+	--shadow-overlay:
+		0 16px 40px -12px light-dark(oklch(0.25 0.03 258 / 0.22), oklch(0 0 0 / 0.55)),
+		0 2px 6px light-dark(oklch(0.25 0.03 258 / 0.06), oklch(0 0 0 / 0.3));
+
+	--ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+:root {
+	--duration-fast: 120ms;
+	--duration-base: 180ms;
+	--duration-slow: 280ms;
+
+	--z-sticky: 10;
+	--z-nav: 20;
+	--z-overlay: 40;
+	--z-modal: 50;
+	--z-toast: 60;
+	--z-tooltip: 70;
+
+	--size-touch: 44px;
+}
