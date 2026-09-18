@@ -2751,6 +2751,179 @@
     },
     "saved": "Saved"
   },
+  "settingsIntegrations": {
+    "copied": "Copied",
+    "username": "Username",
+    "loadFailed": "This couldn't be loaded.",
+    "retry": "Try again",
+    "secret": {
+      "onlyOnce": "Copy it now and keep it somewhere safe: you won't be able to see it again.",
+      "token": "token",
+      "done": "Done"
+    },
+    "tokens": {
+      "new": "New token",
+      "create": "Create token",
+      "createdTitle": "“{title}” is ready",
+      "name": "Name",
+      "nameHint": "To recognise it later, e.g. by the app that uses it.",
+      "namePlaceholder": "e.g. Home Assistant",
+      "titleRequired": "Give the token a name.",
+      "expiry": {
+        "label": "Expires",
+        "days": "{count} days",
+        "year": "1 year",
+        "custom": "Other date",
+        "pick": "Expiry date",
+        "on": "It stops working on {date}.",
+        "invalid": "Pick a day after today."
+      },
+      "permissions": "Permissions",
+      "permissionsHint": "The token can only do what's ticked here. Keep it to what the app needs.",
+      "permissionsFixed": "This token gets exactly these permissions.",
+      "permissionsRequired": "Tick at least one permission.",
+      "presets": "Presets",
+      "presetNames": {
+        "readOnly": "Read only",
+        "tasks": "Tasks",
+        "projects": "Projects",
+        "fullAccess": "Full access"
+      },
+      "searchPermissions": "Search permissions…",
+      "pickedCount": "{count} ticked",
+      "allOf": "All of {group}",
+      "details": "Details",
+      "expires": "expires {date}",
+      "expired": "expired {ago}",
+      "createdAgo": "created {ago}",
+      "deleteNamed": "Delete “{title}”",
+      "delete": "Delete token",
+      "deleteTitle": "Delete this token?",
+      "deleteDescription": "Whatever uses “{title}” loses access right away. This can't be undone.",
+      "deleted": "Token deleted"
+    },
+    "apiTokens": {
+      "description": "Let scripts and other apps use Norna's API without your password.",
+      "listTitle": "Tokens",
+      "emptyTitle": "No API tokens yet",
+      "emptyDescription": "Create one for each app, with only the permissions it needs.",
+      "docs": "API documentation"
+    },
+    "caldav": {
+      "description": "Sync your tasks with calendar and to-do apps that support CalDAV.",
+      "url": "Server address",
+      "passwordOrToken": "Sign in with your username and either your password or a CalDAV token.",
+      "tokenOnly": "Your account has no password here: sign in with your username and a CalDAV token as the password.",
+      "docs": "More about CalDAV",
+      "tokensTitle": "CalDAV tokens",
+      "tokenName": "CalDAV token",
+      "createdTitle": "Your CalDAV token is ready",
+      "emptyTitle": "No CalDAV tokens yet",
+      "deleteNamed": "Delete token #{id}",
+      "deleteTitle": "Delete this CalDAV token?",
+      "deleteDescription": "Apps that sign in with it stop syncing. This can't be undone.",
+      "apiTokenHint": "An API token with the caldav access permission works too.",
+      "apiTokenLink": "Create one"
+    },
+    "feeds": {
+      "description": "Follow your notifications from any feed reader.",
+      "url": "Atom feed",
+      "howTo": "Feed readers sign in with your username and, as the password, a token that can read the feed.",
+      "tokensTitle": "Feed tokens",
+      "emptyTitle": "No feed tokens yet",
+      "emptyDescription": "Create one for your feed reader.",
+      "newToken": "New feed token",
+      "tokenTitle": "Feed reader"
+    },
+    "mcp": {
+      "description": "Connect an AI assistant to your tasks, projects and labels with the Model Context Protocol.",
+      "endpoint": "Endpoint",
+      "docs": "More about MCP",
+      "tokensTitle": "MCP tokens",
+      "emptyTitle": "No MCP tokens yet",
+      "emptyDescription": "Create one and follow the steps for your assistant.",
+      "allTokens": "All API tokens",
+      "newToken": "New MCP token",
+      "createdTitle": "Your MCP token is ready",
+      "typedPreset": "Tools, read and write",
+      "client": "Connect it to",
+      "chooseClient": "Choose an app",
+      "clientHelp": "{client} setup guide",
+      "values": {
+        "command": "command",
+        "environment": "variable",
+        "config": "configuration",
+        "url": "URL",
+        "header": "header",
+        "token": "token"
+      },
+      "clients": {
+        "claudeCode": {
+          "command": "Run this in a terminal:",
+          "verify": "Then start Claude Code and run /mcp to check the connection."
+        },
+        "codex": {
+          "environment": "Put the token in your shell's environment:",
+          "command": "Add the server:",
+          "config": "Or add this to ~/.codex/config.toml instead:",
+          "note": "Start Codex from a shell where NORNA_MCP_TOKEN is set. Set it again in each new shell, or keep it in your shell's profile."
+        },
+        "claudeDesktop": {
+          "open": "Open Customize → Connectors → Add custom connector. On Team or Enterprise plans, an owner adds it under Organization settings → Connectors.",
+          "url": "Name it Norna and enter this URL:",
+          "auth": "Set Authentication to No sign-in.",
+          "header": "Under Request headers, choose authorization and paste this whole value, “Bearer ” included, then add the connector:",
+          "beta": "Request headers are a beta only some organizations have. If you don't see them, this connector isn't available to your account yet."
+        },
+        "mistral": {
+          "open": "In the sidebar, open Context → Connectors → Add Connector → Add Custom Connector.",
+          "url": "Name it Norna, enter this URL and select Connect:",
+          "token": "Choose HTTP Bearer authentication and paste this token:"
+        },
+        "chatgpt": {
+          "unavailable": "ChatGPT only connects to MCP servers through OAuth, which isn't supported yet, so this token won't work there."
+        },
+        "other": {
+          "title": "Other",
+          "url": "Use the streamable HTTP transport with this endpoint:",
+          "header": "Send this header with every request:"
+        }
+      }
+    },
+    "bots": {
+      "description": "Accounts you own for automations: they join projects and take tasks, and sign in only with API tokens.",
+      "new": "New bot",
+      "create": "Create bot",
+      "created": "Bot created",
+      "deleted": "Bot deleted",
+      "editTitle": "Edit bot",
+      "edit": "Edit",
+      "enable": "Enable",
+      "disable": "Disable",
+      "disabled": "Disabled",
+      "delete": "Delete bot",
+      "deleteTitle": "Delete {username}?",
+      "deleteDescription": "The bot and everything it owns are deleted, and its tokens stop working. This can't be undone.",
+      "actionsFor": "Actions for {username}",
+      "username": "Username",
+      "usernameHint": "Bot usernames always start with bot-.",
+      "usernameRequired": "Enter a username.",
+      "usernameSpaces": "Usernames can't contain spaces.",
+      "name": "Display name (optional)",
+      "nameHint": "What people see when it comments or takes a task.",
+      "namePlaceholder": "e.g. Assistant",
+      "tokensTitle": "API tokens",
+      "noTokens": "No tokens yet: it can't sign in until it has one.",
+      "newToken": "New token for {username}",
+      "emptyTitle": "No bots yet",
+      "emptyDescription": "Create one for each automation, so its work shows under its own name."
+    },
+    "webhooks": {
+      "description": "Each webhook gets a POST request when one of your tasks sends a reminder or becomes overdue, in any project.",
+      "emptyDescription": "Add one to get your reminders in another service, like a chat."
+    },
+    "copy": "Copy"
+  },
   "settingsAccount": {
     "currentPassword": "Current password",
     "passwordRequired": "Enter your password.",

@@ -25,12 +25,12 @@ export function createWebhookDraft(): WebhookDraft {
 }
 
 // The API masks the write-only credentials, but only these fields ever reach a cache.
-function toWebhook({id, target_url, events, project_id, created_by, created, updated}: Webhook): Webhook {
+export function toWebhook({id, target_url, events, project_id, created_by, created, updated}: Webhook): Webhook {
 	return {id, target_url, events: events ?? [], project_id, created_by, created, updated}
 }
 
 // The server only sends the Basic Auth header when both halves are set.
-function webhookBody({target_url, events, secret, basic_auth_user, basic_auth_password}: WebhookDraft): WebhookWritable {
+export function webhookBody({target_url, events, secret, basic_auth_user, basic_auth_password}: WebhookDraft): WebhookWritable {
 	return {
 		target_url: target_url.trim(),
 		events,

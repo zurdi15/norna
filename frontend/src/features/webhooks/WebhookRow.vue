@@ -12,11 +12,11 @@ import UiIcon from '@/ui/UiIcon.vue'
 import UiIconButton from '@/ui/UiIconButton.vue'
 import UiMenu from '@/ui/UiMenu.vue'
 
-import type {ProjectWebhook} from './useProjectWebhooks'
+import type {ListedWebhook} from './useWebhooks'
 import WebhookEventsEditor from './WebhookEventsEditor.vue'
 
 const props = withDefaults(defineProps<{
-	webhook: ProjectWebhook
+	webhook: ListedWebhook
 	// Every event the server offers, to tell "all of them" apart.
 	events: string[]
 	eventsLoading?: boolean

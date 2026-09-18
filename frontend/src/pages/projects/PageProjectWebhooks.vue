@@ -1,27 +1,23 @@
 <script setup lang="ts">
-import {computed, ref, watch} from 'vue'
+import {computed} from 'vue'
 import {useI18n} from 'vue-i18n'
-import {Plus} from '@lucide/vue'
 
 import {
-	createWebhookDraft,
 	useCreateProjectWebhookMutation,
 	useDeleteProjectWebhookMutation,
 	useUpdateProjectWebhookMutation,
+	type WebhookDraft,
 } from '@/client/queries/projectWebhooks'
 import {PERMISSIONS} from '@/constants/permissions'
 import {useProject} from '@/composables/useProject'
 import {useTitle} from '@/composables/useTitle'
 import ModalPage from '@/features/shell/ModalPage.vue'
-import {useProjectWebhooks, useWebhookEvents, type ProjectWebhook} from '@/features/webhooks/useProjectWebhooks'
-import WebhookForm from '@/features/webhooks/WebhookForm.vue'
-import WebhookRow from '@/features/webhooks/WebhookRow.vue'
+import {useProjectWebhooks, useWebhookEvents, type ListedWebhook} from '@/features/webhooks/useWebhooks'
+import WebhookTargets from '@/features/webhooks/WebhookTargets.vue'
 import {useConfigStore} from '@/stores/config'
-import {confirm} from '@/ui/confirm'
 import UiAlert from '@/ui/UiAlert.vue'
 import UiButton from '@/ui/UiButton.vue'
 import UiEmptyState from '@/ui/UiEmptyState.vue'
-import UiSectionHeading from '@/ui/UiSectionHeading.vue'
 import UiSkeleton from '@/ui/UiSkeleton.vue'
 
 /** HTTP callbacks for a project: other services hear about its changes as they happen. */
@@ -52,70 +48,22 @@ const create = useCreateProjectWebhookMutation()
 const update = useUpdateProjectWebhookMutation()
 const remove = useDeleteProjectWebhookMutation()
 
-const creating = ref(false)
-const draft = ref(createWebhookDraft())
-const editingId = ref<number | null>(null)
-
-// The secret typed for one project must not follow the user to another.
-watch(() => props.projectId, () => {
-	creating.value = false
-	draft.value = createWebhookDraft()
-	editingId.value = null
-})
-
-function startCreating() {
-	editingId.value = null
-	creating.value = true
-}
-
-function cancelCreating() {
-	creating.value = false
-	draft.value = createWebhookDraft()
-}
-
-async function submit() {
-	const projectId = props.projectId
+async function createWebhook(webhook: WebhookDraft) {
 	try {
-		await create.mutateAsync({projectId, webhook: draft.value})
-	} catch {
-		return
+		await create.mutateAsync({projectId: props.projectId, webhook})
 	} finally {
 		// Drops the secret and the basic-auth password from the mutation cache.
 		create.reset()
 	}
-	if (projectId === props.projectId) {
-		cancelCreating()
-	}
 }
 
-function startEditing(webhook: ProjectWebhook) {
-	creating.value = false
-	editingId.value = webhook.id
+function saveEvents(webhook: ListedWebhook, selected: string[]) {
+	return update.mutateAsync({projectId: props.projectId, id: webhook.id, target_url: webhook.target_url, events: selected})
 }
 
-async function saveEvents(webhook: ProjectWebhook, selected: string[]) {
-	const id = webhook.id
-	try {
-		await update.mutateAsync({projectId: props.projectId, id, target_url: webhook.target_url, events: selected})
-	} catch {
-		return
-	}
-	if (editingId.value === id) {
-		editingId.value = null
-	}
-}
-
-async function removeWebhook(webhook: ProjectWebhook) {
-	const projectId = props.projectId
-	const confirmed = await confirm({
-		title: t('projectWebhooks.deleteTitle'),
-		description: t('projectWebhooks.deleteDescription', {url: webhook.target_url}),
-		confirmLabel: t('projectWebhooks.delete'),
-		tone: 'danger',
-	})
-	if (confirmed) {
-		remove.mutate({projectId, id: webhook.id})
-	}
+// The webhook's own project: the confirmation may outlive a switch to another one.
+function removeWebhook(webhook: ListedWebhook) {
+	remove.mutate({projectId: webhook.project_id ?? props.projectId, id: webhook.id})
 }
 </script>
 
@@ -152,77 +100,20 @@ async function removeWebhook(webhook: ProjectWebhook) {
 			>
 				{{ t('projectWebhooks.readOnly') }}
 			</UiAlert>
-			<WebhookForm
-				v-if="creating"
-				v-model="draft"
+			<!-- A secret typed for one project must not follow the user to another. -->
+			<WebhookTargets
+				:key="projectId"
+				:webhooks="webhooks"
 				:events="events"
 				:events-loading="eventsPending"
-				:loading="create.isPending.value"
-				@submit="submit"
-				@cancel="cancelCreating"
+				:editable="canWrite"
+				:empty-description="t('projectWebhooks.emptyDescription')"
+				:create-pending="create.isPending.value"
+				:saving-id="update.isPending.value ? update.variables.value?.id : undefined"
+				:create="createWebhook"
+				:save-events="saveEvents"
+				:remove="removeWebhook"
 			/>
-			<section
-				v-if="webhooks.length"
-				class="grid gap-1"
-			>
-				<UiSectionHeading
-					:title="t('projectWebhooks.listTitle')"
-					:count="webhooks.length"
-				>
-					<template
-						v-if="canWrite && !creating"
-						#actions
-					>
-						<UiButton
-							variant="ghost"
-							size="sm"
-							:icon="Plus"
-							class="-me-2 pointer-coarse:h-11"
-							@click="startCreating"
-						>
-							{{ t('projectWebhooks.new') }}
-						</UiButton>
-					</template>
-				</UiSectionHeading>
-				<ul
-					role="list"
-					class="divide-y divide-line"
-				>
-					<WebhookRow
-						v-for="webhook in webhooks"
-						:key="webhook.id"
-						:webhook="webhook"
-						:events="events"
-						:events-loading="eventsPending"
-						:editable="canWrite"
-						:editing="editingId === webhook.id"
-						:saving="update.isPending.value && update.variables.value?.id === webhook.id"
-						@edit="startEditing(webhook)"
-						@cancel="editingId = null"
-						@save="selected => saveEvents(webhook, selected)"
-						@remove="removeWebhook(webhook)"
-					/>
-				</ul>
-			</section>
-			<UiEmptyState
-				v-else-if="!creating"
-				:title="t('projectWebhooks.emptyTitle')"
-				:description="canWrite ? t('projectWebhooks.emptyDescription') : undefined"
-				class="py-8"
-			>
-				<template
-					v-if="canWrite"
-					#actions
-				>
-					<UiButton
-						variant="primary"
-						:icon="Plus"
-						@click="startCreating"
-					>
-						{{ t('projectWebhooks.new') }}
-					</UiButton>
-				</template>
-			</UiEmptyState>
 		</div>
 		<template
 			v-if="inModal"

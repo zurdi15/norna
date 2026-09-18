@@ -1957,6 +1957,179 @@
 		},
 		"saved": "Guardado"
 	},
+	"settingsIntegrations": {
+		"copied": "Copiado",
+		"username": "Nombre de usuario",
+		"loadFailed": "No se ha podido cargar.",
+		"retry": "Reintentar",
+		"secret": {
+			"onlyOnce": "Cópialo ahora y guárdalo en un lugar seguro: no podrás volver a verlo.",
+			"token": "token",
+			"done": "Hecho"
+		},
+		"tokens": {
+			"new": "Nuevo token",
+			"create": "Crear token",
+			"createdTitle": "“{title}” está listo",
+			"name": "Nombre",
+			"nameHint": "Para reconocerlo más adelante, por ejemplo por la app que lo usa.",
+			"namePlaceholder": "p. ej., Home Assistant",
+			"titleRequired": "Ponle un nombre al token.",
+			"expiry": {
+				"label": "Caduca",
+				"days": "{count} días",
+				"year": "1 año",
+				"custom": "Otra fecha",
+				"pick": "Fecha de caducidad",
+				"on": "Deja de funcionar el {date}.",
+				"invalid": "Elige un día posterior a hoy."
+			},
+			"permissions": "Permisos",
+			"permissionsHint": "El token solo puede hacer lo que marques aquí. Limítalo a lo que necesita la app.",
+			"permissionsFixed": "Este token tiene justo estos permisos.",
+			"permissionsRequired": "Marca al menos un permiso.",
+			"presets": "Predefinidos",
+			"presetNames": {
+				"readOnly": "Solo lectura",
+				"tasks": "Tareas",
+				"projects": "Proyectos",
+				"fullAccess": "Acceso total"
+			},
+			"searchPermissions": "Buscar permisos…",
+			"pickedCount": "{count} marcados | {count} marcado | {count} marcados",
+			"allOf": "Todo {group}",
+			"details": "Detalles",
+			"expires": "caduca el {date}",
+			"expired": "caducó {ago}",
+			"createdAgo": "creado {ago}",
+			"deleteNamed": "Borrar “{title}”",
+			"delete": "Borrar token",
+			"deleteTitle": "¿Borrar este token?",
+			"deleteDescription": "Lo que use “{title}” pierde el acceso al momento. No se puede deshacer.",
+			"deleted": "Token borrado"
+		},
+		"apiTokens": {
+			"description": "Deja que scripts y otras apps usen la API de Norna sin tu contraseña.",
+			"listTitle": "Tokens",
+			"emptyTitle": "Aún no hay tokens de API",
+			"emptyDescription": "Crea uno por app, con solo los permisos que necesita.",
+			"docs": "Documentación de la API"
+		},
+		"caldav": {
+			"description": "Sincroniza tus tareas con apps de calendario y de tareas que admitan CalDAV.",
+			"url": "Dirección del servidor",
+			"passwordOrToken": "Inicia sesión con tu nombre de usuario y tu contraseña o un token de CalDAV.",
+			"tokenOnly": "Tu cuenta no tiene contraseña aquí: inicia sesión con tu nombre de usuario y un token de CalDAV como contraseña.",
+			"docs": "Más sobre CalDAV",
+			"tokensTitle": "Tokens de CalDAV",
+			"tokenName": "Token de CalDAV",
+			"createdTitle": "Tu token de CalDAV está listo",
+			"emptyTitle": "Aún no hay tokens de CalDAV",
+			"deleteNamed": "Borrar el token #{id}",
+			"deleteTitle": "¿Borrar este token de CalDAV?",
+			"deleteDescription": "Las apps que lo usan dejan de sincronizar. No se puede deshacer.",
+			"apiTokenHint": "También sirve un token de API con el permiso caldav access.",
+			"apiTokenLink": "Crear uno"
+		},
+		"feeds": {
+			"description": "Sigue tus notificaciones desde cualquier lector de feeds.",
+			"url": "Feed Atom",
+			"howTo": "Los lectores de feeds inician sesión con tu nombre de usuario y, como contraseña, un token que pueda leer el feed.",
+			"tokensTitle": "Tokens del feed",
+			"emptyTitle": "Aún no hay tokens para el feed",
+			"emptyDescription": "Crea uno para tu lector de feeds.",
+			"newToken": "Nuevo token para el feed",
+			"tokenTitle": "Lector de feeds"
+		},
+		"mcp": {
+			"description": "Conecta un asistente de IA a tus tareas, proyectos y etiquetas con el Model Context Protocol.",
+			"endpoint": "Endpoint",
+			"docs": "Más sobre MCP",
+			"tokensTitle": "Tokens de MCP",
+			"emptyTitle": "Aún no hay tokens de MCP",
+			"emptyDescription": "Crea uno y sigue los pasos para tu asistente.",
+			"allTokens": "Todos los tokens de API",
+			"newToken": "Nuevo token de MCP",
+			"createdTitle": "Tu token de MCP está listo",
+			"typedPreset": "Herramientas, lectura y escritura",
+			"client": "Conéctalo a",
+			"chooseClient": "Elige una app",
+			"clientHelp": "Guía de configuración de {client}",
+			"values": {
+				"command": "comando",
+				"environment": "variable",
+				"config": "configuración",
+				"url": "URL",
+				"header": "cabecera",
+				"token": "token"
+			},
+			"clients": {
+				"claudeCode": {
+					"command": "Ejecuta esto en una terminal:",
+					"verify": "Después abre Claude Code y ejecuta /mcp para comprobar la conexión."
+				},
+				"codex": {
+					"environment": "Pon el token en el entorno de tu shell:",
+					"command": "Añade el servidor:",
+					"config": "O, en su lugar, añade esto a ~/.codex/config.toml:",
+					"note": "Abre Codex desde una shell con NORNA_MCP_TOKEN definida. Vuelve a definirla en cada shell nueva o guárdala en el perfil de tu shell."
+				},
+				"claudeDesktop": {
+					"open": "Abre Personalizar → Conectores → Añadir conector personalizado. En los planes Team o Enterprise lo añade un propietario en Ajustes de la organización → Conectores.",
+					"url": "Llámalo Norna y escribe esta URL:",
+					"auth": "Pon Autenticación en Sin inicio de sesión.",
+					"header": "En Cabeceras de la petición, elige authorization y pega este valor entero, con “Bearer ” incluido; después añade el conector:",
+					"beta": "Las cabeceras de la petición son una beta que solo tienen algunas organizaciones. Si no las ves, este conector aún no está disponible para tu cuenta."
+				},
+				"mistral": {
+					"open": "En la barra lateral, abre Context → Connectors → Add Connector → Add Custom Connector.",
+					"url": "Llámalo Norna, escribe esta URL y pulsa Connect:",
+					"token": "Elige la autenticación HTTP Bearer y pega este token:"
+				},
+				"chatgpt": {
+					"unavailable": "ChatGPT solo se conecta a servidores MCP con OAuth, que aún no está disponible, así que este token no funciona ahí."
+				},
+				"other": {
+					"title": "Otra",
+					"url": "Usa el transporte HTTP streamable con este endpoint:",
+					"header": "Envía esta cabecera en cada petición:"
+				}
+			}
+		},
+		"bots": {
+			"description": "Cuentas tuyas para automatizaciones: se unen a proyectos, reciben tareas y solo inician sesión con tokens de API.",
+			"new": "Nuevo bot",
+			"create": "Crear bot",
+			"created": "Bot creado",
+			"deleted": "Bot borrado",
+			"editTitle": "Editar bot",
+			"edit": "Editar",
+			"enable": "Activar",
+			"disable": "Desactivar",
+			"disabled": "Desactivado",
+			"delete": "Borrar bot",
+			"deleteTitle": "¿Borrar {username}?",
+			"deleteDescription": "Se borran el bot y todo lo que es suyo, y sus tokens dejan de funcionar. No se puede deshacer.",
+			"actionsFor": "Acciones de {username}",
+			"username": "Nombre de usuario",
+			"usernameHint": "Los nombres de usuario de los bots siempre empiezan por bot-.",
+			"usernameRequired": "Escribe un nombre de usuario.",
+			"usernameSpaces": "El nombre de usuario no puede tener espacios.",
+			"name": "Nombre visible (opcional)",
+			"nameHint": "Lo que se ve cuando comenta o recibe una tarea.",
+			"namePlaceholder": "p. ej., Asistente",
+			"tokensTitle": "Tokens de API",
+			"noTokens": "Aún no tiene tokens: no puede iniciar sesión hasta tener uno.",
+			"newToken": "Nuevo token para {username}",
+			"emptyTitle": "Aún no hay bots",
+			"emptyDescription": "Crea uno por automatización, para que su trabajo aparezca con su propio nombre."
+		},
+		"webhooks": {
+			"description": "Cada webhook recibe una petición POST cuando una de tus tareas envía un recordatorio o vence, en cualquier proyecto.",
+			"emptyDescription": "Añade uno para recibir tus recordatorios en otro servicio, como un chat."
+		},
+		"copy": "Copiar"
+	},
 	"settingsAccount": {
 		"currentPassword": "Contraseña actual",
 		"passwordRequired": "Escribe tu contraseña.",
