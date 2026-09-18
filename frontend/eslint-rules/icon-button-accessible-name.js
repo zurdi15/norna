@@ -1,16 +1,16 @@
 /**
  * Flags icon-only buttons without an accessible name.
  *
- * BaseButton renders a bare <button>/<a> and does not enforce a name, so an
- * icon-only usage without aria-label is announced as just "button" (WCAG 1.1.1
- * / 4.1.2). Same for XButton's icon-only mode. Visible text, {{ }} content,
+ * A <button> or UiButton whose only content is an icon (UiIcon or svg) is
+ * announced as just "button" (WCAG 1.1.1 / 4.1.2). UiIconButton is not checked:
+ * its required `label` prop already names it. Visible text, {{ }} content,
  * sr-only spans, aria-label(ledby) or title all count as a name; unknown child
  * components are assumed to render text so the rule only fires on clearly
  * icon-only content.
  */
 
 const NAME_ATTRS = new Set(['aria-label', 'aria-labelledby', 'title'])
-const ICON_ELEMENTS = new Set(['Icon', 'icon', 'svg', 'i'])
+const ICON_ELEMENTS = new Set(['UiIcon', 'svg', 'i'])
 // Plain containers we can safely look through for text
 const TRANSPARENT_ELEMENTS = new Set(['span', 'div', 'template'])
 
@@ -36,10 +36,6 @@ function hasNameAttr(element, extra = []) {
 		// static attr must be non-empty; bound attrs are trusted
 		return attr.directive || (attr.value != null && attr.value.value.trim() !== '')
 	})
-}
-
-function getAttr(element, name) {
-	return element.startTag.attributes.find(attr => attrName(attr) === name)
 }
 
 function contentProvidesName(element) {
@@ -77,7 +73,7 @@ export default {
 	meta: {
 		type: 'problem',
 		docs: {
-			description: 'require an accessible name on icon-only BaseButton/XButton usages',
+			description: 'require an accessible name on icon-only button/UiButton usages',
 		},
 		messages: {
 			missingName: 'Icon-only <{{component}}> has no accessible name — screen readers announce it as just "button". Add aria-label (translated via $t) or visible/sr-only text.',
@@ -103,15 +99,11 @@ export default {
 		}
 
 		return services.defineTemplateBodyVisitor({
-			'VElement[rawName="BaseButton"]'(node) {
-				check(node, 'BaseButton')
+			'VElement[rawName="button"]'(node) {
+				check(node, 'button')
 			},
-			'VElement[rawName="XButton"]'(node) {
-				// XButton is only icon-only when it has an icon prop and no slot content
-				if (getAttr(node, 'icon') === undefined) {
-					return
-				}
-				check(node, 'XButton')
+			'VElement[rawName="UiButton"]'(node) {
+				check(node, 'UiButton')
 			},
 		})
 	},
