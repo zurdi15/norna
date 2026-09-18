@@ -312,13 +312,15 @@ const router = createRouter({
 			// Saved-filter pseudo-projects use IDs <= -2; -1 is the Favorites pseudo-project.
 			path: '/projects/:projectId(-[2-9]\\d*|-1\\d+)/settings/edit',
 			name: 'filter.settings.edit',
-			component: PagePending,
+			component: () => import('@/pages/filters/PageSavedFilterEdit.vue'),
+			meta: {modal: true, title: 'savedFilters.editTitle'},
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
 		},
 		{
 			path: '/projects/:projectId(-[2-9]\\d*|-1\\d+)/settings/delete',
 			name: 'filter.settings.delete',
-			component: PagePending,
+			component: () => import('@/pages/filters/PageSavedFilterDelete.vue'),
+			meta: {modal: true, title: 'savedFilters.deleteTitle'},
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
 		},
 		{
@@ -386,7 +388,8 @@ const router = createRouter({
 		{
 			path: '/filters/new',
 			name: 'filters.create',
-			component: PagePending,
+			component: () => import('@/pages/filters/PageSavedFilterCreate.vue'),
+			meta: {modal: true, title: 'savedFilters.new'},
 		},
 		{
 			path: '/auth/openid/:provider',

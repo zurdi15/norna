@@ -1768,6 +1768,19 @@
 		"deleteTitle": "¿Borrar este equipo?",
 		"deleteDescription": "{team} se borra y sus miembros pierden los proyectos compartidos a través de él. No se puede deshacer."
 	},
+	"savedFilters": {
+		"new": "Nuevo filtro guardado",
+		"create": "Crear filtro",
+		"editTitle": "Editar filtro guardado",
+		"deleteTitle": "Borrar filtro guardado",
+		"deleteDescription": "«{filter}» se borrará. Sus tareas siguen en sus proyectos.",
+		"delete": "Borrar filtro",
+		"explanation": "Un filtro guardado aparece como un proyecto, con las tareas de cualquier proyecto que cumplan su consulta.",
+		"titleLabel": "Nombre",
+		"titleRequired": "Un filtro guardado necesita un nombre.",
+		"query": "Consulta",
+		"description": "Nota"
+	},
 	"projectViews": {
 		"title": "Vistas",
 		"new": "Nueva vista",

@@ -2562,6 +2562,19 @@
     "deleteTitle": "Delete this team?",
     "deleteDescription": "{team} is deleted and its members lose the projects shared through it. This can't be undone."
   },
+  "savedFilters": {
+    "new": "New saved filter",
+    "create": "Create filter",
+    "editTitle": "Edit saved filter",
+    "deleteTitle": "Delete saved filter",
+    "deleteDescription": "“{filter}” will be deleted. Its tasks stay in their projects.",
+    "delete": "Delete filter",
+    "explanation": "A saved filter shows up like a project, with the tasks of any project that match its query.",
+    "titleLabel": "Name",
+    "titleRequired": "A saved filter needs a name.",
+    "query": "Query",
+    "description": "Note"
+  },
   "projectViews": {
     "title": "Views",
     "new": "New view",
