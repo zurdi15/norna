@@ -358,7 +358,7 @@ describe('patch task mutation', () => {
 
 		expect(sdk.patchTasksRead.mock.calls[0]?.[0].body).toEqual([{op: 'replace', path: '/project_id', value: 2}])
 		expect(cachedDetail()).toMatchObject({project_id: 2, identifier: 'WRK-1'})
-		expect(message.success).toHaveBeenCalledWith({message: 'The task was moved to Work.'})
+		expect(message.success).toHaveBeenCalledWith({message: 'Moved to Work'})
 	})
 })
 
