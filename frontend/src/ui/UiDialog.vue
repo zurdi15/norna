@@ -16,6 +16,7 @@ import {X} from '@lucide/vue'
 import {cn} from './cn'
 import {useBreakpoints} from './composables/useBreakpoints'
 import {useKeyboardInset} from './composables/useKeyboardInset'
+import {useLayerStack} from './composables/useLayerStack'
 import {useSwipeDismiss} from './composables/useSwipeDismiss'
 import UiIconButton from './UiIconButton.vue'
 
@@ -46,6 +47,7 @@ const open = defineModel<boolean>('open', {default: false})
 const {t} = useI18n()
 const {isMd} = useBreakpoints()
 const keyboardInset = useKeyboardInset()
+const layer = useLayerStack(open)
 
 const asSheet = computed(() => props.presentation === 'sheet' || (props.presentation === 'auto' && !isMd.value))
 
@@ -63,9 +65,9 @@ const swipe = useSwipeDismiss({
 
 watch(open, isOpen => isOpen && swipe.reset())
 
-const sheetStyle = computed(() => asSheet.value
-	? {...swipe.style.value, bottom: `${keyboardInset.value}px`}
-	: undefined)
+const contentStyle = computed(() => asSheet.value
+	? {...layer.contentStyle.value, ...swipe.style.value, bottom: `${keyboardInset.value}px`}
+	: layer.contentStyle.value)
 
 const SIZES = {
 	sm: 'max-w-sm',
@@ -102,17 +104,14 @@ function close() {
 		</DialogTrigger>
 		<DialogPortal>
 			<DialogOverlay
-				class="
-					fixed inset-0 z-(--z-overlay) bg-scrim
-					data-[state=closed]:animate-fade-out
-					data-[state=open]:animate-fade-in
-				"
+				:style="layer.backdropStyle.value"
+				class="fixed inset-0 bg-scrim data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in"
 			/>
 			<DialogContent
 				v-bind="description ? {} : NO_DESCRIPTION"
-				:style="sheetStyle"
+				:style="contentStyle"
 				:class="cn(
-					'fixed z-(--z-modal) flex flex-col border-line bg-surface-raised shadow-overlay focus:outline-none',
+					'fixed flex flex-col border-line bg-surface-raised shadow-overlay focus:outline-none',
 					asSheet
 						? `
 							inset-x-0 bottom-0 max-h-[92dvh] rounded-t-sheet border-t pb-safe

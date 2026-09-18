@@ -3,6 +3,7 @@ import type {HTMLAttributes} from 'vue'
 import {DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, VisuallyHidden} from 'reka-ui'
 
 import {cn} from './cn'
+import {useLayerStack} from './composables/useLayerStack'
 
 // A panel sliding in from the start edge, for navigation on screens without room for a sidebar.
 const props = withDefaults(defineProps<{
@@ -15,22 +16,21 @@ const props = withDefaults(defineProps<{
 
 const open = defineModel<boolean>('open', {default: false})
 const NO_DESCRIPTION = {'aria-describedby': undefined}
+const layer = useLayerStack(open)
 </script>
 
 <template>
 	<DialogRoot v-model:open="open">
 		<DialogPortal>
 			<DialogOverlay
-				class="
-					fixed inset-0 z-(--z-overlay) bg-scrim
-					data-[state=closed]:animate-fade-out
-					data-[state=open]:animate-fade-in
-				"
+				:style="layer.backdropStyle.value"
+				class="fixed inset-0 bg-scrim data-[state=closed]:animate-fade-out data-[state=open]:animate-fade-in"
 			/>
 			<DialogContent
 				v-bind="NO_DESCRIPTION"
+				:style="layer.contentStyle.value"
 				:class="cn(
-					'fixed inset-y-0 inset-s-0 z-(--z-modal) flex w-[min(20rem,85vw)] flex-col border-e border-line bg-canvas-subtle',
+					'fixed inset-y-0 inset-s-0 flex w-[min(20rem,85vw)] flex-col border-e border-line bg-canvas-subtle',
 					'pt-safe pb-safe shadow-overlay focus:outline-none',
 					'data-[state=closed]:animate-drawer-out data-[state=open]:animate-drawer-in',
 					props.class,

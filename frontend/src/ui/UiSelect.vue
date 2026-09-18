@@ -80,7 +80,7 @@ const selected = computed(() => props.items.find(item => item.value === model.va
 				position="popper"
 				:side-offset="4"
 				class="
-					z-(--z-overlay) max-h-(--reka-select-content-available-height) min-w-(--reka-select-trigger-width)
+					z-(--z-popover) max-h-(--reka-select-content-available-height) min-w-(--reka-select-trigger-width)
 					overflow-hidden rounded-lg border border-line bg-surface-raised p-1 shadow-overlay
 					data-[state=closed]:animate-pop-out
 					data-[state=open]:animate-pop-in

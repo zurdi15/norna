@@ -25,6 +25,6 @@ export interface UiMenuHeading {
 export type UiMenuEntry = UiMenuAction | UiMenuSeparator | UiMenuHeading
 
 export const menuPanelClass = [
-	'z-(--z-overlay) min-w-52 rounded-lg border border-line bg-surface-raised p-1 shadow-overlay focus:outline-none',
+	'z-(--z-popover) min-w-52 rounded-lg border border-line bg-surface-raised p-1 shadow-overlay focus:outline-none',
 	'data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in',
 ]

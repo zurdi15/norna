@@ -40,7 +40,7 @@ function close() {
 				:collision-padding="8"
 				:aria-label="label"
 				:class="cn(
-					'z-(--z-overlay) max-h-(--reka-popover-content-available-height) w-72 overflow-y-auto',
+					'z-(--z-popover) max-h-(--reka-popover-content-available-height) w-72 overflow-y-auto',
 					'origin-(--reka-popover-content-transform-origin) rounded-lg border border-line bg-surface-raised shadow-overlay',
 					'focus:outline-none data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in',
 					props.class,

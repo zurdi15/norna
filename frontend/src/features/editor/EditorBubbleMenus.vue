@@ -88,7 +88,7 @@ const toolClass = 'aria-pressed:bg-accent-subtle aria-pressed:text-accent'
 		:editor="editor"
 		:should-show="showTextMenu"
 		:options="{placement: 'top', offset: 8, shift: {padding: 8}}"
-		class="z-(--z-overlay)"
+		class="z-(--z-popover)"
 	>
 		<div
 			role="toolbar"
@@ -134,7 +134,7 @@ const toolClass = 'aria-pressed:bg-accent-subtle aria-pressed:text-accent'
 		:editor="editor"
 		:should-show="showLinkMenu"
 		:options="{placement: 'bottom-start', offset: 6, shift: {padding: 8}}"
-		class="z-(--z-overlay)"
+		class="z-(--z-popover)"
 	>
 		<div
 			:class="panelClass"
@@ -176,7 +176,7 @@ const toolClass = 'aria-pressed:bg-accent-subtle aria-pressed:text-accent'
 		:editor="editor"
 		:should-show="showImageMenu"
 		:options="{placement: 'top', offset: 8}"
-		class="z-(--z-overlay)"
+		class="z-(--z-popover)"
 	>
 		<div
 			:class="panelClass"
@@ -199,7 +199,7 @@ const toolClass = 'aria-pressed:bg-accent-subtle aria-pressed:text-accent'
 		:should-show="showTableMenu"
 		:get-referenced-virtual-element="tableReference"
 		:options="{placement: 'top-end', offset: 6, shift: {padding: 8}}"
-		class="z-(--z-overlay)"
+		class="z-(--z-popover)"
 	>
 		<div
 			role="toolbar"

@@ -153,9 +153,14 @@
 	--z-sticky: 10;
 	--z-nav: 20;
 	--z-overlay: 40;
+
+	/* Dialogs stack upwards from here in the order they open (useLayerStack). */
 	--z-modal: 50;
-	--z-toast: 60;
-	--z-tooltip: 70;
+
+	/* Menus, popovers and selects: above any dialog they open from. */
+	--z-popover: 80;
+	--z-toast: 90;
+	--z-tooltip: 100;
 
 	--size-touch: 44px;
 }
