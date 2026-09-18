@@ -33,12 +33,16 @@ const router = createRouter({
 		}
 
 		// Otherwise just scroll to the top
-		return {
-			'inset-inline-start': 0,
-			'inset-block-start': 0,
-		}
+		return {left: 0, top: 0}
 	},
 	routes: [
+		// Design system catalog, dev builds only. Public so it can be checked without an account.
+		...(import.meta.env.DEV ? [{
+			path: '/_ui',
+			name: 'dev.ui',
+			component: () => import('@/pages/dev/PageUiCatalog.vue'),
+			meta: {public: true},
+		}] : []),
 		{
 			path: '/',
 			name: 'home',
@@ -435,7 +439,20 @@ const router = createRouter({
 	],
 })
 
-export async function getAuthForRoute(to: RouteLocation, authStore) {
+// The slice of the auth store the guard reads, so tests can pass a plain object.
+interface RouteAuthState {
+	authUser: unknown
+	authLinkShare: unknown
+	info?: {pendingEmail?: string | null} | null
+	verifyEmail(token: string): Promise<unknown>
+	refreshUserInfo(): Promise<unknown>
+}
+
+export async function getAuthForRoute(to: RouteLocation, authStore: RouteAuthState) {
+	if (to.meta?.public) {
+		return
+	}
+
 	// vue-router already decoded to.hash once, so slicing off the prefix yields the original
 	// fullPath (e.g. /oauth/authorize?...) losslessly — no extra decodeURIComponent needed.
 	const redirectDest = to.name === 'user.login' && to.hash.startsWith(REDIRECT_HASH_PREFIX)
