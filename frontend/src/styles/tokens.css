@@ -16,8 +16,8 @@
 	/* Surfaces: snow in light, polar night in dark */
 	--color-canvas: light-dark(oklch(0.985 0.003 250), oklch(0.163 0.011 258));
 	--color-canvas-subtle: light-dark(oklch(0.966 0.005 250), oklch(0.188 0.012 258));
-	--color-surface: light-dark(oklch(1 0 0), oklch(0.203 0.013 258));
-	--color-surface-raised: light-dark(oklch(1 0 0), oklch(0.238 0.014 258));
+	--color-surface: light-dark(oklch(1 0 none), oklch(0.203 0.013 258));
+	--color-surface-raised: light-dark(oklch(1 0 none), oklch(0.238 0.014 258));
 	--color-line: light-dark(oklch(0.918 0.006 250), oklch(0.285 0.014 258));
 	--color-line-strong: light-dark(oklch(0.855 0.01 250), oklch(0.365 0.016 258));
 
@@ -31,7 +31,7 @@
 	--color-accent-hover: color-mix(in oklch, var(--color-accent), var(--color-ink) 14%);
 	--color-accent-subtle: color-mix(in oklch, var(--color-accent) 11%, var(--color-surface));
 	--color-accent-line: color-mix(in oklch, var(--color-accent) 38%, var(--color-surface));
-	--color-on-accent: light-dark(oklch(0.99 0 0), oklch(0.17 0.02 258));
+	--color-on-accent: light-dark(oklch(0.99 0 none), oklch(0.17 0.02 258));
 
 	/* State: aurora, ember, lingon */
 	--color-success: light-dark(oklch(0.56 0.115 165), oklch(0.76 0.12 165));
@@ -40,7 +40,7 @@
 	--color-success-subtle: color-mix(in oklch, var(--color-success) 10%, var(--color-surface));
 	--color-warning-subtle: color-mix(in oklch, var(--color-warning) 12%, var(--color-surface));
 	--color-danger-subtle: color-mix(in oklch, var(--color-danger) 9%, var(--color-surface));
-	--color-on-state: light-dark(oklch(0.99 0 0), oklch(0.17 0.02 258));
+	--color-on-state: light-dark(oklch(0.99 0 none), oklch(0.17 0.02 258));
 
 	--color-scrim: light-dark(oklch(0.22 0.02 258 / 0.32), oklch(0.05 0.01 258 / 0.62));
 
