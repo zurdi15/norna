@@ -6,7 +6,6 @@ import {
 	SECONDS_A_WEEK,
 	SECONDS_A_YEAR,
 } from '@/constants/date'
-import {secondsToPeriod} from '@/helpers/time/period'
 import {REPEAT_TYPES, type IRepeatAfter, type IRepeatType} from '@/types/IRepeatAfter'
 import {TASK_REPEAT_MODES, type IRepeatMode} from '@/types/IRepeatMode'
 
@@ -22,9 +21,28 @@ const SECONDS_PER_UNIT: Record<IRepeatType, number> = {
 	years: SECONDS_A_YEAR,
 }
 
+// Largest first. Months and years have no fixed length; the api repeats them as 30- and 365-day blocks.
+const UNITS_LARGEST_FIRST: readonly [IRepeatType, number][] = [
+	[REPEAT_TYPES.Years, SECONDS_A_YEAR],
+	[REPEAT_TYPES.Months, SECONDS_A_MONTH],
+	[REPEAT_TYPES.Weeks, SECONDS_A_WEEK],
+	[REPEAT_TYPES.Days, SECONDS_A_DAY],
+	[REPEAT_TYPES.Hours, SECONDS_A_HOUR],
+	[REPEAT_TYPES.Minutes, SECONDS_A_MINUTE],
+]
+
+/** The largest whole unit for an interval in seconds, e.g. 60 days → 2 months. */
 export function parseRepeatAfter(seconds: number | null | undefined): RepeatAfter {
-	const period = secondsToPeriod(seconds ?? 0)
-	return {type: period.unit, amount: period.amount}
+	const total = seconds ?? 0
+	if (total <= 0) {
+		return {type: REPEAT_TYPES.Hours, amount: 0}
+	}
+	for (const [type, size] of UNITS_LARGEST_FIRST) {
+		if (total % size === 0) {
+			return {type, amount: total / size}
+		}
+	}
+	return {type: REPEAT_TYPES.Seconds, amount: total}
 }
 
 export function repeatAfterToSeconds(repeatAfter: RepeatAfter | number | null | undefined): number {

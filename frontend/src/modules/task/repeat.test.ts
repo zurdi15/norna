@@ -42,6 +42,8 @@ describe('parseRepeatAfter', () => {
 		expect(parseRepeatAfter(3 * SECONDS_A_DAY)).toEqual({type: 'days', amount: 3})
 		expect(parseRepeatAfter(5 * SECONDS_A_HOUR)).toEqual({type: 'hours', amount: 5})
 		expect(parseRepeatAfter(90 * 60)).toEqual({type: 'minutes', amount: 90})
+		expect(parseRepeatAfter(2 * SECONDS_A_MONTH)).toEqual({type: 'months', amount: 2})
+		expect(parseRepeatAfter(SECONDS_A_YEAR)).toEqual({type: 'years', amount: 1})
 	})
 
 	it('round-trips through repeatAfterToSeconds', () => {
