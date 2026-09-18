@@ -1242,6 +1242,19 @@
 		},
 		"list": {
 			"loading": "Cargando tareas"
+		},
+		"bulk": {
+			"select": "Seleccionar",
+			"deselect": "Quitar de la selección",
+			"isSelected": ", seleccionada",
+			"selected": "{count} seleccionada | {count} seleccionadas",
+			"toolbar": "Tareas seleccionadas",
+			"complete": "Completar",
+			"move": "Mover a otro proyecto",
+			"clear": "Salir de la selección",
+			"updated": "{count} tarea actualizada | {count} tareas actualizadas",
+			"deleteTitle": "¿Borrar esta tarea? | ¿Borrar {count} tareas?",
+			"deleteDescription": "Se borrarán junto con sus comentarios y adjuntos. No se puede deshacer."
 		}
 	},
 	"agenda": {

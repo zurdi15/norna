@@ -3,6 +3,7 @@ import {computed, useTemplateRef, type HTMLAttributes} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {
 	Check,
+	CheckSquare,
 	Ellipsis,
 	ListChecks,
 	ListTree,
@@ -31,6 +32,7 @@ import UiMenu from '@/ui/UiMenu.vue'
 import PriorityMark from './PriorityMark.vue'
 import TaskCheck from './TaskCheck.vue'
 import TaskDue from './TaskDue.vue'
+import {useTaskSelection} from './selection'
 import {useTaskLink} from './useTaskLink'
 import {useTaskMenu} from './useTaskMenu'
 
@@ -46,11 +48,14 @@ const props = withDefaults(defineProps<{
 	showIdentifier?: boolean
 	// The keyboard cursor of the list (j/k).
 	active?: boolean
+	// Tasks of a project shared read-only: they open, but don't change.
+	readOnly?: boolean
 	class?: HTMLAttributes['class']
 }>(), {
 	showProject: true,
 	showIdentifier: undefined,
 	active: false,
+	readOnly: false,
 	class: undefined,
 })
 
@@ -83,13 +88,34 @@ const hasMeta = computed(() => due.value !== null || repeats.value || project.va
 	|| labels.value.length > 0 || assignees.value.length > 0 || checklist.value.total > 0
 	|| subtasks.value.length > 0 || attachments.value > 0 || comments.value > 0)
 
-const menuItems = computed(() => taskMenu(props.task))
+// Pages that allow bulk actions provide a selection; once something is picked, a tap selects.
+const selection = useTaskSelection()
+const selected = computed(() => selection?.isSelected(props.task.id) ?? false)
+const selecting = computed(() => selection?.active ?? false)
+
+const menuItems = computed(() => selection && !props.readOnly
+	? [
+		{label: selected.value ? t('tasks.bulk.deselect') : t('tasks.bulk.select'), icon: CheckSquare, onSelect: () => selection.toggle(props.task)},
+		{type: 'separator' as const},
+		...taskMenu(props.task),
+	]
+	: taskMenu(props.task, {readOnly: props.readOnly}))
+
+function onClickCapture(event: MouseEvent) {
+	if (!selecting.value || !selection) {
+		return
+	}
+	event.preventDefault()
+	event.stopPropagation()
+	selection.toggle(props.task)
+}
 
 const contextMenu = useTemplateRef<InstanceType<typeof UiContextMenu>>('contextMenu')
 const root = useTemplateRef<HTMLElement>('root')
 const swipe = useSwipeAction({
 	target: root,
-	enabled: computed(() => !hasFinePointer.value),
+	// Read-only rows keep the long press for their menu; a swipe would promise a change.
+	enabled: computed(() => !hasFinePointer.value && !selecting.value && !props.readOnly),
 	onSwipeRight: () => actions.setDone(props.task, !done.value),
 	onSwipeLeft: () => contextMenu.value?.open(),
 })
@@ -110,6 +136,7 @@ const countClass = 'inline-flex items-center gap-1 font-mono text-2xs text-ink-f
 		<div
 			ref="root"
 			:class="cn('@container relative touch-pan-y overflow-hidden select-none touch-callout-none', props.class)"
+			@click.capture="onClickCapture"
 		>
 			<!-- What letting go will do, revealed under the row as it slides. -->
 			<div
@@ -131,10 +158,11 @@ const countClass = 'inline-flex items-center gap-1 font-mono text-2xs text-ink-f
 
 			<div
 				:data-active="active || undefined"
+				:data-selected="selected || undefined"
 				:style="swipe.style.value"
 				:class="cn(
 					'group/row relative flex gap-3 bg-canvas px-4 py-2.5 transition-colors duration-150',
-					'hover:bg-canvas-subtle data-active:bg-canvas-subtle',
+					'hover:bg-canvas-subtle data-active:bg-canvas-subtle data-selected:bg-accent-subtle',
 					'@xl:min-h-9.5 @xl:items-center @xl:px-6 @xl:py-1.5',
 				)"
 			>
@@ -142,6 +170,7 @@ const countClass = 'inline-flex items-center gap-1 font-mono text-2xs text-ink-f
 					:model-value="done"
 					:priority="task.priority"
 					:label="t(done ? 'tasks.row.markUndone' : 'tasks.row.markDone', {title: task.title})"
+					:disabled="readOnly"
 					class="z-10 mt-0.5 @xl:mt-0"
 					@update:modelValue="setDone"
 				/>
@@ -170,6 +199,10 @@ const countClass = 'inline-flex items-center gap-1 font-mono text-2xs text-ink-f
 							)"
 						>
 							{{ task.title }}
+							<span
+								v-if="selected"
+								class="sr-only"
+							>{{ t('tasks.bulk.isSelected') }}</span>
 						</RouterLink>
 					</div>
 

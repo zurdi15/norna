@@ -5,6 +5,7 @@ import type {Task} from '@/client/generated'
 import {cn} from '@/ui/cn'
 import UiSectionHeading from '@/ui/UiSectionHeading.vue'
 
+import {useTaskSelection} from './selection'
 import TaskRow from './TaskRow.vue'
 import {useTaskListKeyboard} from './useTaskListKeyboard'
 
@@ -34,7 +35,8 @@ const props = withDefaults(defineProps<{
 
 const visibleGroups = computed(() => props.groups.filter(group => group.tasks.length > 0 || group.keepWhenEmpty))
 const allTasks = computed(() => visibleGroups.value.flatMap(group => group.tasks))
-const {activeId} = useTaskListKeyboard(allTasks, computed(() => props.keyboard))
+const selection = useTaskSelection()
+const {activeId} = useTaskListKeyboard(allTasks, computed(() => props.keyboard), selection && (task => selection.toggle(task)))
 </script>
 
 <template>

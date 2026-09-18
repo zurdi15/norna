@@ -43,15 +43,25 @@ export function useTaskMenu() {
 	}
 
 	// onDeleted lets the detail leave the page of a task that no longer exists.
-	return (task: Task, options: {onDeleted?: () => void} = {}): UiMenuEntry[] => {
+	// Tasks of a read-only project can only be opened and shared.
+	return (task: Task, options: {onDeleted?: () => void, readOnly?: boolean} = {}): UiMenuEntry[] => {
+		const open: UiMenuEntry = {
+			label: t('tasks.actions.open'),
+			icon: PanelRightOpen,
+			onSelect: () => void router.push(taskLink(task.id ?? 0)),
+		}
+		const copyLink: UiMenuEntry = {
+			label: t('tasks.actions.copyLink'),
+			icon: Link,
+			onSelect: () => void actions.copyLink(task),
+		}
+		if (options.readOnly) {
+			return [open, copyLink]
+		}
 		const today = startOfDay(new Date())
 		const due = getTaskDate(task.due_date)
 		return [
-			{
-				label: t('tasks.actions.open'),
-				icon: PanelRightOpen,
-				onSelect: () => void router.push(taskLink(task.id ?? 0)),
-			},
+			open,
 			{
 				label: task.done ? t('tasks.actions.markUndone') : t('tasks.actions.markDone'),
 				icon: task.done ? Circle : CircleCheck,
@@ -85,11 +95,7 @@ export function useTaskMenu() {
 				icon: task.is_favorite ? StarOff : Star,
 				onSelect: () => actions.toggleFavorite(task),
 			},
-			{
-				label: t('tasks.actions.copyLink'),
-				icon: Link,
-				onSelect: () => void actions.copyLink(task),
-			},
+			copyLink,
 			{
 				label: t('tasks.actions.duplicate'),
 				icon: Copy,

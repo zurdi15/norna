@@ -4,6 +4,7 @@ import {useMutation} from '@tanstack/vue-query'
 import type {Task} from '@/client/generated'
 import {queryClient} from '@/client/queryClient'
 import {
+	bulkUpdateTasksMutationOptions,
 	deleteTaskMutationOptions,
 	duplicateTaskMutationOptions,
 	patchTaskMutationOptions,
@@ -28,6 +29,7 @@ export const useTaskActionsStore = defineStore('taskActions', () => {
 	const favorite = useMutation(toggleTaskFavoriteMutationOptions(), queryClient)
 	const duplicate = useMutation(duplicateTaskMutationOptions(), queryClient)
 	const remove = useMutation(deleteTaskMutationOptions(), queryClient)
+	const bulk = useMutation(bulkUpdateTasksMutationOptions(), queryClient)
 
 	/** Patches fields of a task; a failure is already reported by the mutation. */
 	async function update(task: Task, changes: TaskPatch) {
@@ -111,6 +113,54 @@ export const useTaskActionsStore = defineStore('taskActions', () => {
 		}
 	}
 
+	function taskIds(tasks: readonly Task[]): number[] {
+		return tasks.map(task => task.id).filter((id): id is number => id !== undefined)
+	}
+
+	/** One change to several tasks; done and due dates can be undone from the toast. */
+	async function bulkUpdate(tasks: readonly Task[], changes: TaskPatch) {
+		const ids = taskIds(tasks)
+		if (ids.length === 0) {
+			return
+		}
+		try {
+			await bulk.mutateAsync({ids, patch: changes})
+		} catch {
+			return
+		}
+		const undo = changes.done !== undefined || changes.due_date !== undefined
+		success({message: t('tasks.bulk.updated', ids.length)}, undo ? [{
+			title: t('tasks.actions.undo'),
+			// Each task gets its own previous value back.
+			callback: () => {
+				for (const task of tasks) {
+					void update(task, {
+						...(changes.done !== undefined ? {done: task.done ?? false} : {}),
+						...(changes.due_date !== undefined ? {due_date: task.due_date ?? null} : {}),
+					})
+				}
+			},
+		}] : [])
+	}
+
+	async function bulkDelete(tasks: readonly Task[]): Promise<boolean> {
+		const ids = taskIds(tasks)
+		if (ids.length === 0) {
+			return false
+		}
+		const confirmed = await confirm({
+			title: t('tasks.bulk.deleteTitle', ids.length),
+			description: t('tasks.bulk.deleteDescription'),
+			confirmLabel: t('tasks.actions.delete'),
+			tone: 'danger',
+		})
+		if (!confirmed) {
+			return false
+		}
+		const results = await Promise.allSettled(ids.map(id => remove.mutateAsync(id)))
+		return results.every(result => result.status === 'fulfilled')
+	}
+
 	async function copyLink(task: Task) {
 		if (task.id === undefined) {
 			return
@@ -132,6 +182,8 @@ export const useTaskActionsStore = defineStore('taskActions', () => {
 		toggleFavorite,
 		duplicateTask,
 		deleteTask,
+		bulkUpdate,
+		bulkDelete,
 		copyLink,
 	}
 })

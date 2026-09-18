@@ -32,6 +32,14 @@ onLongPress(target, () => {
 	}
 	navigator.vibrate?.(8)
 	sheetOpen.value = true
+	// Lifting the finger after the long press turns into a click on whatever the opening
+	// sheet put under it; that click must not pick an action.
+	const swallow = (event: Event) => {
+		event.preventDefault()
+		event.stopPropagation()
+	}
+	document.addEventListener('click', swallow, {capture: true, once: true})
+	setTimeout(() => document.removeEventListener('click', swallow, {capture: true}), 800)
 }, {delay: 450, distanceThreshold: 8})
 
 defineExpose({

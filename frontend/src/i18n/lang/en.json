@@ -2066,6 +2066,19 @@
     },
     "list": {
       "loading": "Loading tasks"
+    },
+    "bulk": {
+      "select": "Select",
+      "deselect": "Deselect",
+      "isSelected": ", selected",
+      "selected": "{count} selected | {count} selected",
+      "toolbar": "Selected tasks",
+      "complete": "Complete",
+      "move": "Move to project",
+      "clear": "Clear the selection",
+      "updated": "{count} task updated | {count} tasks updated",
+      "deleteTitle": "Delete this task? | Delete {count} tasks?",
+      "deleteDescription": "They will be deleted with their comments and attachments. This can't be undone."
     }
   },
   "agenda": {

@@ -13,10 +13,11 @@ function overlayOpen(): boolean {
 }
 
 /**
- * j/k move a cursor through the tasks of the page and Enter opens the task under it.
+ * j/k move a cursor through the tasks of the page, Enter opens the task under it and
+ * x selects it (where the page offers bulk actions).
  * While the detail panel is open, moving the cursor also opens the next task in it.
  */
-export function useTaskListKeyboard(tasks: Ref<readonly Task[]>, enabled: Ref<boolean>) {
+export function useTaskListKeyboard(tasks: Ref<readonly Task[]>, enabled: Ref<boolean>, onSelect?: (task: Task) => void) {
 	const route = useRoute()
 	const router = useRouter()
 	const taskLink = useTaskLink()
@@ -71,6 +72,14 @@ export function useTaskListKeyboard(tasks: Ref<readonly Task[]>, enabled: Ref<bo
 				if (task && (event.key === 'o' || event.target === document.body)) {
 					event.preventDefault()
 					open(task)
+				}
+				break
+			}
+			case 'x': {
+				const task = tasks.value.find(candidate => candidate.id === activeId.value)
+				if (task && onSelect) {
+					event.preventDefault()
+					onSelect(task)
 				}
 				break
 			}
