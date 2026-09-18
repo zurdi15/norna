@@ -1275,7 +1275,8 @@
 		"upcomingEmpty": "Nada vence en los próximos siete días.",
 		"allClear": "Todo en orden. Las tareas con fecha aparecerán aquí según se acerque su día.",
 		"loadFailed": "No se han podido cargar tus tareas",
-		"retry": "Reintentar"
+		"retry": "Reintentar",
+		"recentProjects": "Proyectos recientes"
 	},
 	"pickers": {
 		"unitShort": {
@@ -1526,7 +1527,9 @@
 		"showUndated": "Sin fecha",
 		"undated": "Sin fecha",
 		"emptyTitle": "No viene nada",
-		"emptyDescription": "Aquí aparecerán las tareas que venzan en este rango."
+		"emptyDescription": "Aquí aparecerán las tareas que venzan en este rango.",
+		"until": "Hasta…",
+		"untilDate": "Hasta {date}"
 	},
 	"projectView": {
 		"title": "Proyecto",
@@ -1636,6 +1639,15 @@
 			"collapse": "Ocultar las subtareas de {task}",
 			"datesChanged": "Fechas cambiadas: {title}"
 		}
+	},
+	"projects": {
+		"title": "Proyectos",
+		"new": "Nuevo proyecto",
+		"showArchived": "Archivados",
+		"archived": "Archivado",
+		"subprojects": "{count} subproyecto | {count} subproyectos",
+		"emptyTitle": "Aún no hay proyectos",
+		"emptyDescription": "Los proyectos agrupan tus tareas y sus vistas. Crea el primero."
 	},
 	"kanban": {
 		"columns": "Columnas",

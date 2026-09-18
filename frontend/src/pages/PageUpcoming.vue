@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import {computed} from 'vue'
+import {computed, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useRoute, useRouter} from 'vue-router'
 import {useQuery} from '@tanstack/vue-query'
-import {CalendarOff, History} from '@lucide/vue'
+import {CalendarOff, CalendarRange, History} from '@lucide/vue'
 
 import type {Task} from '@/client/generated'
 import {everyTaskQuery} from '@/client/queries/tasks'
@@ -13,12 +13,16 @@ import MobileRootActions from '@/features/shell/MobileRootActions.vue'
 import PageHeader from '@/features/shell/PageHeader.vue'
 import TaskList, {type TaskListGroup} from '@/features/tasks/TaskList.vue'
 import TaskListSkeleton from '@/features/tasks/TaskListSkeleton.vue'
+import {provideTaskSelection} from '@/features/tasks/selection'
+import TaskSelectionBar from '@/features/tasks/TaskSelectionBar.vue'
 import {startOfDay} from '@/helpers/time/dateMath'
 import {getTaskDate} from '@/modules/task/task'
 import UiButton from '@/ui/UiButton.vue'
 import UiChip from '@/ui/UiChip.vue'
 import UiEmptyState from '@/ui/UiEmptyState.vue'
 import UiSegmented from '@/ui/UiSegmented.vue'
+import UiAdaptivePopover from '@/ui/UiAdaptivePopover.vue'
+import DatePicker from '@/features/tasks/pickers/DatePicker.vue'
 
 /**
  * What's coming, day by day. The range lives in the url (from/to take dates or
@@ -33,6 +37,7 @@ const props = defineProps<{
 
 defineOptions({inheritAttrs: false})
 
+const selection = provideTaskSelection()
 const {t, locale} = useI18n()
 const route = useRoute()
 const router = useRouter()
@@ -60,7 +65,6 @@ const range = computed<RangeKey | 'custom'>(() => {
 
 const rangeItems = computed(() => [
 	...(Object.keys(RANGES) as RangeKey[]).map(key => ({value: key, label: t(`upcoming.ranges.${key}`)})),
-	...(range.value === 'custom' ? [{value: 'custom' as const, label: t('upcoming.ranges.custom')}] : []),
 ])
 
 function update(query: Partial<{from: string, to: string, showOverdue: boolean, showNulls: boolean}>) {
@@ -73,6 +77,18 @@ function update(query: Partial<{from: string, to: string, showOverdue: boolean, 
 			showNulls: String(query.showNulls ?? props.showNulls),
 		},
 	})
+}
+
+// A custom range runs from now until a picked day (inclusive).
+const untilOpen = ref(false)
+const until = ref<Date | null>(null)
+function pickUntil(date: Date | null) {
+	untilOpen.value = false
+	if (date) {
+		const end = new Date(date)
+		end.setHours(23, 59, 59, 0)
+		update({from: 'now', to: end.toISOString()})
+	}
 }
 
 function pickRange(key: RangeKey | 'custom') {
@@ -150,6 +166,27 @@ const groups = computed<TaskListGroup[]>(() => {
 					class="shrink-0"
 					@update:modelValue="pickRange"
 				/>
+				<UiAdaptivePopover
+					v-model:open="untilOpen"
+					:title="t('upcoming.until')"
+					class="w-80"
+				>
+					<template #trigger>
+						<UiChip
+							as="button"
+							:pressed="range === 'custom'"
+							:icon="CalendarRange"
+							class="shrink-0"
+						>
+							{{ range === 'custom' && dateTo instanceof Date ? t('upcoming.untilDate', {date: dates.short(dateTo)}) : t('upcoming.until') }}
+						</UiChip>
+					</template>
+					<DatePicker
+						v-model="until"
+						:clearable="false"
+						@select="pickUntil"
+					/>
+				</UiAdaptivePopover>
 				<UiChip
 					as="button"
 					:pressed="showOverdue"
@@ -196,4 +233,5 @@ const groups = computed<TaskListGroup[]>(() => {
 			</template>
 		</TaskList>
 	</div>
+	<TaskSelectionBar :selection="selection" />
 </template>

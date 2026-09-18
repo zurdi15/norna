@@ -243,7 +243,7 @@ const router = createRouter({
 		{
 			path: '/projects',
 			name: 'projects.index',
-			component: PagePending,
+			component: () => import('@/pages/PageProjects.vue'),
 		},
 		{
 			path: '/projects/new',

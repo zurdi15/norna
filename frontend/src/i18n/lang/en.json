@@ -2069,7 +2069,8 @@
     "upcomingEmpty": "Nothing due in the next seven days.",
     "allClear": "All clear. Tasks with a due date show up here as their day comes.",
     "loadFailed": "Your tasks couldn't be loaded",
-    "retry": "Try again"
+    "retry": "Try again",
+    "recentProjects": "Recent projects"
   },
   "pickers": {
     "unitShort": {
@@ -2320,7 +2321,9 @@
     "showUndated": "No date",
     "undated": "No date",
     "emptyTitle": "Nothing coming up",
-    "emptyDescription": "Tasks with a due date in this range will show up here."
+    "emptyDescription": "Tasks with a due date in this range will show up here.",
+    "until": "Until…",
+    "untilDate": "Until {date}"
   },
   "projectView": {
     "title": "Project",
@@ -2430,6 +2433,15 @@
       "collapse": "Hide the subtasks of {task}",
       "datesChanged": "Dates changed: {title}"
     }
+  },
+  "projects": {
+    "title": "Projects",
+    "new": "New project",
+    "showArchived": "Archived",
+    "archived": "Archived",
+    "subprojects": "{count} sub-project | {count} sub-projects",
+    "emptyTitle": "No projects yet",
+    "emptyDescription": "Projects hold your tasks and their views. Create the first one."
   },
   "kanban": {
     "columns": "Columns",
