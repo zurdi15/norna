@@ -22,6 +22,10 @@ const props = withDefaults(defineProps<{
 	iconEnd?: Component
 	// Keyboard hint shown on pointer devices, e.g. "Mod+Enter".
 	shortcut?: string
+	// Also make the shortcut press this button (see directives/shortcut).
+	bindShortcut?: boolean
+	// Icon buttons show the shortcut in their tooltip instead.
+	showShortcut?: boolean
 	class?: HTMLAttributes['class']
 }>(), {
 	variant: 'secondary',
@@ -34,6 +38,8 @@ const props = withDefaults(defineProps<{
 	icon: undefined,
 	iconEnd: undefined,
 	shortcut: undefined,
+	bindShortcut: false,
+	showShortcut: true,
 	class: undefined,
 })
 
@@ -54,6 +60,7 @@ function onClickCapture(event: MouseEvent) {
 
 <template>
 	<Primitive
+		v-shortcut="bindShortcut && shortcut ? shortcut : ''"
 		:as="as"
 		:type="isNativeButton ? type : undefined"
 		:disabled="isNativeButton ? disabled : undefined"
@@ -75,7 +82,7 @@ function onClickCapture(event: MouseEvent) {
 			:size="iconSize"
 		/>
 		<UiKbd
-			v-if="shortcut"
+			v-if="shortcut && showShortcut"
 			:shortcut="shortcut"
 			class="ms-1 hidden pointer-fine:inline-flex"
 		/>

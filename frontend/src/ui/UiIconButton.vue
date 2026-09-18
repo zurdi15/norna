@@ -18,6 +18,7 @@ const props = withDefaults(defineProps<{
 	disabled?: boolean
 	loading?: boolean
 	shortcut?: string
+	bindShortcut?: boolean
 	tooltip?: boolean
 	tooltipSide?: 'top' | 'right' | 'bottom' | 'left'
 	class?: HTMLAttributes['class']
@@ -29,6 +30,7 @@ const props = withDefaults(defineProps<{
 	disabled: false,
 	loading: false,
 	shortcut: undefined,
+	bindShortcut: false,
 	tooltip: true,
 	tooltipSide: 'top',
 	class: undefined,
@@ -55,6 +57,9 @@ defineOptions({inheritAttrs: false})
 			:size="size"
 			:disabled="disabled"
 			:loading="loading"
+			:shortcut="shortcut"
+			:bind-shortcut="bindShortcut"
+			:show-shortcut="false"
 			:aria-label="label"
 			:class="cn(iconButtonSizes[size], props.class)"
 		>

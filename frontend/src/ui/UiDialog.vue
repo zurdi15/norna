@@ -26,6 +26,8 @@ const props = withDefaults(defineProps<{
 	hideTitle?: boolean
 	// auto: centered panel from md up, bottom sheet below.
 	presentation?: 'auto' | 'sheet' | 'center'
+	// Centered panels only: 'top' anchors near the top, for palettes whose height changes while typing.
+	position?: 'middle' | 'top'
 	size?: 'sm' | 'md' | 'lg'
 	class?: HTMLAttributes['class']
 	bodyClass?: HTMLAttributes['class']
@@ -33,6 +35,7 @@ const props = withDefaults(defineProps<{
 	description: undefined,
 	hideTitle: false,
 	presentation: 'auto',
+	position: 'middle',
 	size: 'md',
 	class: undefined,
 	bodyClass: undefined,
@@ -74,6 +77,16 @@ const SIZES = {
 // there is no description) drops the dangling reference and its console warning.
 const NO_DESCRIPTION = {'aria-describedby': undefined}
 
+// Reka focuses the first tabbable element on open, which for a hidden title is the close
+// button. Content marked data-autofocus (a search box) takes the focus instead.
+function onOpenAutoFocus(event: Event) {
+	const target = sheet.value?.querySelector<HTMLElement>('[data-autofocus]')
+	if (target) {
+		event.preventDefault()
+		target.focus()
+	}
+}
+
 function close() {
 	open.value = false
 }
@@ -107,12 +120,15 @@ function close() {
 							data-[state=open]:animate-sheet-in
 						`
 						: [
-							'top-1/2 left-1/2 max-h-[85dvh] w-[calc(100vw-2rem)] -translate-1/2 rounded-lg border',
+							position === 'top'
+								? 'top-[12dvh] left-1/2 max-h-[76dvh] w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg border'
+								: 'top-1/2 left-1/2 max-h-[85dvh] w-[calc(100vw-2rem)] -translate-1/2 rounded-lg border',
 							'data-[state=closed]:animate-pop-out data-[state=open]:animate-pop-in',
 							SIZES[size],
 						],
 					props.class,
 				)"
+				@openAutoFocus="onOpenAutoFocus"
 			>
 				<div
 					ref="handle"

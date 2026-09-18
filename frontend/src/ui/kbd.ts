@@ -28,6 +28,17 @@ const COMMON_KEYS: Record<string, string> = {
 	arrowleft: '←',
 	arrowright: '→',
 	space: '␣',
+	slash: '/',
+	period: '.',
+	comma: ',',
+	backslash: '\\',
+}
+
+/**
+ * A sequence like "KeyG KeyO" (press G, then O) as one keycap list per step.
+ */
+export function shortcutToSteps(shortcut: string, apple = isAppleDevice()): string[][] {
+	return shortcut.split(' ').filter(Boolean).map(step => shortcutToKeycaps(step, apple))
 }
 
 /**

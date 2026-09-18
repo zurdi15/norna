@@ -7,6 +7,8 @@ export interface UiMenuAction {
 	// Hint only; the shortcut itself is registered elsewhere.
 	shortcut?: string
 	tone?: 'default' | 'danger'
+	// Shows a check mark: for picking one option out of a group, like the theme.
+	checked?: boolean
 	disabled?: boolean
 	onSelect: () => void
 }

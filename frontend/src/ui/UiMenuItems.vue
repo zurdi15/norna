@@ -11,6 +11,8 @@ import {
 
 import {cn} from './cn'
 import type {UiMenuAction, UiMenuEntry} from './menu'
+import {Check} from '@lucide/vue'
+
 import UiIcon from './UiIcon.vue'
 import UiKbd from './UiKbd.vue'
 
@@ -73,7 +75,13 @@ function runFromSheet(action: UiMenuAction) {
 					size="lg"
 					:class="entry.tone === 'danger' ? undefined : 'text-ink-muted'"
 				/>
-				{{ entry.label }}
+				<span class="flex-1">{{ entry.label }}</span>
+				<UiIcon
+					v-if="entry.checked"
+					:icon="Check"
+					size="lg"
+					class="text-accent"
+				/>
 			</button>
 		</template>
 	</template>
@@ -111,6 +119,11 @@ function runFromSheet(action: UiMenuAction) {
 					:class="entry.tone === 'danger' ? undefined : 'text-ink-faint'"
 				/>
 				<span class="flex-1 truncate">{{ entry.label }}</span>
+				<UiIcon
+					v-if="entry.checked"
+					:icon="Check"
+					class="text-accent"
+				/>
 				<UiKbd
 					v-if="entry.shortcut"
 					:shortcut="entry.shortcut"

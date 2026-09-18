@@ -91,6 +91,8 @@
 	--animate-pop-out: pop-out var(--duration-fast) var(--ease-in-out);
 	--animate-sheet-in: sheet-in var(--duration-slow) var(--ease-out);
 	--animate-sheet-out: sheet-out var(--duration-base) var(--ease-in-out);
+	--animate-drawer-in: drawer-in var(--duration-slow) var(--ease-out);
+	--animate-drawer-out: drawer-out var(--duration-base) var(--ease-in-out);
 
 	@keyframes fade-in {
 		from {
@@ -127,6 +129,18 @@
 	@keyframes sheet-out {
 		to {
 			transform: translateY(100%);
+		}
+	}
+
+	@keyframes drawer-in {
+		from {
+			transform: translateX(-100%);
+		}
+	}
+
+	@keyframes drawer-out {
+		to {
+			transform: translateX(-100%);
 		}
 	}
 }

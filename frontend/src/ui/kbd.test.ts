@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest'
 
-import {shortcutToKeycaps} from './kbd'
+import {shortcutToKeycaps, shortcutToSteps} from './kbd'
 
 describe('shortcutToKeycaps', () => {
 	it('uses symbols for modifiers on Apple devices', () => {
@@ -19,5 +19,14 @@ describe('shortcutToKeycaps', () => {
 	it('draws common named keys as glyphs', () => {
 		expect(shortcutToKeycaps('Enter', true)).toEqual(['⏎'])
 		expect(shortcutToKeycaps('Escape', false)).toEqual(['Esc'])
+	})
+
+	it('splits sequences into steps', () => {
+		expect(shortcutToSteps('KeyG KeyO', false)).toEqual([['G'], ['O']])
+		expect(shortcutToSteps('Mod+KeyK', true)).toEqual([['⌘', 'K']])
+	})
+
+	it('names punctuation keys by their symbol', () => {
+		expect(shortcutToKeycaps('Shift+Slash', false)).toEqual(['Shift', '/'])
 	})
 })
