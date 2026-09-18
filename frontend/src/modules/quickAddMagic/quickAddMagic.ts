@@ -1,4 +1,5 @@
 import {parseDate} from './dateParser'
+import {extractNaturalDate} from './naturalDate'
 import {PREFIXES, PrefixMode} from './prefixes'
 import {getItemsFromPrefix, getLabelsFromPrefix, getProjectFromPrefix} from './prefixParser'
 import {getPriority} from './priorityParser'
@@ -55,6 +56,15 @@ export const parseTaskText = (text: string, prefixesMode: PrefixMode = PrefixMod
 	const {newText, date} = parseDate(result.text, now)
 	result.text = newText
 	result.date = date
+
+	// The parser only speaks English; a Spanish date phrase is found and taken out separately.
+	if (result.date === null) {
+		const natural = extractNaturalDate(result.text, now)
+		if (natural) {
+			result.text = natural.text
+			result.date = natural.date
+		}
+	}
 
 	return cleanupResult(result, prefixes)
 }
