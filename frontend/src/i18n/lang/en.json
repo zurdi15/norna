@@ -637,7 +637,7 @@
   },
   "filters": {
     "title": "Filters",
-    "clear": "Clear Filters",
+    "clear": "Clear",
     "showResults": "Show results",
     "noResults": "No results",
     "fromView": "The current view has a filter set as well:",
@@ -666,7 +666,7 @@
     },
     "query": {
       "label": "Filter query",
-      "placeholder": "Type a search or filter query…",
+      "placeholder": "done = false && dueDate < now+7d",
       "help": {
         "intro": "To filter tasks, you can use a query syntax similar to SQL. The available fields for filtering include:",
         "link": "How does this work?",
@@ -715,6 +715,27 @@
           "priorityOneOrTwoPastDue": "Matches tasks with priority level 1 or 2 and a due date in the past"
         }
       }
+    },
+    "showDone": "Show done tasks",
+    "includeNulls": "Include tasks without dates",
+    "includeNullsHint": "Only matters when filtering by a date.",
+    "activeCount": "{count} active condition | {count} active conditions",
+    "help": {
+      "toggle": "Syntax",
+      "fields": "Fields",
+      "groups": {
+        "dates": "Dates",
+        "people": "People",
+        "organize": "Organize",
+        "status": "Status"
+      },
+      "operators": "Operators",
+      "relativeDates": "Relative dates",
+      "relativeDatesHint": "Add or subtract d (days), w (weeks), M (months) or y (years) from now; /d rounds to the start of the day.",
+      "examples": "Examples",
+      "insert": "Insert {token}",
+      "exampleDueSoon": "Not done and due within 7 days",
+      "exampleUrgent": "Priority 4 or higher, or labelled urgent"
     }
   },
   "sorting": {

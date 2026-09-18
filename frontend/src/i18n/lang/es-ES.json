@@ -283,7 +283,7 @@
 	},
 	"filters": {
 		"title": "Filtros",
-		"clear": "Limpiar Filtros",
+		"clear": "Limpiar",
 		"attributes": {
 			"title": "Título",
 			"titlePlaceholder": "El título del filtro guardado va aquí…",
@@ -303,6 +303,31 @@
 		"edit": {
 			"title": "Editar este Filtro Guardado",
 			"success": "El filtro se guardó con éxito."
+		},
+		"showDone": "Mostrar tareas completadas",
+		"includeNulls": "Incluir tareas sin fechas",
+		"includeNullsHint": "Solo afecta al filtrar por una fecha.",
+		"activeCount": "{count} condición activa | {count} condiciones activas",
+		"query": {
+			"label": "Consulta de filtro",
+			"placeholder": "done = false && dueDate < now+7d"
+		},
+		"help": {
+			"toggle": "Sintaxis",
+			"fields": "Campos",
+			"groups": {
+				"dates": "Fechas",
+				"people": "Personas",
+				"organize": "Organización",
+				"status": "Estado"
+			},
+			"operators": "Operadores",
+			"relativeDates": "Fechas relativas",
+			"relativeDatesHint": "Suma o resta d (días), w (semanas), M (meses) o y (años) a now; /d redondea al inicio del día.",
+			"examples": "Ejemplos",
+			"insert": "Insertar {token}",
+			"exampleDueSoon": "Sin completar y con vencimiento en 7 días",
+			"exampleUrgent": "Prioridad 4 o más, o con la etiqueta urgent"
 		}
 	},
 	"migrate": {

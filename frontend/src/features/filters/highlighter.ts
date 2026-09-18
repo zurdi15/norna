@@ -5,18 +5,28 @@ import {
 	DATE_FIELDS,
 	FILTER_JOIN_OPERATOR,
 	FILTER_OPERATORS,
-	FILTER_OPERATORS_REGEX,
-	getFilterFieldRegexPattern,
 	LABEL_FIELDS,
 	PROJECT_FIELDS,
 } from '@/helpers/filters'
 import {getLabelByExactTitle} from '@/client/queries/labels'
 import type {Label} from '@/client/generated'
 import {getLabelColor} from '@/composables/useLabelStyles'
-import {getTextColor} from '@/helpers/color/getTextColor'
 import {Node} from '@tiptap/pm/model'
 
 export const filterHighlighterKey = new PluginKey<DecorationSet>('filterHighlighter')
+
+const escapeRegex = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+// Longest first, or `>= 3` reads as `>` and the value `= 3`.
+const OPERATORS_LONGEST_FIRST = [...FILTER_OPERATORS]
+	.sort((a, b) => b.length - a.length)
+	.map(op => /^[a-z]/i.test(op) ? `\\b${escapeRegex(op)}\\b` : escapeRegex(op))
+	.join('|')
+
+// getFilterFieldRegexPattern from the helpers, with the operators in that order.
+function getFilterFieldRegexPattern(field: string): RegExp {
+	return new RegExp('\\b(' + field + ')\\s*(' + OPERATORS_LONGEST_FIRST + ')\\s*(?:(["\'])((?:\\\\.|(?!\\3)[^\\\\])*?)\\3|([^&|()<]+?))(?=\\s*(?:&&|\\||\\)|$))', 'g')
+}
 
 export function createFilterHighlighter(getLabels: () => Label[]) {
 	return new Plugin({
@@ -45,10 +55,10 @@ export function decorateDocument(doc: Node, labels: Label[]) {
 	const text = doc.textContent
 
 	const fieldRegex = new RegExp(`\\b(${AVAILABLE_FILTER_FIELDS.join('|')})\\b`, 'g')
-	const operatorRegex = new RegExp(FILTER_OPERATORS_REGEX, 'g')
+	const operatorRegex = new RegExp(`(${OPERATORS_LONGEST_FIRST})`, 'g')
 	const logicalRegex = new RegExp(`(${FILTER_JOIN_OPERATOR.map(op => op.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g')
 	const fieldValueRegex = new RegExp(
-		`(${AVAILABLE_FILTER_FIELDS.join('|')})\\s*(${FILTER_OPERATORS.map(op => op.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\s*([^\\s&|()]+)`,
+		`(${AVAILABLE_FILTER_FIELDS.join('|')})\\s*(${OPERATORS_LONGEST_FIRST})\\s*([^\\s&|()]+)`,
 		'gi',
 	)
 
@@ -112,14 +122,14 @@ export function decorateDocument(doc: Node, labels: Label[]) {
 
 				if (label) {
 					const color = getLabelColor(label)
-					// Use label color if found
+					// The stylesheet tints the value with the label's color, readable in either theme.
 					decorations.push(
 						Decoration.inline(from, to, {
 							class: 'label-value',
-							style: `background-color: ${color}; color: ${getTextColor(color)};`,
+							...(color ? {style: `--label-color: ${color}`} : {}),
 						}),
 					)
-					
+
 					return
 				}
 

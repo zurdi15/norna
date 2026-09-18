@@ -1,5 +1,15 @@
 import {describe, it, expect} from 'vitest'
-import {calculateReplacementRange} from './FilterAutocomplete'
+import {Schema} from '@tiptap/pm/model'
+import {EditorState, TextSelection, type Transaction} from '@tiptap/pm/state'
+import type {EditorView} from '@tiptap/pm/view'
+
+import {
+	applyFilterSuggestion,
+	calculateReplacementRange,
+	createFilterAutocompletePlugin,
+	dismissFilterAutocomplete,
+	filterAutocompleteKey,
+} from './FilterAutocomplete'
 
 describe('FilterAutocomplete', () => {
 	describe('calculateReplacementRange', () => {
@@ -217,5 +227,100 @@ describe('FilterAutocomplete', () => {
 				expect(result.replaceTo).toBe(31)
 			})
 		})
+	})
+})
+
+const schema = new Schema({
+	nodes: {
+		doc: {content: 'paragraph'},
+		paragraph: {content: 'text*'},
+		text: {inline: true},
+	},
+})
+
+// Enough of a view for the helpers, which only read the state and dispatch.
+function createView(text: string, caret = text.length) {
+	const plugin = createFilterAutocompletePlugin({onChange: () => {}, onKeyDown: () => false})
+	const doc = schema.node('doc', null, [schema.node('paragraph', null, text ? [schema.text(text)] : [])])
+	let state = EditorState.create({doc, plugins: [plugin]})
+	state = state.apply(state.tr.setSelection(TextSelection.create(state.doc, caret + 1)))
+	const view = {
+		get state() {
+			return state
+		},
+		dispatch(tr: Transaction) {
+			state = state.apply(tr)
+		},
+	}
+	return view as unknown as EditorView & {state: EditorState}
+}
+
+function type(view: EditorView, text: string) {
+	view.dispatch(view.state.tr.insertText(text))
+}
+
+const text = (view: EditorView) => view.state.doc.textContent
+const pluginState = (view: EditorView) => filterAutocompleteKey.getState(view.state)!
+
+describe('filter autocomplete plugin', () => {
+	it('stays closed for content it starts with', () => {
+		const view = createView('labels in urg')
+		expect(pluginState(view)).toMatchObject({active: false, context: {search: 'urg'}})
+	})
+
+	it('opens while typing a value and follows it', () => {
+		const view = createView('done = false && ')
+		type(view, 'labels in ur')
+		expect(pluginState(view)).toMatchObject({active: true, context: {search: 'ur', kind: 'labels'}})
+		type(view, ' ')
+		expect(pluginState(view).active).toBe(false)
+	})
+
+	it('closes on Escape until the next edit', () => {
+		const view = createView('')
+		type(view, 'labels in ur')
+		dismissFilterAutocomplete(view)
+		expect(pluginState(view).active).toBe(false)
+		type(view, 'g')
+		expect(pluginState(view)).toMatchObject({active: true, context: {search: 'urg'}})
+	})
+
+	it('closes when the caret moves to another value', () => {
+		const view = createView('')
+		type(view, 'labels in a && project = b')
+		expect(pluginState(view).active).toBe(true)
+		view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, 12)))
+		expect(pluginState(view)).toMatchObject({active: false, context: {field: 'labels'}})
+	})
+
+	it('replaces the value being typed and closes', () => {
+		const view = createView('')
+		type(view, 'labels in urgent, ho')
+		applyFilterSuggestion(view, pluginState(view).context!, 'home')
+		expect(text(view)).toBe('labels in urgent, home')
+		expect(view.state.selection.from).toBe(text(view).length + 1)
+		expect(pluginState(view).active).toBe(false)
+	})
+
+	it('keeps the rest of the query after the caret', () => {
+		const view = createView('labels = wo && done = false', 'labels = wo'.length)
+		type(view, 'r')
+		applyFilterSuggestion(view, pluginState(view).context!, 'Work To Do')
+		expect(text(view)).toBe('labels = Work To Do && done = false')
+	})
+
+	it('quotes values that would end an unquoted value', () => {
+		const view = createView('')
+		type(view, 'project = ho')
+		applyFilterSuggestion(view, pluginState(view).context!, 'Home (old)')
+		expect(text(view)).toBe('project = "Home (old)"')
+	})
+
+	it('closes the quote the value was opened with', () => {
+		const view = createView('project = "Wo" && done = true', 'project = "Wo'.length)
+		type(view, 'r')
+		applyFilterSuggestion(view, pluginState(view).context!, 'Work To Do')
+		expect(text(view)).toBe('project = "Work To Do" && done = true')
+		expect(view.state.selection.from).toBe('project = "Work To Do"'.length + 1)
 	})
 })
