@@ -51,18 +51,18 @@ const router = createRouter({
 		{
 			path: '/:pathMatch(.*)*',
 			name: 'not-found',
-			component: PagePending,
+			component: () => import('@/pages/PageNotFound.vue'),
 		},
 		// if you omit the last `*`, the `/` character in params will be encoded when resolving or pushing
 		{
 			path: '/:pathMatch(.*)',
 			name: 'bad-not-found',
-			component: PagePending,
+			component: () => import('@/pages/PageNotFound.vue'),
 		},
 		{
 			path: '/login',
 			name: 'user.login',
-			component: PagePending,
+			component: () => import('@/pages/auth/PageLogin.vue'),
 			meta: {
 				title: 'user.auth.login',
 			},
@@ -70,7 +70,7 @@ const router = createRouter({
 		{
 			path: '/get-password-reset',
 			name: 'user.password-reset.request',
-			component: PagePending,
+			component: () => import('@/pages/auth/PageRequestPasswordReset.vue'),
 			meta: {
 				title: 'user.auth.resetPassword',
 			},
@@ -78,7 +78,7 @@ const router = createRouter({
 		{
 			path: '/password-reset',
 			name: 'user.password-reset.reset',
-			component: PagePending,
+			component: () => import('@/pages/auth/PagePasswordReset.vue'),
 			meta: {
 				title: 'user.auth.resetPassword',
 			},
@@ -88,7 +88,7 @@ const router = createRouter({
 			name: 'user.register',
 			// FIXME: use dynamic imports
 			// component: PagePending,
-			component: PagePending,
+			component: () => import('@/pages/auth/PageRegister.vue'),
 			meta: {
 				title: 'user.auth.createAccount',
 			},
@@ -212,7 +212,7 @@ const router = createRouter({
 			name: 'link-share.auth',
 			// FIXME: use dynamic imports
 			// component: PagePending,
-			component: PagePending,
+			component: () => import('@/pages/auth/PageLinkShareAuth.vue'),
 		},
 		{
 			path: '/tasks/:id',
@@ -382,7 +382,7 @@ const router = createRouter({
 		{
 			path: '/auth/openid/:provider',
 			name: 'openid.auth',
-			component: PagePending,
+			component: () => import('@/pages/auth/PageOpenIdCallback.vue'),
 		},
 		{
 			path: '/oauth/authorize',
