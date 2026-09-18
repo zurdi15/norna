@@ -12,10 +12,4 @@ files: [
     "dest": "en-api.json",
     "type": "json",
   },
-  {
-    "source": "frontend/src/i18n/lang/en.json",
-    "translation": "frontend/src/i18n/lang/%locale%.json",
-    "dest": "en.json",
-    "type": "json",
-  },
 ]

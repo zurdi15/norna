@@ -71,6 +71,7 @@ var (
 		"dev:make-listener":        Dev.MakeListener,
 		"dev:make-notification":    Dev.MakeNotification,
 		"dev:prepare-worktree":     Dev.PrepareWorktree,
+		"dev:sync-upstream":        Dev.SyncUpstream,
 		"dev:tag-release":          Dev.TagRelease,
 		"test:e2e":                 Test.E2E,
 		"test:e2e-api":             Test.E2EApi,
@@ -2017,6 +2018,52 @@ func commitPathIfChanged(ctx context.Context, path, message string) error {
 		return fmt.Errorf("failed to commit %s: %w", path, err)
 	}
 
+	return nil
+}
+
+// SyncUpstream merges upstream/main into the current branch but keeps frontend/ as it is.
+// Norna's frontend is a full rewrite, so only the backend follows upstream. The generated
+// API client is the one piece of frontend/ that tracks the backend, so it is regenerated.
+// The merge is left uncommitted for review.
+func (Dev) SyncUpstream(ctx context.Context) error {
+	if out, err := runGitCommandWithOutput(ctx, "status", "--porcelain"); err != nil {
+		return fmt.Errorf("failed to read git status: %w", err)
+	} else if len(bytes.TrimSpace(out)) > 0 {
+		return fmt.Errorf("working tree is not clean, commit or stash first")
+	}
+
+	if err := runAndStreamOutput(ctx, "git", "fetch", "upstream"); err != nil {
+		return fmt.Errorf("failed to fetch upstream: %w", err)
+	}
+
+	discarded, err := runGitCommandWithOutput(ctx, "diff", "--name-only", "HEAD...upstream/main", "--", "frontend")
+	if err != nil {
+		return fmt.Errorf("failed to list upstream frontend changes: %w", err)
+	}
+
+	// Conflicts are expected (under frontend/ at least), so a non-zero exit is not fatal here.
+	_ = runAndStreamOutput(ctx, "git", "merge", "--no-commit", "--no-ff", "upstream/main")
+
+	// restore removes paths that are not in HEAD, which also drops files upstream added.
+	if err := runAndStreamOutput(ctx, "git", "restore", "--source=HEAD", "--staged", "--worktree", "--", "frontend"); err != nil {
+		return fmt.Errorf("failed to restore frontend/ from HEAD: %w", err)
+	}
+
+	if conflicts, err := runGitCommandWithOutput(ctx, "diff", "--name-only", "--diff-filter=U"); err != nil {
+		return fmt.Errorf("failed to list conflicts: %w", err)
+	} else if len(bytes.TrimSpace(conflicts)) > 0 {
+		fmt.Printf("Backend conflicts to resolve before regenerating the client:\n%s\n", conflicts)
+		return fmt.Errorf("resolve the conflicts above, then run mage generate:frontend-client")
+	}
+
+	if err := (Generate{}).FrontendClient(ctx); err != nil {
+		return fmt.Errorf("failed to regenerate the frontend client: %w", err)
+	}
+
+	if len(bytes.TrimSpace(discarded)) > 0 {
+		fmt.Printf("Upstream frontend changes that were discarded (check frontend/embed.go and the e2e harness):\n%s\n", discarded)
+	}
+	printSuccess("Upstream merged with frontend/ kept. Run the typecheck and unit tests, then commit.")
 	return nil
 }
 

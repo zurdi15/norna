@@ -1,6 +1,6 @@
 # AGENT Instructions
 
-Vikunja: self-hosted to-do app. Go API in `pkg/`, Vue 3 + TypeScript frontend in `frontend/` (pnpm). `veans/` is a separate Go module with its own `AGENTS.md`.
+Norna: a personal fork of Vikunja, the self-hosted to-do app. Go API in `pkg/` (follows upstream), Vue 3 + TypeScript frontend in `frontend/` (pnpm), rewritten from scratch with its own design system. `veans/` is a separate Go module with its own `AGENTS.md`.
 
 ## Commands
 
@@ -26,9 +26,12 @@ Invoke with the `Skill` tool before writing code in these areas:
 - `prepare-worktree` — setting up a worktree for a plan
 - `run-e2e-tests` — running Playwright e2e tests (never `pnpm test:e2e` directly)
 
+Frontend UI work follows the [design system](.agents/docs/design-system.md): tokens only, `src/ui/` primitives, mobile first.
+
 ## Details
 
 - [API design](.agents/docs/api.md)
+- [Design system](.agents/docs/design-system.md)
 - [Testing](.agents/docs/testing.md)
 - [Code style](.agents/docs/code-style.md)
 - [Translations](.agents/docs/translations.md)
