@@ -2044,6 +2044,12 @@ func (Dev) SyncUpstream(ctx context.Context) error {
 	// Conflicts are expected (under frontend/ at least), so a non-zero exit is not fatal here.
 	_ = runAndStreamOutput(ctx, "git", "merge", "--no-commit", "--no-ff", "upstream/main")
 
+	// restore refuses unmerged paths that HEAD doesn't have (upstream changed a file of the old
+	// frontend we deleted), so settle frontend conflicts first: HEAD's version, or no file.
+	if err := keepHeadForFrontendConflicts(ctx); err != nil {
+		return err
+	}
+
 	// restore removes paths that are not in HEAD, which also drops files upstream added.
 	if err := runAndStreamOutput(ctx, "git", "restore", "--source=HEAD", "--staged", "--worktree", "--", "frontend"); err != nil {
 		return fmt.Errorf("failed to restore frontend/ from HEAD: %w", err)
@@ -2064,6 +2070,27 @@ func (Dev) SyncUpstream(ctx context.Context) error {
 		fmt.Printf("Upstream frontend changes that were discarded (check frontend/embed.go and the e2e harness):\n%s\n", discarded)
 	}
 	printSuccess("Upstream merged with frontend/ kept. Run the typecheck and unit tests, then commit.")
+	return nil
+}
+
+// keepHeadForFrontendConflicts resolves every conflicted path under frontend/ to HEAD's side:
+// HEAD's file when it has one, otherwise the path is removed.
+func keepHeadForFrontendConflicts(ctx context.Context) error {
+	out, err := runGitCommandWithOutput(ctx, "diff", "--name-only", "--diff-filter=U", "--", "frontend")
+	if err != nil {
+		return fmt.Errorf("failed to list frontend conflicts: %w", err)
+	}
+	for _, path := range strings.Fields(string(out)) {
+		if _, err := runGitCommandWithOutput(ctx, "cat-file", "-e", "HEAD:"+path); err == nil {
+			if _, err := runGitCommandWithOutput(ctx, "checkout", "HEAD", "--", path); err != nil {
+				return fmt.Errorf("failed to keep %s from HEAD: %w", path, err)
+			}
+			continue
+		}
+		if _, err := runGitCommandWithOutput(ctx, "rm", "--quiet", "--force", "--", path); err != nil {
+			return fmt.Errorf("failed to drop %s: %w", path, err)
+		}
+	}
 	return nil
 }
 
