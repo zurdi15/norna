@@ -1397,8 +1397,8 @@
     "allPages": "These shortcuts work on all pages.",
     "currentPageOnly": "These shortcuts work only on the current page.",
     "somePagesOnly": "These shortcuts work only on some pages.",
-    "toggleMenu": "Toggle The Menu",
-    "quickSearch": "Open the search/quick action bar",
+    "toggleMenu": "Show or hide the sidebar",
+    "quickSearch": "Open search and commands",
     "then": "then",
     "task": {
       "title": "Task Page",
@@ -1431,11 +1431,11 @@
     },
     "navigation": {
       "title": "Navigation",
-      "overview": "Navigate to overview",
-      "upcoming": "Navigate to upcoming tasks",
-      "labels": "Navigate to labels",
-      "teams": "Navigate to teams",
-      "projects": "Navigate to projects"
+      "overview": "Go to Today",
+      "upcoming": "Go to Upcoming",
+      "labels": "Go to Labels",
+      "teams": "Go to Teams",
+      "projects": "Go to Projects"
     },
     "list": {
       "title": "Task List",
@@ -1810,6 +1810,188 @@
     "calendar": {
       "previous": "Previous month",
       "next": "Next month"
+    },
+    "kbd": {
+      "then": "then"
+    }
+  },
+  "notFound": {
+    "title": "Nothing woven here",
+    "description": "The page you were looking for doesn't exist or was moved.",
+    "home": "Back to today"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "titleWithUnread": "Notifications, {count} unread",
+    "unread": "Unread",
+    "markAllRead": "Mark all read",
+    "emptyTitle": "All caught up",
+    "emptyDescription": "Comments, assignments and reminders will show up here.",
+    "taskComment": "commented on {task}",
+    "taskAssigned": "assigned {task} to {assignee}",
+    "taskAssignedYou": "assigned you {task}",
+    "taskDeleted": "deleted {task}",
+    "taskCreated": "created {task}",
+    "taskMentioned": "mentioned you in {task}",
+    "taskReminder": "Reminder: {task}",
+    "taskOverdue": "{task} is overdue",
+    "tasksOverdue": "You have overdue tasks",
+    "projectCreated": "created the project {project}",
+    "teamMemberAdded": "added {member} to {team}",
+    "teamMemberAddedYou": "added you to {team}",
+    "dataExportReady": "Your data export is ready to download",
+    "unknown": "sent you a notification"
+  },
+  "shell": {
+    "navigation": "Navigation",
+    "openNavigation": "Open navigation",
+    "back": "Back",
+    "loading": "Loading Norna",
+    "skipToContent": "Skip to content",
+    "search": "Search",
+    "searchPlaceholder": "Search or run…",
+    "newTask": "New task",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "expandProject": "Show the projects inside {project}",
+    "collapseProject": "Hide the projects inside {project}",
+    "offline": "You're offline. Changes can't be saved until the connection is back.",
+    "offlineTitle": "You're offline",
+    "offlineDescription": "Norna needs a connection to load. It will pick up as soon as you're back online.",
+    "nav": {
+      "home": "Today",
+      "upcoming": "Upcoming",
+      "projects": "Projects",
+      "favorites": "Favorites",
+      "filters": "Filters",
+      "labels": "Labels",
+      "teams": "Teams",
+      "timeTracking": "Time tracking",
+      "newProject": "New project"
+    },
+    "user": {
+      "account": "Account",
+      "settings": "Settings",
+      "theme": "Theme",
+      "themeSystem": "Match system",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "about": "About Norna",
+      "logout": "Log out"
+    },
+    "shortcuts": {
+      "title": "Keyboard shortcuts"
+    },
+    "palette": {
+      "title": "Search and commands",
+      "placeholder": "Search projects or type a command…",
+      "recent": "Recent",
+      "actions": "Actions",
+      "goTo": "Go to",
+      "newTask": "New task",
+      "newProject": "New project",
+      "newFilter": "New saved filter",
+      "lightTheme": "Switch to light theme",
+      "darkTheme": "Switch to dark theme",
+      "empty": "Nothing matches “{query}”"
+    },
+    "update": {
+      "available": "A new version of Norna is ready.",
+      "reload": "Update"
+    },
+    "api": {
+      "title": "Connect to your server",
+      "description": "Norna couldn't reach its server. Enter the address where it runs.",
+      "url": "Server address",
+      "urlHint": "The address you open Norna at, e.g. https://norna.example.com",
+      "urlRequired": "Enter the server address.",
+      "connect": "Connect",
+      "connected": "Connected to {domain}.",
+      "unreachable": "Couldn't reach a server at {domain}. Check the address and that it's online."
+    }
+  },
+  "auth": {
+    "password": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "or": "or",
+    "imprint": "Imprint",
+    "privacy": "Privacy",
+    "deletionConfirmed": "Your account is scheduled for deletion.",
+    "passwordRules": {
+      "required": "Enter a password.",
+      "tooShort": "Use at least 8 characters.",
+      "tooLong": "Use at most 72 characters."
+    },
+    "login": {
+      "title": "Welcome back",
+      "description": "Sign in to pick up the threads.",
+      "username": "Username",
+      "usernameOrEmail": "Username or email",
+      "usernameRequired": "Enter your username or email.",
+      "passwordRequired": "Enter your password.",
+      "remember": "Stay signed in",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "withProvider": "Continue with {provider}",
+      "noAccount": "New here?",
+      "createAccount": "Create an account",
+      "totpTitle": "Two-factor code",
+      "totpDescription": "Enter the 6-digit code from your authenticator app.",
+      "totpCode": "Code",
+      "verify": "Verify",
+      "emailConfirmed": "Your email is confirmed. You can sign in now."
+    },
+    "register": {
+      "title": "Create your account",
+      "description": "One account for all your projects and tasks.",
+      "inviteDescription": "You've been invited. Pick a username and password to join.",
+      "username": "Username",
+      "email": "Email",
+      "passwordHint": "8 to 72 characters.",
+      "usernameRequired": "Choose a username.",
+      "usernameNoSpaces": "Usernames can't contain spaces.",
+      "usernameNotUrl": "Usernames can't look like a web address.",
+      "emailInvalid": "Enter a valid email address.",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "login": "Sign in",
+      "failed": "Registration didn't go through. Check the fields and try again.",
+      "disabled": "Registration is closed on this server.",
+      "confirmEmail": "Account created. Open the link we emailed you to confirm your address, then sign in.",
+      "inviteInvalid": "This invite link is invalid or has expired.",
+      "inviteFailed": "Couldn't check this invite. Try again in a moment.",
+      "inviteTeams": "You'll join: {teams}"
+    },
+    "reset": {
+      "requestTitle": "Reset your password",
+      "requestDescription": "Enter your account's email and we'll send you a link to set a new password.",
+      "send": "Send reset link",
+      "sent": "If that address has an account, a reset link is on its way. Check your inbox.",
+      "title": "Set a new password",
+      "description": "Choose a new password for your account.",
+      "newPassword": "New password",
+      "save": "Save password",
+      "done": "Your password was changed. Sign in with the new one.",
+      "tokenMissing": "This reset link is incomplete. Request a new one.",
+      "backToLogin": "Back to sign in"
+    },
+    "openid": {
+      "title": "Signing you in",
+      "working": "Talking to your identity provider…",
+      "failed": "Signing in with the external provider didn't work.",
+      "stateMismatch": "The sign-in response didn't match this request, so it was refused. Try again.",
+      "totpDescription": "Your account uses two-factor authentication. Enter the code and we'll finish signing you in."
+    },
+    "share": {
+      "title": "Shared project",
+      "working": "Opening the shared project…",
+      "passwordDescription": "This project is protected. Enter its password to open it.",
+      "open": "Open project",
+      "wrongPassword": "That password isn't right.",
+      "denied": "You don't have access to this project.",
+      "serverError": "The server couldn't open this share. Try again later.",
+      "failed": "This share link couldn't be opened."
     }
   }
 }

@@ -721,13 +721,13 @@
 		}
 	},
 	"keyboardShortcuts": {
-		"title": "Atajos de Teclado",
+		"title": "Atajos de teclado",
 		"general": "General",
 		"allPages": "Estos atajos funcionan en todas las páginas.",
 		"currentPageOnly": "Estos atajos funcionan solo en la página actual.",
 		"somePagesOnly": "Estos atajos funcionan solo en algunas páginas.",
-		"toggleMenu": "Alternar El Menú",
-		"quickSearch": "Abrir la barra de búsqueda/acción rápida",
+		"toggleMenu": "Mostrar u ocultar la barra lateral",
+		"quickSearch": "Abrir la búsqueda y los comandos",
 		"then": "después",
 		"task": {
 			"title": "Página de Tarea",
@@ -753,12 +753,12 @@
 			"switchToTableView": "Cambiar a vista de tabla"
 		},
 		"navigation": {
-			"title": "Secciones",
-			"overview": "Ir a resumen",
-			"upcoming": "Ir a tareas próximas",
-			"labels": "Ir a etiquetas",
-			"teams": "Ir a equipos",
-			"projects": "Navegar a proyectos"
+			"title": "Navegación",
+			"overview": "Ir a Hoy",
+			"upcoming": "Ir a Próximas",
+			"labels": "Ir a Etiquetas",
+			"teams": "Ir a Equipos",
+			"projects": "Ir a Proyectos"
 		}
 	},
 	"update": {
@@ -926,6 +926,188 @@
 		"calendar": {
 			"previous": "Mes anterior",
 			"next": "Mes siguiente"
+		},
+		"kbd": {
+			"then": "y luego"
+		}
+	},
+	"notFound": {
+		"title": "Aquí no hay nada tejido",
+		"description": "La página que buscabas no existe o se ha movido.",
+		"home": "Volver a hoy"
+	},
+	"notifications": {
+		"title": "Notificaciones",
+		"titleWithUnread": "Notificaciones, {count} sin leer",
+		"unread": "Sin leer",
+		"markAllRead": "Marcar todo como leído",
+		"emptyTitle": "Estás al día",
+		"emptyDescription": "Aquí aparecerán comentarios, asignaciones y recordatorios.",
+		"taskComment": "comentó en {task}",
+		"taskAssigned": "asignó {task} a {assignee}",
+		"taskAssignedYou": "te asignó {task}",
+		"taskDeleted": "borró {task}",
+		"taskCreated": "creó {task}",
+		"taskMentioned": "te mencionó en {task}",
+		"taskReminder": "Recordatorio: {task}",
+		"taskOverdue": "{task} está vencida",
+		"tasksOverdue": "Tienes tareas vencidas",
+		"projectCreated": "creó el proyecto {project}",
+		"teamMemberAdded": "añadió a {member} a {team}",
+		"teamMemberAddedYou": "te añadió a {team}",
+		"dataExportReady": "Tu exportación de datos está lista para descargar",
+		"unknown": "te envió una notificación"
+	},
+	"shell": {
+		"navigation": "Navegación",
+		"openNavigation": "Abrir la navegación",
+		"back": "Volver",
+		"loading": "Cargando Norna",
+		"skipToContent": "Saltar al contenido",
+		"search": "Buscar",
+		"searchPlaceholder": "Buscar o ejecutar…",
+		"newTask": "Nueva tarea",
+		"collapseSidebar": "Plegar la barra lateral",
+		"expandSidebar": "Desplegar la barra lateral",
+		"expandProject": "Mostrar los proyectos dentro de {project}",
+		"collapseProject": "Ocultar los proyectos dentro de {project}",
+		"offline": "Sin conexión. Los cambios no se guardarán hasta que vuelva.",
+		"offlineTitle": "Sin conexión",
+		"offlineDescription": "Norna necesita conexión para cargar. Seguirá en cuanto vuelvas a estar en línea.",
+		"nav": {
+			"home": "Hoy",
+			"upcoming": "Próximas",
+			"projects": "Proyectos",
+			"favorites": "Favoritos",
+			"filters": "Filtros",
+			"labels": "Etiquetas",
+			"teams": "Equipos",
+			"timeTracking": "Registro de tiempo",
+			"newProject": "Nuevo proyecto"
+		},
+		"user": {
+			"account": "Cuenta",
+			"settings": "Ajustes",
+			"theme": "Tema",
+			"themeSystem": "Como el sistema",
+			"themeLight": "Claro",
+			"themeDark": "Oscuro",
+			"about": "Acerca de Norna",
+			"logout": "Cerrar sesión"
+		},
+		"shortcuts": {
+			"title": "Atajos de teclado"
+		},
+		"palette": {
+			"title": "Buscar y comandos",
+			"placeholder": "Busca proyectos o escribe un comando…",
+			"recent": "Recientes",
+			"actions": "Acciones",
+			"goTo": "Ir a",
+			"newTask": "Nueva tarea",
+			"newProject": "Nuevo proyecto",
+			"newFilter": "Nuevo filtro guardado",
+			"lightTheme": "Cambiar al tema claro",
+			"darkTheme": "Cambiar al tema oscuro",
+			"empty": "Nada coincide con «{query}»"
+		},
+		"update": {
+			"available": "Hay una versión nueva de Norna.",
+			"reload": "Actualizar"
+		},
+		"api": {
+			"title": "Conecta con tu servidor",
+			"description": "Norna no ha podido llegar a su servidor. Escribe la dirección donde se ejecuta.",
+			"url": "Dirección del servidor",
+			"urlHint": "La dirección en la que abres Norna, p. ej. https://norna.example.com",
+			"urlRequired": "Escribe la dirección del servidor.",
+			"connect": "Conectar",
+			"connected": "Conectado a {domain}.",
+			"unreachable": "No se ha podido llegar a un servidor en {domain}. Revisa la dirección y que esté en marcha."
+		}
+	},
+	"auth": {
+		"password": "Contraseña",
+		"showPassword": "Mostrar la contraseña",
+		"hidePassword": "Ocultar la contraseña",
+		"or": "o",
+		"imprint": "Aviso legal",
+		"privacy": "Privacidad",
+		"deletionConfirmed": "Tu cuenta está programada para borrarse.",
+		"passwordRules": {
+			"required": "Escribe una contraseña.",
+			"tooShort": "Usa al menos 8 caracteres.",
+			"tooLong": "Usa como mucho 72 caracteres."
+		},
+		"login": {
+			"title": "Hola de nuevo",
+			"description": "Entra para retomar los hilos.",
+			"username": "Usuario",
+			"usernameOrEmail": "Usuario o email",
+			"usernameRequired": "Escribe tu usuario o email.",
+			"passwordRequired": "Escribe tu contraseña.",
+			"remember": "Mantener la sesión",
+			"forgotPassword": "¿Olvidaste la contraseña?",
+			"submit": "Entrar",
+			"withProvider": "Continuar con {provider}",
+			"noAccount": "¿Primera vez aquí?",
+			"createAccount": "Crea una cuenta",
+			"totpTitle": "Código de verificación",
+			"totpDescription": "Escribe el código de 6 dígitos de tu app de autenticación.",
+			"totpCode": "Código",
+			"verify": "Verificar",
+			"emailConfirmed": "Tu email está confirmado. Ya puedes entrar."
+		},
+		"register": {
+			"title": "Crea tu cuenta",
+			"description": "Una cuenta para todos tus proyectos y tareas.",
+			"inviteDescription": "Te han invitado. Elige un usuario y una contraseña para unirte.",
+			"username": "Usuario",
+			"email": "Email",
+			"passwordHint": "Entre 8 y 72 caracteres.",
+			"usernameRequired": "Elige un nombre de usuario.",
+			"usernameNoSpaces": "El usuario no puede contener espacios.",
+			"usernameNotUrl": "El usuario no puede parecer una dirección web.",
+			"emailInvalid": "Escribe un email válido.",
+			"submit": "Crear cuenta",
+			"haveAccount": "¿Ya tienes cuenta?",
+			"login": "Entrar",
+			"failed": "No se ha podido completar el registro. Revisa los campos y vuelve a intentarlo.",
+			"disabled": "El registro está cerrado en este servidor.",
+			"confirmEmail": "Cuenta creada. Abre el enlace que te hemos enviado por email para confirmar la dirección y luego entra.",
+			"inviteInvalid": "Esta invitación no es válida o ha caducado.",
+			"inviteFailed": "No se ha podido comprobar la invitación. Inténtalo de nuevo en un momento.",
+			"inviteTeams": "Te unirás a: {teams}"
+		},
+		"reset": {
+			"requestTitle": "Recupera tu contraseña",
+			"requestDescription": "Escribe el email de tu cuenta y te enviaremos un enlace para elegir una contraseña nueva.",
+			"send": "Enviar enlace",
+			"sent": "Si esa dirección tiene cuenta, el enlace ya va de camino. Revisa tu bandeja de entrada.",
+			"title": "Elige una contraseña nueva",
+			"description": "Escribe la nueva contraseña de tu cuenta.",
+			"newPassword": "Contraseña nueva",
+			"save": "Guardar contraseña",
+			"done": "Tu contraseña se ha cambiado. Entra con la nueva.",
+			"tokenMissing": "Este enlace de recuperación está incompleto. Pide uno nuevo.",
+			"backToLogin": "Volver a entrar"
+		},
+		"openid": {
+			"title": "Iniciando sesión",
+			"working": "Hablando con tu proveedor de identidad…",
+			"failed": "No se ha podido entrar con el proveedor externo.",
+			"stateMismatch": "La respuesta del inicio de sesión no coincide con esta petición y se ha rechazado. Vuelve a intentarlo.",
+			"totpDescription": "Tu cuenta usa verificación en dos pasos. Escribe el código y terminamos de iniciar la sesión."
+		},
+		"share": {
+			"title": "Proyecto compartido",
+			"working": "Abriendo el proyecto compartido…",
+			"passwordDescription": "Este proyecto está protegido. Escribe su contraseña para abrirlo.",
+			"open": "Abrir proyecto",
+			"wrongPassword": "La contraseña no es correcta.",
+			"denied": "No tienes acceso a este proyecto.",
+			"serverError": "El servidor no ha podido abrir este enlace. Inténtalo más tarde.",
+			"failed": "No se ha podido abrir este enlace compartido."
 		}
 	}
 }
