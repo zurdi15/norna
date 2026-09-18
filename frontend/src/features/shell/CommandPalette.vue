@@ -21,6 +21,7 @@ import {
 import {SHORTCUTS} from '@/constants/shortcuts'
 import {useProjects} from '@/composables/useProjects'
 import {getHistory} from '@/modules/projectHistory'
+import {useBackdropLink} from './useRouteBackdrop'
 import {useAuthStore} from '@/stores/auth'
 import {useShellStore} from '@/stores/shell'
 import {useColorScheme} from '@/composables/useColorScheme'
@@ -67,14 +68,21 @@ watch(() => shell.commandPaletteOpen, open => {
 	}
 })
 
+const backdropLink = useBackdropLink()
+
 function go(name: string, params?: Record<string, number>) {
 	return () => router.push({name, params})
 }
 
+// Create forms open as a dialog over the page the palette was called from.
+function openOver(name: string) {
+	return () => router.push(backdropLink({name}))
+}
+
 const actions = computed<Command[]>(() => [
 	{key: 'new-task', label: t('shell.palette.newTask'), icon: FilePlus2, keywords: 'create add', run: () => shell.quickAddOpen = true},
-	{key: 'new-project', label: t('shell.palette.newProject'), icon: FolderPlus, keywords: 'create add', run: go('project.create')},
-	{key: 'new-filter', label: t('shell.palette.newFilter'), icon: ListFilter, keywords: 'create add', run: go('filters.create')},
+	{key: 'new-project', label: t('shell.palette.newProject'), icon: FolderPlus, keywords: 'create add', run: openOver('project.create')},
+	{key: 'new-filter', label: t('shell.palette.newFilter'), icon: ListFilter, keywords: 'create add', run: openOver('filters.create')},
 	{
 		key: 'theme',
 		label: t(isDark.value ? 'shell.palette.lightTheme' : 'shell.palette.darkTheme'),

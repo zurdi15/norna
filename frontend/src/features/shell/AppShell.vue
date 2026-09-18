@@ -10,16 +10,17 @@ import {useRenewTokenOnFocus} from '@/composables/useRenewTokenOnFocus'
 import {useWebSocket} from '@/composables/useWebSocket'
 import TaskDetailPanel from '@/features/tasks/detail/TaskDetailPanel.vue'
 import QuickAddDialog from '@/features/tasks/quick-add/QuickAddDialog.vue'
-import {useTaskBackdrop} from '@/features/tasks/detail/useTaskBackdrop'
 import {useBaseStore} from '@/stores/base'
 import {useShellStore} from '@/stores/shell'
 import {useBreakpoints} from '@/ui/composables/useBreakpoints'
+import UiDialog from '@/ui/UiDialog.vue'
 import UiDrawer from '@/ui/UiDrawer.vue'
 
 import AppSidebar from './AppSidebar.vue'
 import BottomNav from './BottomNav.vue'
 import CommandPalette from './CommandPalette.vue'
 import ShortcutsDialog from './ShortcutsDialog.vue'
+import {useRouteBackdrop} from './useRouteBackdrop'
 
 const {t} = useI18n()
 const route = useRoute()
@@ -31,8 +32,19 @@ const {isMd, isLg} = useBreakpoints()
 useRenewTokenOnFocus()
 
 // A task opened from a page shows beside it on wide screens; elsewhere it takes the whole page.
-const {backdrop, close: closeTaskPanel} = useTaskBackdrop()
-const taskPanel = computed(() => isLg.value && backdrop.value !== null)
+// Dialog routes (settings, create forms) open over the page they were linked from.
+const {kind: backdropKind, backdrop, close: closeBackdrop} = useRouteBackdrop()
+const taskPanel = computed(() => backdropKind.value === 'panel' && isLg.value && backdrop.value !== null)
+const routeDialog = computed(() => backdropKind.value === 'modal' && backdrop.value !== null)
+const behind = computed(() => taskPanel.value || routeDialog.value ? backdrop.value ?? undefined : undefined)
+const dialogOpen = computed({
+	get: () => routeDialog.value,
+	set: open => {
+		if (!open) {
+			closeBackdrop()
+		}
+	},
+})
 
 const {connect, subscribe} = useWebSocket()
 connect()
@@ -110,21 +122,35 @@ function focusMain() {
 			tabindex="-1"
 			class="min-w-0 flex-1 pb-[calc(3.75rem+env(safe-area-inset-bottom))] focus:outline-none md:pb-0"
 		>
-			<!-- One RouterView either way, so the page behind the panel isn't remounted when it opens. -->
-			<RouterView :route="taskPanel ? backdrop ?? undefined : undefined" />
+			<!-- One RouterView either way, so the page behind a panel or dialog isn't remounted when it opens. -->
+			<RouterView :route="behind" />
 		</main>
 		<TaskDetailPanel
 			v-if="taskPanel"
-			@close="closeTaskPanel"
+			@close="closeBackdrop"
 		>
 			<RouterView v-slot="{Component}">
 				<component
 					:is="Component"
 					in-panel
-					@close="closeTaskPanel"
+					@close="closeBackdrop"
 				/>
 			</RouterView>
 		</TaskDetailPanel>
+		<UiDialog
+			v-if="routeDialog"
+			v-model:open="dialogOpen"
+			:title="shell.dialogTitle || (route.meta.title ? t(route.meta.title) : '')"
+			size="lg"
+		>
+			<RouterView v-slot="{Component}">
+				<component
+					:is="Component"
+					in-modal
+					@close="closeBackdrop"
+				/>
+			</RouterView>
+		</UiDialog>
 	</div>
 	<BottomNav v-if="!isMd" />
 	<CommandPalette />

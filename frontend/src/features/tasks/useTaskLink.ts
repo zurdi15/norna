@@ -1,21 +1,12 @@
-import {useRoute, type RouteLocationRaw} from 'vue-router'
+import type {RouteLocationRaw} from 'vue-router'
+
+import {useBackdropLink} from '@/features/shell/useRouteBackdrop'
 
 /**
- * Where a task opens. The page it was opened from travels in history.state as the
- * backdrop, so wide screens keep it visible behind the detail panel; moving between
- * tasks inside the panel keeps that backdrop and replaces the entry.
+ * Where a task opens: beside the page it was opened from on wide screens, which
+ * stays as the backdrop (see useRouteBackdrop).
  */
 export function useTaskLink() {
-	const route = useRoute()
-
-	return (taskId: number): RouteLocationRaw => {
-		const onDetail = route.name === 'task.detail'
-		const backdropView: string | undefined = onDetail ? window.history.state?.backdropView : route.fullPath
-		return {
-			name: 'task.detail',
-			params: {id: taskId},
-			state: backdropView ? {backdropView} : undefined,
-			replace: onDetail && backdropView !== undefined,
-		}
-	}
+	const backdropLink = useBackdropLink()
+	return (taskId: number): RouteLocationRaw => backdropLink({name: 'task.detail', params: {id: taskId}})
 }

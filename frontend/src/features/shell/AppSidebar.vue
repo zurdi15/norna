@@ -19,6 +19,7 @@ import UiTooltip from '@/ui/UiTooltip.vue'
 import NornaMark from './NornaMark.vue'
 import NotificationsPopover from './NotificationsPopover.vue'
 import SidebarLink from './SidebarLink.vue'
+import {useBackdropLink} from './useRouteBackdrop'
 import SidebarProjectItem from './SidebarProjectItem.vue'
 import UserMenu from './UserMenu.vue'
 
@@ -29,6 +30,7 @@ const props = withDefaults(defineProps<{
 	inDrawer: false,
 })
 
+const backdropLink = useBackdropLink()
 const {t} = useI18n()
 const shell = useShellStore()
 const baseStore = useBaseStore()
@@ -202,7 +204,7 @@ const sectionTitle = 'flex items-center gap-2 px-2 pt-4 pb-1.5 caption'
 				</RouterLink>
 				<span class="thread" />
 				<RouterLink
-					:to="{name: 'project.create'}"
+					:to="backdropLink({name: 'project.create'})"
 					class="grid size-5 place-items-center rounded-sm text-ink-faint hover:bg-surface hover:text-ink"
 					:aria-label="t('shell.nav.newProject')"
 				>

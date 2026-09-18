@@ -10,6 +10,8 @@ export const useShellStore = defineStore('shell', () => {
 	const commandPaletteOpen = ref(false)
 	const shortcutsOpen = ref(false)
 	const quickAddOpen = ref(false)
+	// Set by the page in a dialog route, when its title depends on data (e.g. archive or restore).
+	const dialogTitle = ref('')
 
 	function toggleSidebar() {
 		sidebarCollapsed.value = !sidebarCollapsed.value
@@ -21,6 +23,7 @@ export const useShellStore = defineStore('shell', () => {
 		commandPaletteOpen,
 		shortcutsOpen,
 		quickAddOpen,
+		dialogTitle,
 		toggleSidebar,
 	}
 })
