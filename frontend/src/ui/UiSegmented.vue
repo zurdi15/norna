@@ -51,7 +51,7 @@ function select(value: unknown) {
 				'transition-colors duration-150 hover:text-ink',
 				'data-[state=on]:bg-surface-raised data-[state=on]:text-ink data-[state=on]:shadow-raised',
 				'data-[state=on]:ring-1 data-[state=on]:ring-line',
-				size === 'sm' ? 'h-6 text-xs' : 'h-7 text-sm pointer-coarse:h-9',
+				size === 'sm' ? 'h-6 text-xs pointer-coarse:h-9' : 'h-7 text-sm pointer-coarse:h-10',
 			)"
 		>
 			<UiIcon

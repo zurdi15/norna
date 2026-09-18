@@ -14,9 +14,12 @@ withDefaults(defineProps<{
 	title: string
 	side?: 'top' | 'right' | 'bottom' | 'left'
 	align?: 'start' | 'center' | 'end'
+	// Off when an item opens something else (a picker) that must keep the focus.
+	restoreFocus?: boolean
 }>(), {
 	side: 'bottom',
 	align: 'end',
+	restoreFocus: true,
 })
 
 const open = defineModel<boolean>('open', {default: false})
@@ -38,6 +41,7 @@ const {isMd} = useBreakpoints()
 				:side-offset="6"
 				:collision-padding="8"
 				:class="cn(menuPanelClass, 'origin-(--reka-dropdown-menu-content-transform-origin)')"
+				@closeAutoFocus="(event: Event) => !restoreFocus && event.preventDefault()"
 			>
 				<UiMenuItems
 					kind="dropdown"

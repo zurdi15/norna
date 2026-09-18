@@ -15,6 +15,7 @@ import LinkShareShell from '@/features/shell/LinkShareShell.vue'
 import {DEFAULT_LANGUAGE, setLanguage, type SupportedLocale} from '@/i18n'
 import {error, success} from '@/message'
 import {useAuthStore} from '@/stores/auth'
+import UiConfirmHost from '@/ui/UiConfirmHost.vue'
 import UiToaster from '@/ui/UiToaster.vue'
 
 const authStore = useAuthStore()
@@ -55,6 +56,7 @@ useServiceWorkerUpdate()
 			<AppShell v-else-if="authStore.authUser" />
 			<LinkShareShell v-else-if="authStore.authLinkShare" />
 		</AppReady>
+		<UiConfirmHost />
 	</TooltipProvider>
 	<UiToaster />
 </template>

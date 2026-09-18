@@ -31,6 +31,7 @@ const props = withDefaults(defineProps<{
 })
 
 // The app works with JS Dates. Picking a day keeps the time of day already set, if any.
+// Clicking the picked day again keeps it: clearing a date is an explicit action of the picker.
 const model = defineModel<Date | null>({default: null})
 
 const {t, locale} = useI18n()
@@ -60,6 +61,7 @@ const navButton = 'grid size-8 cursor-pointer place-items-center rounded-md text
 		:locale="locale"
 		:week-starts-on="weekStartsOn"
 		fixed-weeks
+		prevent-deselect
 		weekday-format="narrow"
 		:class="cn('w-full select-none', props.class)"
 	>
