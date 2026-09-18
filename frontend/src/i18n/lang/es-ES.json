@@ -2502,5 +2502,66 @@
 			"revokeOthersDescription": "{count} dispositivo tendrá que volver a iniciar sesión. | {count} dispositivos tendrán que volver a iniciar sesión.",
 			"revokedMany": "Sesión cerrada en {count} dispositivo | Sesión cerrada en {count} dispositivos"
 		}
+	},
+	"timeTracking": {
+		"title": "Registro de tiempo",
+		"stop": "Parar",
+		"logTime": "Registrar tiempo",
+		"editEntry": "Editar registro",
+		"running": "En marcha",
+		"entries": "Registros",
+		"total": "Total",
+		"delete": "Eliminar",
+		"deleteEntry": "Eliminar registro",
+		"deleteTitle": "¿Eliminar este registro?",
+		"deleteDescription": "El tiempo que contiene se pierde para siempre.",
+		"loadFailed": "No se pudieron cargar tus registros de tiempo. Vuelve a intentarlo en un momento.",
+		"emptyTitle": "Sin tiempo registrado",
+		"emptyDescription": "No hay nada registrado en estos días. Inicia un temporizador o registra tiempo a mano.",
+		"timer": {
+			"label": "Temporizador",
+			"runningSince": "En marcha desde las {time}",
+			"idle": "Ningún temporizador en marcha",
+			"idleHint": "Elige una tarea y el reloj empieza a contar.",
+			"pickTask": "Registrar tiempo en…",
+			"runningSinceDay": "En marcha desde {time}"
+		},
+		"form": {
+			"task": "Tarea",
+			"taskSearch": "Busca una tarea…",
+			"pickTask": "Elige una tarea",
+			"openTask": "Abrir tarea",
+			"onProject": "En {project}",
+			"taskRequired": "Elige la tarea a la que va este tiempo.",
+			"day": "Día",
+			"start": "Inicio",
+			"end": "Fin",
+			"nextDay": "Día siguiente",
+			"duration": "Duración",
+			"durationPlaceholder": "1h 30m",
+			"durationInvalid": "El fin tiene que ir después del inicio.",
+			"stillRunning": "Sigue en marcha: para el temporizador para fijar el fin.",
+			"note": "Nota",
+			"commentPlaceholder": "¿En qué trabajaste?",
+			"save": "Guardar",
+			"update": "Guardar cambios",
+			"startTimer": "Iniciar temporizador"
+		},
+		"ranges": {
+			"label": "Periodo",
+			"thisWeek": "Esta semana",
+			"lastWeek": "Semana pasada",
+			"thisMonth": "Este mes",
+			"custom": "Elegir días",
+			"from": "Desde",
+			"to": "Hasta",
+			"fromDay": "Desde el {day}",
+			"toDay": "Hasta el {day}"
+		},
+		"filters": {
+			"project": "Proyecto",
+			"allProjects": "Todos los proyectos"
+		},
+		"start": "Iniciar"
 	}
 }

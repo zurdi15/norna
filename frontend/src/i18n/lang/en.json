@@ -1643,17 +1643,30 @@
   },
   "timeTracking": {
     "title": "Time tracking",
-    "stop": "Stop timer",
+    "stop": "Stop",
     "logTime": "Log time",
     "editEntry": "Edit entry",
     "form": {
       "task": "Task",
       "taskSearch": "Search for a task…",
       "commentPlaceholder": "What did you work on?",
-      "save": "Save entry",
+      "save": "Save",
       "startTimer": "Start timer",
-      "update": "Update entry",
-      "smartFill": "Fill from last entry"
+      "update": "Save changes",
+      "smartFill": "Fill from last entry",
+      "pickTask": "Pick a task",
+      "openTask": "Open task",
+      "onProject": "On {project}",
+      "taskRequired": "Pick the task this time goes on.",
+      "day": "Day",
+      "start": "Start",
+      "end": "End",
+      "nextDay": "Next day",
+      "duration": "Duration",
+      "durationPlaceholder": "1h 30m",
+      "durationInvalid": "The end has to come after the start.",
+      "stillRunning": "Still running: stop the timer to set the end.",
+      "note": "Note"
     },
     "list": {
       "emptyTask": "No time tracked for this task yet.",
@@ -1665,7 +1678,41 @@
     "browse": {
       "selectRange": "Select a range",
       "userSearch": "Search for a user…"
-    }
+    },
+    "running": "Running",
+    "entries": "Entries",
+    "total": "Total",
+    "delete": "Delete",
+    "deleteEntry": "Delete entry",
+    "deleteTitle": "Delete this entry?",
+    "deleteDescription": "The time it holds is gone for good.",
+    "loadFailed": "Couldn't load your time entries. Try again in a moment.",
+    "emptyTitle": "No time tracked",
+    "emptyDescription": "Nothing logged on these days. Start a timer or log time by hand.",
+    "timer": {
+      "label": "Timer",
+      "runningSince": "Running since {time}",
+      "idle": "No timer running",
+      "idleHint": "Pick a task and the clock starts.",
+      "pickTask": "Track time on…",
+      "runningSinceDay": "Running since {time}"
+    },
+    "ranges": {
+      "label": "Range",
+      "thisWeek": "This week",
+      "lastWeek": "Last week",
+      "thisMonth": "This month",
+      "custom": "Pick days",
+      "from": "From",
+      "to": "To",
+      "fromDay": "From {day}",
+      "toDay": "To {day}"
+    },
+    "filters": {
+      "project": "Project",
+      "allProjects": "All projects"
+    },
+    "start": "Start"
   },
   "time": {
     "units": {

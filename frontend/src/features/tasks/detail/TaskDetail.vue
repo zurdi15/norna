@@ -5,8 +5,11 @@ import {useRouter} from 'vue-router'
 
 import type {TaskDetail} from '@/client/queries/tasks'
 import {PERMISSIONS} from '@/constants/permissions'
+import {PRO_FEATURE} from '@/constants/proFeatures'
+import TaskTimeTracking from '@/features/time-tracking/TaskTimeTracking.vue'
 import {formatDateSince} from '@/helpers/time/formatDate'
 import {getDisplayName} from '@/modules/user/displayName'
+import {useConfigStore} from '@/stores/config'
 import {useTaskActionsStore} from '@/stores/taskActions'
 import {cn} from '@/ui/cn'
 
@@ -36,6 +39,7 @@ const emit = defineEmits<{
 const {t} = useI18n()
 const router = useRouter()
 const actions = useTaskActionsStore()
+const configStore = useConfigStore()
 
 const properties = useTemplateRef<InstanceType<typeof TaskProperties>>('properties')
 const relations = useTemplateRef<InstanceType<typeof TaskRelations>>('relations')
@@ -132,6 +136,10 @@ const updatedLine = computed(() => props.task.updated && props.task.updated !== 
 			ref="attachments"
 			:task="task"
 			:editable="editable"
+		/>
+		<TaskTimeTracking
+			v-if="configStore.isProFeatureEnabled(PRO_FEATURE.TIME_TRACKING)"
+			:task="task"
 		/>
 		<TaskActivity
 			:task="task"
