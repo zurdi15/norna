@@ -14,6 +14,7 @@ import {useAgenda} from '@/features/tasks/useAgenda'
 import type {ProjectResponse} from '@/client/queries/projects'
 import {useProjects} from '@/composables/useProjects'
 import {getHistory} from '@/modules/projectHistory'
+import {useAuthStore} from '@/stores/auth'
 import UiColorDot from '@/ui/UiColorDot.vue'
 import UiSectionHeading from '@/ui/UiSectionHeading.vue'
 import {isoWeek} from '@/modules/task/dueDate'
@@ -67,9 +68,11 @@ const groups = computed<TaskListGroup[]>(() => [
 ])
 
 // Read once per visit: the list only changes while browsing projects, away from here.
+// The "show last viewed" setting turns it off.
+const authStore = useAuthStore()
 const projects = useProjects()
 const history = getHistory()
-const recentProjects = computed(() => history
+const recentProjects = computed(() => (authStore.settings.frontend_settings.show_last_viewed ? history : [])
 	.map(entry => projects.projects[entry.id])
 	.filter((project): project is ProjectResponse => project !== undefined && !project.is_archived))
 
