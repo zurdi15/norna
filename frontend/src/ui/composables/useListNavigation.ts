@@ -1,4 +1,4 @@
-import {computed, nextTick, ref, watch, type Ref} from 'vue'
+import {computed, getCurrentInstance, nextTick, onMounted, ref, watch, type Ref} from 'vue'
 
 /**
  * Keyboard navigation for a search box driving a list (the combobox pattern): focus stays
@@ -25,6 +25,7 @@ export function useListNavigation<T>(options: {
 	// Keys joined with a unit separator, which no key contains.
 	watch(() => options.items.value.map(options.getKey).join(''), () => {
 		activeIndex.value = initial()
+		reveal('center')
 	})
 
 	const activeItem = computed(() => options.items.value[activeIndex.value])
@@ -35,17 +36,26 @@ export function useListNavigation<T>(options: {
 
 	const activeDescendant = computed(() => activeItem.value === undefined ? undefined : optionId(activeItem.value))
 
+	function reveal(block: ScrollLogicalPosition) {
+		nextTick(() => {
+			if (activeDescendant.value) {
+				document.getElementById(activeDescendant.value)?.scrollIntoView({block})
+			}
+		})
+	}
+
 	function setActive(index: number) {
 		const count = options.items.value.length
 		if (count === 0) {
 			return
 		}
 		activeIndex.value = (index + count) % count
-		nextTick(() => {
-			if (activeDescendant.value) {
-				document.getElementById(activeDescendant.value)?.scrollIntoView({block: 'nearest'})
-			}
-		})
+		reveal('nearest')
+	}
+
+	// A picker opening on its current value shows it, not the top of the list.
+	if (getCurrentInstance()) {
+		onMounted(() => reveal('center'))
 	}
 
 	function onKeydown(event: KeyboardEvent) {

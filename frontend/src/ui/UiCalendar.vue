@@ -24,9 +24,12 @@ import UiIcon from './UiIcon.vue'
 const props = withDefaults(defineProps<{
 	// 0 = Sunday … 6 = Saturday; callers pass the user's setting.
 	weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+	// The first day that can be picked.
+	minValue?: Date | DateValue
 	class?: HTMLAttributes['class']
 }>(), {
 	weekStartsOn: 1,
+	minValue: undefined,
 	class: undefined,
 })
 
@@ -36,10 +39,14 @@ const model = defineModel<Date | null>({default: null})
 
 const {t, locale} = useI18n()
 
+function toCalendarDate(date: Date): CalendarDate {
+	return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate())
+}
+
+const minCalendarValue = computed(() => props.minValue instanceof Date ? toCalendarDate(props.minValue) : props.minValue)
+
 const value = computed<DateValue | undefined>({
-	get: () => model.value
-		? new CalendarDate(model.value.getFullYear(), model.value.getMonth() + 1, model.value.getDate())
-		: undefined,
+	get: () => model.value ? toCalendarDate(model.value) : undefined,
 	set: (picked) => {
 		if (!picked) {
 			model.value = null
@@ -60,6 +67,7 @@ const navButton = 'grid size-8 cursor-pointer place-items-center rounded-md text
 		v-model="value"
 		:locale="locale"
 		:week-starts-on="weekStartsOn"
+		:min-value="minCalendarValue"
 		fixed-weeks
 		prevent-deselect
 		weekday-format="narrow"

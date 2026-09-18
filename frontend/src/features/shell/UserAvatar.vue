@@ -23,6 +23,7 @@ const PIXELS: Record<UiAvatarSize, number> = {
 	md: 48,
 	lg: 64,
 	xl: 96,
+	'2xl': 128,
 }
 
 const src = ref<string>()

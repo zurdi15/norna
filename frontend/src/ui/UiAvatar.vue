@@ -4,7 +4,7 @@ import {AvatarFallback, AvatarImage, AvatarRoot} from 'reka-ui'
 
 import {cn} from './cn'
 
-export type UiAvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+export type UiAvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
 
 const props = withDefaults(defineProps<{
 	name: string
@@ -23,6 +23,7 @@ const SIZES: Record<UiAvatarSize, string> = {
 	md: 'size-6 text-2xs',
 	lg: 'size-8 text-xs',
 	xl: 'size-12 text-base',
+	'2xl': 'size-16 text-2xl',
 }
 
 const initials = computed(() => props.name
