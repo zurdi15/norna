@@ -31,6 +31,7 @@ function toggle(key: TableColumnKey, shown: boolean | 'indeterminate') {
 				variant="ghost"
 				size="sm"
 				:icon="Columns3"
+				:aria-label="t('projectView.table.columns')"
 				class="shrink-0 text-ink-muted"
 			>
 				<span class="hidden @md:inline">{{ t('projectView.table.columns') }}</span>
