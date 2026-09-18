@@ -37,6 +37,7 @@ import (
 	"fmt"
 	"sort"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"code.vikunja.io/api/pkg/config"
@@ -203,8 +204,25 @@ func Init() {
 	go backgroundLoop(key)
 }
 
+// Norna: this fork turns every pro feature on, with or without a license key. The
+// upstream gating stays for the tests: SetForTests and ResetForTests switch it back
+// on, so they keep checking it as upstream wrote them.
+var gated atomic.Bool
+
+func allFeatures() []Feature {
+	out := make([]Feature, 0, len(featureToString))
+	for f := range featureToString {
+		out = append(out, f)
+	}
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].String() < out[j].String()
+	})
+	return out
+}
+
 // SetForTests enables the given features. Pair with ResetForTests to avoid bleeding state between tests.
 func SetForTests(features []Feature) {
+	gated.Store(true)
 	feats := make([]Feature, 0, len(features))
 	feats = append(feats, features...)
 	applyResponse(&Response{
@@ -215,6 +233,7 @@ func SetForTests(features []Feature) {
 }
 
 func ResetForTests() {
+	gated.Store(true)
 	degradeToFree("reset for tests")
 }
 
@@ -268,6 +287,9 @@ func CurrentInfo() Info {
 
 // EnabledProFeatures returns enabled features (empty slice in free mode); Feature values marshal to their JSON string key.
 func EnabledProFeatures() []Feature {
+	if !gated.Load() {
+		return allFeatures()
+	}
 	st := loadState()
 	if !st.Licensed {
 		return []Feature{}
@@ -287,6 +309,10 @@ func EnabledProFeatures() []Feature {
 
 // IsFeatureEnabled returns whether a specific licensed feature is enabled.
 func IsFeatureEnabled(feature Feature) bool {
+	if !gated.Load() {
+		_, known := featureToString[feature]
+		return known
+	}
 	st := loadState()
 	if !st.Licensed {
 		return false
