@@ -1,6 +1,6 @@
 # Design system (Norna frontend)
 
-The frontend is being rebuilt from scratch on the `norna-redesign` branch (plan: `plans/norna-redesign.md`).
+The frontend was rebuilt from scratch on the `norna-redesign` branch (plan: `plans/norna-redesign.md`).
 The visual direction was fixed in phase 0: IBM Plex Sans + Plex Mono, Fjord accent in its "steel" tone,
 runic radii (3/5/8/14px), and the Norns' captions (Urðr / Verðandi / Skuld) over past / present / future.
 
@@ -27,6 +27,35 @@ runic radii (3/5/8/14px), and the Norns' captions (Urðr / Verðandi / Skuld) ov
   (`eslint-rules/icon-button-accessible-name.js`); `UiIconButton` requires a `label` prop.
 - Pickers and menus open as a popover or dropdown from `md` up and as a bottom sheet or action
   sheet below it, through one adaptive overlay. Don't build two versions of a picker.
+
+## Overlays
+
+- Dialogs and drawers stack in the order they open (`ui/composables/useLayerStack.ts`): a
+  confirmation or a picker sheet opened from a dialog covers it and its backdrop dims it.
+  Menus, popovers and selects use `--z-popover`, above every dialog. A new overlay uses the same.
+- `UiAdaptivePopover` opens from a `trigger`, or points at an `anchor` that doesn't open it (a text
+  selection). Never fake an anchor with an invisible trigger: it gets button semantics.
+- `confirm()` (`ui/confirm.ts`) for destructive actions; toasts through `@/message`.
+- On touch, row and card menus open with a long press as an action sheet (`UiContextMenu`).
+
+## Pages, panels and dialogs
+
+- A task opens beside the page it came from on wide screens (`/tasks/:id` with the page in
+  `history.state`), and full screen on phones. Routes with `meta.modal` (settings of a project,
+  create forms, About) open as a dialog over the page they came from; linked directly, they are
+  pages. Link to both through `useBackdropLink()`; frame dialog pages with `ModalPage`.
+- A page shown behind a panel or dialog reads its own url through `useDisplayedRoute()` /
+  `useDisplayedRouteQuery()`, never `useRoute()` (that is the route on top).
+- `meta.bare` renders a route without the shell but still needs a session (OAuth consent).
+- Settings pages are framed by `features/settings/`: `SettingsPage` (header, back on phones),
+  `SettingsSection`, and `SettingsRow` (label and description left, control right; it names the kit
+  control inside, as `UiField` does). Settings save as they change, with one quiet toast.
+
+## Data on screen
+
+- Reads follow the cache live (`useProject`, `useLabels`…). An edit form copies what it edits into
+  its own draft once the data has loaded; it never edits the cached object.
+- Copy buttons use `useCopyFeedback()`: a brief check mark after a successful copy, no toast.
 
 ## Lint guardrails
 

@@ -6,7 +6,7 @@
 - Lint before committing and fix what it reports:
   - backend changes: `mage lint:fix`
   - frontend changes: `cd frontend && pnpm lint:fix`
-  - CSS/SCSS or Vue `<style>` changes: also `pnpm lint:styles:fix`
+  - CSS or Vue `<style>` changes: also `pnpm lint:styles:fix`
 - Never commit edits to `pkg/swagger/`; CI regenerates it after commit.
 
 ## Plans

@@ -18,7 +18,6 @@
 ## Frontend clients
 
 - Always consume new API routes through the generated functions and types in `frontend/src/client/generated`. Use their snake_case fields directly.
-- `frontend/src/models`, `frontend/src/modelTypes`, and `frontend/src/services` are the legacy v1 architecture. They are being migrated gradually and will be removed. Do not add models, interfaces, or service wrappers there for new routes; existing code can remain until migrated.
 - After adding or changing a v2 route or schema, run `mage generate:frontend-client` and commit the generated output. Never hand-edit it. `mage check:frontend-client` verifies it is current and generation is repeatable.
 - Reuse the shared client configuration in `frontend/src/client/http.ts`. Put shared query/cache behavior in `frontend/src/client/queries/` when needed; do not duplicate the generated transport layer.
 - List queries that load every page use `fetchAllPages` (in `frontend/src/client/queries/`). Mutations fenced to the client request context use `contextMutationOptions`; its `optimistic` option does the cancel, snapshot and rollback.
@@ -51,7 +50,9 @@ Rules:
 - Id lookups must handle pseudo projects: `-1` is Favorites and other negative ids are saved filters. They only exist in the project list and have no detail endpoint.
 - A composable that snapshots data on first load (so an open edit form survives a background refetch) is a draft, not a read. Name it as one, e.g. `useProjectDraft`, and never use it for tables or lists that mutations must update; those read through a live `useQuery` composable. An edit form that needs a draft is a child component mounted once the data has loaded, keyed on the entity id, that seeds the draft once in setup; not watchers plus a stored draft id.
 - Toasts for the mutation outcome go in the option callbacks; UI actions like redirects stay in the component. Call `mutate(x)` when nothing follows, `mutate(x, {onSettled})` for cleanup only, and `try { await mutateAsync(x) } catch { return }` with success-only code after the block. A `mutateAsync` rejection that escapes reaches the global error handler and toasts a second time.
-- Mutation input holding secrets (passwords) sets `gcTime: 0`, and the component calls the mutation's `reset()` once it settles. `gcTime` alone does nothing while a mounted `useMutation` still observes the mutation.
+- Mutation input or results holding secrets (passwords, tokens, files) set `gcTime: 0` — pass it to `contextMutationOptions`, don't spread its result — and the component calls the mutation's `reset()` once it settles. `gcTime` alone does nothing while a mounted `useMutation` still observes the mutation. Strip secret fields from responses before they reach any query cache.
+- Exception, tasks: `patchTaskInCaches` (in `client/queries/tasks.ts`) is the one helper that writes a task edit into every cache shape (task, paged list, infinite list, board). When an edit changes which list a task belongs to or its order (done, dates, labels, priority, project, bucket), the lists are invalidated with `refetchType: 'active'`, not `'none'`: an open list must drop or move the task at once.
+- Exception, WebSocket: the socket only says that something changed (`notification.*`, `timer.*`). Its handlers call `refetch()` on the live query or invalidate the key; they never write the cache themselves.
 - Test mutation options through the real lifecycle: `queryClient.getMutationCache().build(queryClient, options).execute(vars)`. To observe an optimistic write, assert inside the mocked request before throwing. Assert on our cache writes only; don't re-test TanStack's refetch or cancellation behaviour.
 
 ## OpenAPI
