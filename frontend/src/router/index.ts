@@ -17,7 +17,6 @@ import {useBaseStore} from '@/stores/base'
 import {useConfigStore} from '@/stores/config'
 
 // Every route renders this until its page is rebuilt; phases swap in the real page one route at a time.
-const PagePending = () => import('@/pages/PagePending.vue')
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -93,19 +92,26 @@ const router = createRouter({
 		},
 		{
 			path: '/user/settings',
-			name: 'user.settings',
-			component: PagePending,
-			redirect: {name: 'user.settings.general'},
+			component: () => import('@/pages/settings/PageSettings.vue'),
 			children: [
+				{
+					// Phones list the sections here; wide screens show them beside the first one.
+					path: '',
+					name: 'user.settings',
+					component: () => import('@/pages/settings/PageSettingsIndex.vue'),
+					beforeEnter: () => window.matchMedia('(min-width: 48rem)').matches
+						? {name: 'user.settings.general'}
+						: undefined,
+				},
 				{
 					path: '/user/settings/avatar',
 					name: 'user.settings.avatar',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsAvatar.vue'),
 				},
 				{
 					path: '/user/settings/caldav',
 					name: 'user.settings.caldav',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsCaldav.vue'),
 					beforeEnter: async () => {
 						const {useConfigStore} = await import('@/stores/config')
 						if (!useConfigStore().caldav_enabled) {
@@ -116,42 +122,50 @@ const router = createRouter({
 				{
 					path: '/user/settings/mcp',
 					name: 'user.settings.mcp',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsMcp.vue'),
 				},
 				{
 					path: '/user/settings/data-export',
 					name: 'user.settings.data-export',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsDataExport.vue'),
 				},
 				{
 					path: '/user/settings/feeds',
 					name: 'user.settings.feeds',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsFeeds.vue'),
 				},
 				{
 					path: '/user/settings/deletion',
 					name: 'user.settings.deletion',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsDeletion.vue'),
 				},
 				{
 					path: '/user/settings/email-update',
 					name: 'user.settings.email-update',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsEmail.vue'),
+					// Only local accounts have an email and a password here; LDAP and OpenID keep them elsewhere.
+					beforeEnter: () => useAuthStore().info?.is_local_user === false
+						? {name: 'user.settings.general'}
+						: undefined,
 				},
 				{
 					path: '/user/settings/general',
 					name: 'user.settings.general',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsGeneral.vue'),
 				},
 				{
 					path: '/user/settings/password-update',
 					name: 'user.settings.password-update',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsPassword.vue'),
+					// Only local accounts have an email and a password here; LDAP and OpenID keep them elsewhere.
+					beforeEnter: () => useAuthStore().info?.is_local_user === false
+						? {name: 'user.settings.general'}
+						: undefined,
 				},
 				{
 					path: '/user/settings/totp',
 					name: 'user.settings.totp',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsTotp.vue'),
 					beforeEnter: async () => {
 						const {useConfigStore} = await import('@/stores/config')
 						if (!useConfigStore().totp_enabled || !useAuthStore().info?.is_local_user) {
@@ -162,37 +176,37 @@ const router = createRouter({
 				{
 					path: '/user/settings/api-tokens',
 					name: 'user.settings.apiTokens',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsApiTokens.vue'),
 				},
 				{
 					path: '/user/settings/sessions',
 					name: 'user.settings.sessions',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsSessions.vue'),
 				},
 				{
 					path: '/user/settings/webhooks',
 					name: 'user.settings.webhooks',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsWebhooks.vue'),
 				},
 				{
 					path: '/user/settings/bots',
 					name: 'user.settings.bots',
-					component: PagePending,
+					component: () => import('@/pages/settings/PageSettingsBots.vue'),
 				},
 				{
 					path: '/user/settings/migrate',
 					name: 'migrate.start',
-					component: PagePending,
+					component: () => import('@/pages/migrate/PageMigrate.vue'),
 				},
 				{
 					path: '/migrate/csv',
 					name: 'migrate.csv',
-					component: PagePending,
+					component: () => import('@/pages/migrate/PageMigrateCsv.vue'),
 				},
 				{
 					path: '/migrate/:service',
 					name: 'migrate.service',
-					component: PagePending,
+					component: () => import('@/pages/migrate/PageMigrateService.vue'),
 					props: route => ({
 						service: route.params.service as string,
 						code: route.query.code as string,
@@ -203,7 +217,7 @@ const router = createRouter({
 		{
 			path: '/user/export/download',
 			name: 'user.export.download',
-			component: PagePending,
+			component: () => import('@/pages/PageExportDownload.vue'),
 		},
 		{
 			path: '/share/:share/auth',
@@ -332,8 +346,9 @@ const router = createRouter({
 		{
 			path: '/projects/:projectId/info',
 			name: 'project.info',
-			component: PagePending,
+			component: () => import('@/pages/projects/PageProjectInfo.vue'),
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
+			meta: {modal: true, title: 'projectView.menu.info'},
 		},
 		{
 			path: '/projects/:projectId',
@@ -405,17 +420,19 @@ const router = createRouter({
 		{
 			path: '/oauth/authorize',
 			name: 'oauth.authorize',
-			component: PagePending,
+			component: () => import('@/pages/auth/PageOAuthAuthorize.vue'),
+			meta: {bare: true},
 		},
 		{
 			path: '/about',
 			name: 'about',
-			component: PagePending,
+			component: () => import('@/pages/PageAbout.vue'),
+			meta: {modal: true, title: 'about.title'},
 		},
 		{
 			path: '/time-tracking',
 			name: 'time-tracking',
-			component: PagePending,
+			component: () => import('@/pages/PageTimeTracking.vue'),
 			meta: {
 				requiresTimeTracking: true,
 				title: 'timeTracking.title',
@@ -423,7 +440,7 @@ const router = createRouter({
 		},
 		{
 			path: '/admin',
-			component: PagePending,
+			component: () => import('@/pages/admin/PageAdmin.vue'),
 			meta: {
 				requiresAdminPanel: true,
 				adminMode: true,
@@ -432,22 +449,22 @@ const router = createRouter({
 				{
 					path: '',
 					name: 'admin.overview',
-					component: PagePending,
+					component: () => import('@/pages/admin/PageAdminOverview.vue'),
 				},
 				{
 					path: 'users',
 					name: 'admin.users',
-					component: PagePending,
+					component: () => import('@/pages/admin/PageAdminUsers.vue'),
 				},
 				{
 					path: 'projects',
 					name: 'admin.projects',
-					component: PagePending,
+					component: () => import('@/pages/admin/PageAdminProjects.vue'),
 				},
 				{
 					path: 'invite-links',
 					name: 'admin.inviteLinks',
-					component: PagePending,
+					component: () => import('@/pages/admin/PageAdminInviteLinks.vue'),
 					meta: {
 						requiresUserInvites: true,
 					},
