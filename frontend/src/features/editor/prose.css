@@ -1,0 +1,430 @@
+/*
+ * Rendered rich text: task descriptions and comments, editable or not.
+ * Tokens only (they resolve per theme with light-dark()); Tailwind's preflight has reset
+ * margins, list markers and heading sizes, so everything here is explicit.
+ */
+
+.norna-prose {
+	--prose-gap: 0.5em;
+
+	min-inline-size: 0;
+	color: var(--color-ink);
+	font-size: var(--text-md);
+	line-height: 1.6;
+	overflow-wrap: break-word;
+	outline: none;
+}
+
+@media (pointer: fine) {
+	.norna-prose {
+		font-size: var(--text-base);
+	}
+}
+
+.norna-prose :where(blockquote, li, td, th, [data-node-view-content]) > * + *,
+.norna-prose > * + * {
+	margin-block-start: var(--prose-gap);
+}
+
+/* Headings */
+
+.norna-prose :where(h1, h2, h3, h4, h5, h6) {
+	color: var(--color-ink);
+	font-weight: 600;
+	line-height: 1.3;
+	letter-spacing: -0.01em;
+	text-wrap: balance;
+}
+
+.norna-prose h1 {
+	font-size: var(--text-xl);
+}
+
+.norna-prose h2 {
+	font-size: var(--text-lg);
+}
+
+.norna-prose :where(h3, h4, h5, h6) {
+	font-size: 1em;
+}
+
+.norna-prose > :where(h1, h2, h3, h4, h5, h6):not(:first-child) {
+	margin-block-start: 1.1em;
+}
+
+.norna-prose :where(strong, b) {
+	font-weight: 600;
+}
+
+/* Links */
+
+.norna-prose a {
+	color: var(--color-accent);
+	text-decoration-line: underline;
+	text-decoration-color: var(--color-accent-line);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.2em;
+	transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+
+.norna-prose a:hover {
+	text-decoration-color: currentcolor;
+}
+
+/* Lists */
+
+.norna-prose :where(ul, ol) {
+	padding-inline-start: 1.4em;
+}
+
+.norna-prose ul {
+	list-style-type: disc;
+}
+
+.norna-prose ul ul {
+	list-style-type: circle;
+}
+
+.norna-prose ol {
+	list-style-type: decimal;
+}
+
+.norna-prose li {
+	padding-inline-start: 0.2em;
+}
+
+.norna-prose li::marker {
+	color: var(--color-ink-faint);
+}
+
+.norna-prose li > * + *,
+.norna-prose li + li {
+	margin-block-start: 0.2em;
+}
+
+/* Checklists */
+
+.norna-prose ul[data-type="taskList"] {
+	padding-inline-start: 0;
+	list-style: none;
+}
+
+.norna-prose ul[data-type="taskList"] ul[data-type="taskList"] {
+	padding-inline-start: 0.25em;
+}
+
+.norna-prose li[data-checked] {
+	display: flex;
+	gap: 0.6em;
+	align-items: flex-start;
+	padding-inline-start: 0;
+}
+
+.norna-prose li[data-checked] > label {
+	position: relative;
+	display: flex;
+	flex: none;
+	align-items: center;
+	block-size: 1.6em;
+	user-select: none;
+}
+
+/* A larger invisible hit area around the box, for fingers. */
+.norna-prose li[data-checked] > label::after {
+	position: absolute;
+	inset: -0.5rem -0.4rem;
+	content: "";
+}
+
+.norna-prose li[data-checked] > div {
+	flex: 1 1 0%;
+	min-inline-size: 0;
+}
+
+.norna-prose li[data-checked] input[type="checkbox"] {
+	display: grid;
+	flex: none;
+	place-content: center;
+	inline-size: 1.125rem;
+	block-size: 1.125rem;
+	margin: 0;
+	border: 1.5px solid var(--color-line-strong);
+	border-radius: var(--radius-sm);
+	background-color: var(--color-surface);
+	appearance: none;
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		border-color var(--duration-fast) var(--ease-out);
+}
+
+@media (pointer: coarse) {
+	.norna-prose li[data-checked] input[type="checkbox"] {
+		inline-size: 1.25rem;
+		block-size: 1.25rem;
+	}
+}
+
+/* The check mark only borrows the svg's shape; its color is the token behind it. */
+.norna-prose li[data-checked] input[type="checkbox"]::before {
+	inline-size: 0.75rem;
+	block-size: 0.75rem;
+	background-color: var(--color-on-accent);
+	content: "";
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+	transform: scale(0);
+	transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.norna-prose li[data-checked] input[type="checkbox"]:hover {
+	border-color: var(--color-accent);
+}
+
+.norna-prose li[data-checked] input[type="checkbox"]:checked {
+	border-color: var(--color-accent);
+	background-color: var(--color-accent);
+}
+
+.norna-prose li[data-checked] input[type="checkbox"]:checked::before {
+	transform: scale(1);
+}
+
+.norna-prose li[data-checked="true"] > div > :not(ul, ol) {
+	color: var(--color-ink-faint);
+	text-decoration-line: line-through;
+	text-decoration-color: var(--color-line-strong);
+}
+
+[data-checklist-locked] .norna-prose li[data-checked] > label {
+	pointer-events: none;
+}
+
+[data-checklist-locked] .norna-prose li[data-checked] input[type="checkbox"] {
+	opacity: 0.7;
+}
+
+/* Read-only checklist text toggles the item (TaskEditor), so it reads as clickable. */
+.norna-prose[contenteditable="false"] li[data-checked] > div {
+	cursor: pointer;
+}
+
+[data-checklist-locked] .norna-prose[contenteditable="false"] li[data-checked] > div {
+	cursor: auto;
+}
+
+/* Quotes */
+
+.norna-prose blockquote {
+	padding-inline-start: 0.9em;
+	border-inline-start: 2px solid var(--color-line-strong);
+	color: var(--color-ink-muted);
+}
+
+/* Code */
+
+.norna-prose code {
+	padding: 0.1em 0.35em;
+	border: 1px solid var(--color-line);
+	border-radius: var(--radius-sm);
+	background-color: var(--color-canvas-subtle);
+	font-family: var(--font-mono);
+	font-size: 0.86em;
+}
+
+.norna-prose pre {
+	overflow-x: auto;
+	padding: 0.75rem 0.9rem;
+	border: 1px solid var(--color-line);
+	border-radius: var(--radius-md);
+	background-color: var(--color-canvas-subtle);
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	line-height: 1.55;
+	tab-size: 4;
+}
+
+.norna-prose pre code {
+	padding: 0;
+	border: 0;
+	background: none;
+	font-size: inherit;
+}
+
+.norna-prose pre :where(.hljs-comment, .hljs-quote) {
+	color: var(--color-ink-faint);
+	font-style: italic;
+}
+
+.norna-prose pre :where(.hljs-keyword, .hljs-selector-tag, .hljs-built_in, .hljs-type) {
+	color: var(--color-accent);
+}
+
+.norna-prose pre :where(.hljs-string, .hljs-symbol, .hljs-bullet, .hljs-regexp, .hljs-addition) {
+	color: var(--color-success);
+}
+
+.norna-prose pre :where(.hljs-number, .hljs-literal, .hljs-meta, .hljs-params) {
+	color: var(--color-warning);
+}
+
+.norna-prose pre :where(.hljs-title, .hljs-section, .hljs-name, .hljs-tag, .hljs-deletion) {
+	color: var(--color-danger);
+}
+
+.norna-prose pre :where(.hljs-attr, .hljs-attribute, .hljs-variable, .hljs-template-variable, .hljs-property) {
+	color: var(--color-ink-muted);
+}
+
+.norna-prose pre .hljs-emphasis {
+	font-style: italic;
+}
+
+.norna-prose pre .hljs-strong {
+	font-weight: 600;
+}
+
+/* Rules */
+
+.norna-prose hr {
+	margin-block: 1.25em;
+	border: 0;
+	border-block-start: 1px solid var(--color-line);
+}
+
+.norna-prose > hr + * {
+	margin-block-start: 0;
+}
+
+/* Images */
+
+.norna-prose img {
+	display: block;
+	max-inline-size: 100%;
+	block-size: auto;
+	border: 1px solid var(--color-line);
+	border-radius: var(--radius-md);
+}
+
+/* An attachment while its blob loads, or when it could not be loaded. */
+.norna-prose img[data-state] {
+	inline-size: 16rem;
+	aspect-ratio: 16 / 10;
+	background-color: var(--color-canvas-subtle);
+}
+
+.norna-prose img[data-state="loading"] {
+	animation: prose-pulse 1.4s var(--ease-in-out) infinite;
+}
+
+.norna-prose img[data-state="error"] {
+	border-style: dashed;
+}
+
+@keyframes prose-pulse {
+	50% {
+		opacity: 0.55;
+	}
+}
+
+.norna-prose img.ProseMirror-selectednode {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 2px;
+}
+
+/* Tables */
+
+.norna-prose .tableWrapper {
+	overflow-x: auto;
+}
+
+.norna-prose table {
+	inline-size: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+	font-size: 0.95em;
+}
+
+.norna-prose :where(td, th) {
+	position: relative;
+	box-sizing: border-box;
+	min-inline-size: 5em;
+	padding: 0.35em 0.6em;
+	border: 1px solid var(--color-line-strong);
+	text-align: start;
+	vertical-align: top;
+}
+
+.norna-prose th {
+	background-color: var(--color-canvas-subtle);
+	font-weight: 600;
+}
+
+.norna-prose :where(td, th) > * {
+	margin-block: 0;
+}
+
+.norna-prose .selectedCell::after {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	background-color: color-mix(in oklch, var(--color-accent) 16%, transparent);
+	content: "";
+	pointer-events: none;
+}
+
+.norna-prose .column-resize-handle {
+	position: absolute;
+	inset-block: 0 -1px;
+	inset-inline-end: -2px;
+	inline-size: 3px;
+	background-color: var(--color-accent);
+	pointer-events: none;
+}
+
+.norna-prose.resize-cursor {
+	cursor: col-resize;
+}
+
+/* Editing aids */
+
+.norna-prose :where(p, h1, h2, h3).is-empty::before {
+	float: inline-start;
+	block-size: 0;
+	color: var(--color-ink-faint);
+	content: attr(data-placeholder);
+	pointer-events: none;
+}
+
+.norna-prose .suggestion {
+	border-radius: var(--radius-sm);
+	background-color: var(--color-accent-subtle);
+	box-decoration-break: clone;
+}
+
+.norna-prose .ProseMirror-gapcursor::after {
+	border-block-start-color: var(--color-ink);
+}
+
+/* Variants */
+
+[data-editor-variant="description"] .norna-prose[contenteditable="true"] {
+	min-block-size: 6rem;
+	padding-block-end: 1rem;
+}
+
+[data-editor-variant="comment"] .norna-prose {
+	--prose-gap: 0.4em;
+}
+
+[data-editor-variant="comment"] .norna-prose[contenteditable="true"] {
+	min-block-size: 2.75rem;
+	padding: 0.5rem 0.75rem;
+}
+
+[data-editor-variant="comment"] .norna-prose h1 {
+	font-size: var(--text-lg);
+}
+
+[data-editor-variant="comment"] .norna-prose h2 {
+	font-size: var(--text-md);
+}

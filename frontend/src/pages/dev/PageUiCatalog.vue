@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, ref, watch} from 'vue'
+import {computed, ref, watch, type Component} from 'vue'
 import {toast} from 'vue-sonner'
 import {
 	ArrowRightLeft,
@@ -49,6 +49,11 @@ import UiSpinner from '@/ui/UiSpinner.vue'
 import UiSwitch from '@/ui/UiSwitch.vue'
 import UiTabs from '@/ui/UiTabs.vue'
 import UiTextarea from '@/ui/UiTextarea.vue'
+
+// Feature sections live next to this page, one file each, so they can grow without touching it.
+const featureSections = Object.entries(import.meta.glob<{default: Component}>('./catalog/*.vue', {eager: true}))
+	.sort(([a], [b]) => a.localeCompare(b))
+	.map(([path, module]) => ({key: path, component: module.default}))
 
 // Dev-only page: the copy is sample content, not translated UI.
 type Theme = 'system' | 'light' | 'dark'
@@ -538,6 +543,12 @@ function simulateSave() {
 					</template>
 				</UiEmptyState>
 			</section>
+
+			<component
+				:is="section.component"
+				v-for="section in featureSections"
+				:key="section.key"
+			/>
 		</main>
 	</div>
 </template>

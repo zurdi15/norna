@@ -19,10 +19,9 @@ function createEditor(content: string) {
 		isEditing: ref(true),
 		isEditEnabled: () => true,
 		placeholder: '',
-		contentHasChanged: ref(false),
 		bubbleSave: () => {},
 		getEditor: () => editor,
-		uploadCallback: undefined,
+		canUpload: () => false,
 		uploadAndInsertFiles: () => {},
 	}
 

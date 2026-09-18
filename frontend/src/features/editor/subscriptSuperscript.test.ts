@@ -10,10 +10,9 @@ const stubDeps: EditorExtensionDeps = {
 	isEditing: ref(true),
 	isEditEnabled: () => true,
 	placeholder: '',
-	contentHasChanged: ref(false),
 	bubbleSave: () => {},
 	getEditor: () => undefined,
-	uploadCallback: undefined,
+	canUpload: () => false,
 	uploadAndInsertFiles: () => {},
 }
 

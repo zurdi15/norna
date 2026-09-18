@@ -7,17 +7,16 @@ import {createEditorExtensions, type EditorExtensionDeps} from './editorExtensio
 
 const TASK_URL = 'http://localhost:3000/tasks/123'
 
-// Inert deps so the editor runs TipTap.vue's real extension set, whose markdown
+// Inert deps so the editor runs TaskEditor's real extension set, whose markdown
 // paste handler and Link mark both compete with TaskLink for pastes.
 const stubDeps: EditorExtensionDeps = {
 	t: key => key,
 	isEditing: ref(true),
 	isEditEnabled: () => true,
 	placeholder: '',
-	contentHasChanged: ref(false),
 	bubbleSave: () => {},
 	getEditor: () => undefined,
-	uploadCallback: undefined,
+	canUpload: () => false,
 	uploadAndInsertFiles: () => {},
 }
 

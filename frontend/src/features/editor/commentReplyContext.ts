@@ -1,8 +1,8 @@
 import type {InjectionKey} from 'vue'
-import type {ITaskComment} from '@/modelTypes/ITaskComment'
+import type {TaskComment} from '@/client/generated'
 
 export interface CommentReplyContext {
-	findComment: (id: number) => ITaskComment | undefined
+	findComment: (id: number) => TaskComment | undefined
 	scrollToComment: (id: number) => void
 }
 

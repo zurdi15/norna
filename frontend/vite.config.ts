@@ -104,7 +104,6 @@ function getBuildConfig(env: Record<string, string>) {
 				'e2e/**',
 				// Redesign phase 5: these import the suggestion/node-view renderers (.vue) that get
 				// rebuilt with the new editor UI. Re-enable together with them.
-				'**/features/editor/**/*.test.ts',
 				'**/features/filters/FilterAutocomplete.test.ts',
 			],
 			'vitest.commandLine': 'pnpm test:unit',

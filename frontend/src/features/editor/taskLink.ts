@@ -8,7 +8,7 @@ import TaskLinkView from './TaskLinkView.vue'
 
 const PLAIN_ANCHOR_ATTRIBUTES = ['href', 'target', 'rel']
 
-// Pasted taskLink attrs must serialize identically to the Link mark's anchors (NonInclusiveLink.configure in TipTap.vue), hence one shared constant.
+// Pasted taskLink attrs must serialize identically to the Link mark's anchors (NonInclusiveLink.configure in editorExtensions.ts), hence one shared constant.
 export const LINK_HTML_ATTRIBUTES = {target: '_blank', rel: 'noopener noreferrer nofollow'}
 
 // In-memory only: a plain <a href> whose text equals its same-origin /tasks/:id href
@@ -16,7 +16,7 @@ export const LINK_HTML_ATTRIBUTES = {target: '_blank', rel: 'noopener noreferrer
 export const TaskLink = Node.create({
 	name: 'taskLink',
 
-	// Plugins run in reverse declaration order, so this has to outrank TipTap.vue's
+	// Plugins run in reverse declaration order, so this has to outrank editorExtensions.ts'
 	// markdown paste handler, which would run a pasted url through marked instead.
 	// Stays below the Link mark (1000) so pasting over a selection still links it.
 	priority: 200,

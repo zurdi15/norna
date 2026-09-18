@@ -1,22 +1,14 @@
-import {VueRenderer} from '@tiptap/vue-3'
 import type {Editor, Range} from '@tiptap/core'
 import {PluginKey, type EditorState} from '@tiptap/pm/state'
 
 import EmojiList from './EmojiList.vue'
 import {loadEmojis, filterEmojis, type EmojiEntry} from './emojiData'
-import {getPopupContainer} from '../popupContainer'
-import {createSuggestionPopup, type SuggestionPopup} from '../suggestionPopup'
+import {createSuggestionRenderer, type SuggestionRenderProps} from '../suggestionRenderer'
 
 export const EmojiSuggestionPluginKey = new PluginKey('emojiSuggestion')
 
-interface SuggestionProps {
-	editor: Editor
-	range: Range
-	query: string
-	clientRect?: (() => DOMRect | null) | null
+interface EmojiRenderProps extends SuggestionRenderProps {
 	items: EmojiEntry[]
-	command: (item: EmojiEntry) => void
-	event?: KeyboardEvent
 }
 
 const SHORTCODE_RE = /^[a-zA-Z0-9_]*$/
@@ -55,63 +47,7 @@ export default function emojiSuggestionSetup() {
 				.run()
 		},
 
-		render: () => {
-			let component: VueRenderer
-			let popup: SuggestionPopup | null = null
-
-			const unmount = () => {
-				popup?.destroy()
-				popup = null
-				component?.destroy()
-			}
-
-			const mount = (props: SuggestionProps) => {
-				unmount()
-
-				component = new VueRenderer(EmojiList, {
-					props,
-					editor: props.editor,
-				})
-
-				if (!props.clientRect) {
-					unmount()
-					return
-				}
-
-				popup = createSuggestionPopup(
-					getPopupContainer(props.editor),
-					component.element!,
-					props.clientRect,
-					props.editor.view.dom,
-				)
-			}
-
-			return {
-				onStart: (props: SuggestionProps) => {
-					if (!props.items.length && props.query === '') return
-					mount(props)
-				},
-
-				onUpdate(props: SuggestionProps) {
-					if (!popup) {
-						if (props.items.length || props.query !== '') mount(props)
-						return
-					}
-					component?.updateProps(props)
-					popup.reposition()
-				},
-
-				onKeyDown(props: {event: KeyboardEvent}) {
-					if (props.event.key === 'Escape') {
-						if (props.event.isComposing) return false
-						if (popup) popup.element.style.display = 'none'
-						return true
-					}
-					return component?.ref?.onKeyDown(props)
-				},
-
-				onExit: unmount,
-			}
-		},
+		// A lone ":" (a time, a smiley) opens nothing until a shortcode is being typed.
+		render: createSuggestionRenderer<EmojiRenderProps>(EmojiList, props => props.items.length > 0 || props.query !== ''),
 	}
 }

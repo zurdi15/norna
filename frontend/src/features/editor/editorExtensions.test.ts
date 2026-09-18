@@ -3,16 +3,13 @@ import {createPinia, setActivePinia} from 'pinia'
 import {nextTick, ref} from 'vue'
 import {Editor} from '@tiptap/core'
 import {createEditorExtensions, type EditorExtensionDeps} from './editorExtensions'
-import {clearAttachmentBlobCache} from '@/helpers/attachments'
+import {clearAttachmentBlobCache} from '@/client/queries/taskAttachments'
 
-const {getBlobUrl} = vi.hoisted(() => ({getBlobUrl: vi.fn(async () => 'blob:real-attachment')}))
-
-vi.mock('@/services/attachment', async importOriginal => ({
-	...await importOriginal<typeof import('@/services/attachment')>(),
-	default: class {
-		getBlobUrl = getBlobUrl
-	},
+const sdk = vi.hoisted(() => ({
+	taskAttachmentsDownload: vi.fn(async () => ({data: new Blob(['png'], {type: 'image/png'})})),
 }))
+
+vi.mock('@/client/generated', () => sdk)
 
 const API_URL = 'http://localhost:3456/api/v1'
 window.API_URL = API_URL
@@ -29,10 +26,9 @@ function createEditor(content: string) {
 		isEditing: ref(true),
 		isEditEnabled: () => true,
 		placeholder: '',
-		contentHasChanged: ref(false),
 		bubbleSave: () => {},
 		getEditor: () => editor,
-		uploadCallback: undefined,
+		canUpload: () => false,
 		uploadAndInsertFiles: () => {},
 	}
 
@@ -53,8 +49,10 @@ async function settle() {
 
 beforeEach(() => {
 	setActivePinia(createPinia())
+	window.URL.createObjectURL = vi.fn(() => 'blob:real-attachment')
+	window.URL.revokeObjectURL = vi.fn()
 	clearAttachmentBlobCache()
-	getBlobUrl.mockClear()
+	sdk.taskAttachmentsDownload.mockClear()
 })
 
 afterEach(() => {
@@ -113,7 +111,7 @@ describe('CustomImage attachment id', () => {
 
 		expect(first.editor.view.dom.querySelector('img')!.src).toBe('blob:real-attachment')
 		expect(second.editor.view.dom.querySelector('img')!.src).toBe('blob:real-attachment')
-		expect(getBlobUrl).toHaveBeenCalledTimes(1)
+		expect(sdk.taskAttachmentsDownload).toHaveBeenCalledTimes(1)
 	})
 
 	it('round trips the rendered html', async () => {

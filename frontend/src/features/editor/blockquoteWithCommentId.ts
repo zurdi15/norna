@@ -11,7 +11,7 @@ import BlockquoteCommentView from './BlockquoteCommentView.vue'
  * jump-to-original chevron) can find it without a separate schema field.
  *
  * A Vue NodeView renders the in-app header + chevron when the surrounding
- * component (Comments.vue) provides a `commentReplyContext`. Outside that
+ * component (the comment thread) provides a `commentReplyContext`. Outside that
  * context (task descriptions, etc.) the NodeView falls back to a plain
  * blockquote.
  */

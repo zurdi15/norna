@@ -1,4 +1,4 @@
-import {nextTick, toValue, type MaybeRefOrGetter, type Ref} from 'vue'
+import {nextTick, toValue, type MaybeRefOrGetter} from 'vue'
 
 import StarterKit from '@tiptap/starter-kit'
 import {createNodeFromContent, Extension, mergeAttributes, type Editor, type Extensions} from '@tiptap/core'
@@ -31,23 +31,30 @@ import {EmojiExtension} from './emoji/emojiExtension'
 
 import {common, createLowlight} from 'lowlight'
 
-import type {UploadCallback} from './types'
-import type {ITask} from '@/modelTypes/ITask'
-import type {IAttachment} from '@/modelTypes/IAttachment'
-import {fetchAttachmentBlobUrl} from '@/helpers/attachments'
-
-type ImageNodeKey = `${ITask['id']}-${IAttachment['id']}`
+import {fetchAttachmentBlobUrl} from '@/client/queries/taskAttachments'
+import {parseAttachmentUrl} from '@/modules/task/attachmentUrl'
 
 export interface EditorExtensionDeps {
 	t: (key: string) => string
-	isEditing: Ref<boolean>
+	isEditing: MaybeRefOrGetter<boolean>
+	// Whether checklist items may still be ticked while the editor is read-only.
 	isEditEnabled: () => boolean
 	placeholder: MaybeRefOrGetter<string>
-	contentHasChanged: Ref<boolean>
+	// Emits a save: Mod+Enter, Mod+S and ticking a checklist item while read-only.
 	bubbleSave: () => void
 	getEditor: () => Editor | undefined
-	uploadCallback: MaybeRefOrGetter<UploadCallback | undefined>
+	// Whether pasted or dropped images can be uploaded (they need a task to attach to).
+	canUpload: () => boolean
 	uploadAndInsertFiles: (files: File[] | FileList) => void
+	// Opens the file picker for the "/image" command.
+	pickImage?: () => void
+}
+
+// A transparent pixel: "#" would load the page itself and show a broken image while the blob loads.
+const PENDING_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+
+function isImageFile(file: File): boolean {
+	return file.type.startsWith('image/')
 }
 
 const CustomTableCell = TableCell.extend({
@@ -78,6 +85,29 @@ const NonInclusiveLink = Link.extend({
 	},
 })
 
+// Runs before the core keymap, which binds Mod-Enter to exitCode.
+const SubmitShortcuts = Extension.create<{onSubmit: () => void}>({
+	name: 'submitShortcuts',
+	priority: 1100,
+
+	addOptions() {
+		return {
+			onSubmit: () => {},
+		}
+	},
+
+	addKeyboardShortcuts() {
+		const submit = () => {
+			this.options.onSubmit()
+			return true
+		}
+		return {
+			'Mod-Enter': submit,
+			'Mod-s': submit,
+		}
+	},
+})
+
 const additionalLinkProtocols = [
 	'ftp',
 	'git',
@@ -92,11 +122,11 @@ export function createEditorExtensions(deps: EditorExtensionDeps): Extensions {
 		isEditing,
 		isEditEnabled,
 		placeholder,
-		contentHasChanged,
 		bubbleSave,
 		getEditor,
-		uploadCallback,
+		canUpload,
 		uploadAndInsertFiles,
+		pickImage,
 	} = deps
 
 	const CustomImage = Image.extend({
@@ -122,43 +152,49 @@ export function createEditorExtensions(deps: EditorExtensionDeps): Extensions {
 			}
 		},
 		renderHTML({HTMLAttributes}) {
-			if (HTMLAttributes.src?.startsWith(window.API_URL) || HTMLAttributes['data-src']?.startsWith(window.API_URL)) {
-				const imageUrl = HTMLAttributes['data-src'] ?? HTMLAttributes.src
-
-				// The url is something like /tasks/<id>/attachments/<id>
-				const parts = imageUrl.slice(window.API_URL.length + 1).split('/')
-				const taskId = Number(parts[1])
-				const attachmentId = Number(parts[3])
-				const nodeKey: ImageNodeKey = `${taskId}-${attachmentId}`
-				const id = 'tiptap-image-' + nodeKey
-
-				nextTick(async () => {
-
-					// no live view: fail closed, never fall back to document
-					const root = getEditor()?.view?.dom
-					if (!root) return
-
-					const img = root.querySelector(`[id="${id}"]`)
-
-					if (!img || !(img instanceof HTMLImageElement)) return
-
-					try {
-						img.src = await fetchAttachmentBlobUrl({taskId, id: attachmentId})
-					} catch {
-						// leave the placeholder src in place
-					}
-				})
-
-				return ['img', mergeAttributes(this.options.HTMLAttributes, {
-					'data-src': imageUrl,
-					src: '#',
-					alt: HTMLAttributes.alt,
-					title: HTMLAttributes.title,
-					id,
-				})]
+			// Stored descriptions keep the v1 attachment url in data-src (src="#"), older ones in src.
+			const imageUrl = [HTMLAttributes['data-src'], HTMLAttributes.src].find(url => parseAttachmentUrl(url) !== null)
+			const attachment = parseAttachmentUrl(imageUrl)
+			if (!imageUrl || !attachment) {
+				return ['img', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)]
 			}
 
-			return ['img', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)]
+			const id = `tiptap-image-${attachment.taskId}-${attachment.attachmentId}`
+
+			nextTick(async () => {
+				// no live view: fail closed, never fall back to document
+				const root = getEditor()?.view?.dom
+				if (!root) return
+
+				// Only the DOM changes here; the stored html keeps src="#".
+				const images = Array.from(root.querySelectorAll<HTMLImageElement>(`img[id="${id}"]`))
+					.filter(img => img.getAttribute('src') === '#')
+				if (images.length === 0) return
+
+				images.forEach(img => {
+					img.src = PENDING_IMAGE
+					img.dataset.state = 'loading'
+				})
+				try {
+					const url = await fetchAttachmentBlobUrl(attachment)
+					images.forEach(img => {
+						img.src = url
+						delete img.dataset.state
+					})
+				} catch {
+					images.forEach(img => {
+						img.dataset.state = 'error'
+					})
+				}
+			})
+
+			return ['img', mergeAttributes(this.options.HTMLAttributes, {
+				'data-src': imageUrl,
+				src: '#',
+				alt: HTMLAttributes.alt,
+				title: HTMLAttributes.title,
+				id,
+			})]
 		},
 	})
 
@@ -173,10 +209,23 @@ export function createEditorExtensions(deps: EditorExtensionDeps): Extensions {
 						clipboardParser: createClipboardParser(this.editor.schema),
 						transformPasted: slice => repairSliceContent(slice),
 
+						handleDrop: (view, event, _slice, moved) => {
+							const files = Array.from(event.dataTransfer?.files ?? []).filter(isImageFile)
+							if (moved || files.length === 0 || !canUpload()) {
+								return false
+							}
+							const dropped = view.posAtCoords({left: event.clientX, top: event.clientY})
+							if (dropped) {
+								this.editor.commands.setTextSelection(dropped.pos)
+							}
+							uploadAndInsertFiles(files)
+							return true
+						},
+
 						handlePaste: (view, event) => {
 
 							// Handle images pasted from clipboard
-							if (typeof toValue(uploadCallback) !== 'undefined' && event.clipboardData?.items?.length) {
+							if (canUpload() && event.clipboardData?.items?.length) {
 
 								for (const item of event.clipboardData.items) {
 									if (item.kind === 'file' && item.type.startsWith('image/')) {
@@ -242,19 +291,14 @@ export function createEditorExtensions(deps: EditorExtensionDeps): Extensions {
 			addKeyboardShortcuts() {
 				return {
 					'Shift-Enter': () => this.editor.commands.setHardBreak(),
-					'Mod-Enter': () => {
-						if (contentHasChanged.value) {
-							bubbleSave()
-						}
-						return true
-					},
 				}
 			},
 		}),
+		SubmitShortcuts.configure({onSubmit: bubbleSave}),
 
 		Placeholder.configure({
 			placeholder({editor}) {
-				if (!isEditing.value || editor.getText() !== '' && !editor.isFocused) {
+				if (!toValue(isEditing) || editor.getText() !== '' && !editor.isFocused) {
 					return ''
 				}
 
@@ -267,7 +311,7 @@ export function createEditorExtensions(deps: EditorExtensionDeps): Extensions {
 		Underline,
 		NonInclusiveLink.configure({
 			openOnClick: false,
-			validate: (href) => (new RegExp(
+			shouldAutoLink: (href) => (new RegExp(
 				`^(https?|${additionalLinkProtocols.join('|')}):\\/\\/`,
 				'i',
 			)).test(href),
@@ -333,7 +377,10 @@ export function createEditorExtensions(deps: EditorExtensionDeps): Extensions {
 		}),
 
 		Commands.configure({
-			suggestion: suggestionSetup(t),
+			suggestion: suggestionSetup(t, {
+				canInsertImage: () => pickImage !== undefined && canUpload(),
+				pickImage: () => pickImage?.(),
+			}),
 		}),
 
 		EmojiExtension,
