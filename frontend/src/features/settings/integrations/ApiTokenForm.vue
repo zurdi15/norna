@@ -8,7 +8,7 @@ import UiChip from '@/ui/UiChip.vue'
 import UiField from '@/ui/UiField.vue'
 import UiInput from '@/ui/UiInput.vue'
 
-import {formatDay} from './format'
+import {formatDay, neverExpires} from './format'
 import {countPermissions, mergePermissions, restrictToRoutes, type TokenPreset} from './tokenPermissions'
 import TokenExpiryPicker from './TokenExpiryPicker.vue'
 import TokenPermissionsPicker from './TokenPermissionsPicker.vue'
@@ -116,7 +116,9 @@ function submit() {
 				class="text-xs"
 				:class="expiryError ? 'text-danger' : 'text-ink-faint'"
 			>
-				{{ expiryError ?? t('settingsIntegrations.tokens.expiry.on', {date: formatDay(expiresAt, locale)}) }}
+				{{ expiryError ?? (neverExpires(expiresAt)
+					? t('settingsIntegrations.tokens.expiry.neverHint')
+					: t('settingsIntegrations.tokens.expiry.on', {date: formatDay(expiresAt, locale)})) }}
 			</p>
 		</fieldset>
 		<fieldset

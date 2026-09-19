@@ -11,7 +11,7 @@ import UiChip from '@/ui/UiChip.vue'
 import UiIcon from '@/ui/UiIcon.vue'
 import UiIconButton from '@/ui/UiIconButton.vue'
 
-import {formatAgo, formatDay, hasExpired} from './format'
+import {formatAgo, formatDay, hasExpired, neverExpires} from './format'
 import {isFullAccess} from './tokenPermissions'
 import type {ListedApiToken} from './useIntegrations'
 
@@ -152,8 +152,9 @@ const expired = computed(() => hasExpired(props.token.expires_at, now.value))
 				</div>
 			</dl>
 			<p class="flex flex-wrap items-center gap-x-1.5 font-mono text-2xs text-ink-faint">
+				<span v-if="neverExpires(token.expires_at)">{{ t('settingsIntegrations.tokens.neverExpires') }}</span>
 				<time
-					v-if="token.expires_at"
+					v-else-if="token.expires_at"
 					:datetime="token.expires_at"
 					:title="formatDisplayDate(token.expires_at)"
 					:class="expired && 'text-danger'"
