@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.2.0 - 2026-09-19
+
+### Añadido
+- **Tipos de tarea**: en Ajustes → Tareas marcas qué etiquetas son tipos (fix, feat, core…); al crear una tarea eliges uno con un toque y en la lista y el kanban sale como chip delante del título.
+- **Tokens que no caducan**: los tokens de API y de MCP pueden crearse con la caducidad «Nunca».
+
+### Arreglado
+- Ya se puede borrar el proyecto por defecto (el Inbox); antes el borrado fallaba sin avisar y el proyecto reaparecía.
+- Si borrar, archivar, editar, crear o duplicar un proyecto falla, ahora sale un aviso con el motivo.
+- En el móvil, las letras de una tarea nueva se ven mientras escribes, también en «Añadir tarea» del kanban.
+
 ## 0.1.0 - 2026-09-19
 
 Primera versión de Norna: una interfaz nueva de arriba abajo, pensada primero para el móvil.
