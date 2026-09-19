@@ -26,7 +26,7 @@ import (
 )
 
 type infoBody struct {
-	Body shared.VikunjaInfos
+	Body shared.NornaInfos
 }
 
 // RegisterInfoRoutes wires the public instance-info endpoint onto the Huma API.
@@ -34,7 +34,7 @@ func RegisterInfoRoutes(api huma.API) {
 	Register(api, huma.Operation{
 		OperationID: "info",
 		Summary:     "Instance info",
-		Description: "Returns version, frontend URL, motd and the enabled features of this Vikunja instance. Public — no authentication required.",
+		Description: "Returns version, frontend URL, motd and the enabled features of this Norna instance. Public — no authentication required.",
 		Method:      http.MethodGet,
 		Path:        "/info",
 		Tags:        []string{"service"},

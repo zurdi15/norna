@@ -4,7 +4,7 @@ import type {LinkSharing, LinkSharingWritable} from '@/client/generated'
 import {contextMutationOptions} from './contextMutation'
 import {fetchAllPages} from './fetchAllPages'
 import {normalizeSharePermission} from './projectShares'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 
 export const linkShareKeys = {
 	list: (projectId: number) => ['link-shares', projectId] as const,
@@ -26,18 +26,16 @@ function invalidateLinkShares(client: QueryClient, projectId: number) {
 }
 
 export function createLinkShareMutationOptions() {
-	return {
-		...contextMutationOptions({
-			mutationFn: async ({projectId, share}: {projectId: number, share: LinkSharingWritable}) => (await sharesCreate({path: {project: projectId}, body: createLinkShareDraft(share)})).data,
-			onSuccess: (created, {projectId}, client) => {
-				client.setQueryData<LinkSharing[]>(linkShareKeys.list(projectId), current => current ? [...current, created] : current)
-			},
-			onSettled: ({projectId}, client) => invalidateLinkShares(client, projectId),
-			successMessage: () => i18n.global.t('project.share.links.createSuccess'),
-		}),
+	return contextMutationOptions({
+		mutationFn: async ({projectId, share}: {projectId: number, share: LinkSharingWritable}) => (await sharesCreate({path: {project: projectId}, body: createLinkShareDraft(share)})).data,
+		onSuccess: (created, {projectId}, client) => {
+			client.setQueryData<LinkSharing[]>(linkShareKeys.list(projectId), current => current ? [...current, created] : current)
+		},
+		onSettled: ({projectId}, client) => invalidateLinkShares(client, projectId),
+		successMessage: () => translate('projectShare.toasts.linkCreated'),
 		// Input holds the plaintext password.
 		gcTime: 0,
-	}
+	})
 }
 
 export function deleteLinkShareMutationOptions() {
@@ -47,7 +45,7 @@ export function deleteLinkShareMutationOptions() {
 			client.setQueryData<LinkSharing[]>(linkShareKeys.list(projectId), current => current?.filter(share => share.id !== id))
 		},
 		onSettled: ({projectId}, client) => invalidateLinkShares(client, projectId),
-		successMessage: () => i18n.global.t('project.share.links.deleteSuccess'),
+		successMessage: () => translate('projectShare.toasts.linkDeleted'),
 	})
 }
 

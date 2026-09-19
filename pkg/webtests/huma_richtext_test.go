@@ -89,9 +89,9 @@ func TestHumaRichText_FormatDocumented(t *testing.T) {
 	// it would be a trap (markdown stored as HTML). Stripped by stripPatchFormatQuery.
 	assert.False(t, hasParam("/labels/{id}", "patch", "format", "query"), "PATCH must not advertise ?format")
 
-	// The X-Vikunja-Format header is documented centrally, not as a per-op param.
-	assert.False(t, hasParam("/labels/{id}", "get", "X-Vikunja-Format", "header"))
-	assert.False(t, hasParam("/labels/{id}", "patch", "X-Vikunja-Format", "header"))
+	// The X-Norna-Format header is documented centrally, not as a per-op param.
+	assert.False(t, hasParam("/labels/{id}", "get", "X-Norna-Format", "header"))
+	assert.False(t, hasParam("/labels/{id}", "patch", "X-Norna-Format", "header"))
 
 	// Non-rich-text ops carry no format param.
 	assert.False(t, hasParam("/tasks/{task}/comments/{commentid}", "delete", "format", "query"))
@@ -99,7 +99,7 @@ func TestHumaRichText_FormatDocumented(t *testing.T) {
 	// The cross-cutting behavior, including the PATCH header, is in the API description.
 	assert.Contains(t, spec.Info.Description, "Rich-text fields")
 	assert.Contains(t, spec.Info.Description, "CalDAV always exchanges")
-	assert.Contains(t, spec.Info.Description, "X-Vikunja-Format")
+	assert.Contains(t, spec.Info.Description, "X-Norna-Format")
 }
 
 func TestHumaRichText_Read(t *testing.T) {
@@ -317,12 +317,12 @@ func TestHumaRichText_Write(t *testing.T) {
 		id, _ := decodeLabel(t, rec.Body.Bytes())
 
 		// AutoPatch strips the query string but forwards headers, so PATCH markdown
-		// support rides on X-Vikunja-Format.
+		// support rides on X-Norna-Format.
 		req := httptest.NewRequest(http.MethodPatch, fmt.Sprintf("/api/v2/labels/%d", id),
 			strings.NewReader(`{"description":"new **bold**"}`))
 		req.Header.Set("Content-Type", "application/merge-patch+json")
 		req.Header.Set("Authorization", "Bearer "+token)
-		req.Header.Set("X-Vikunja-Format", "markdown")
+		req.Header.Set("X-Norna-Format", "markdown")
 		rec = httptest.NewRecorder()
 		e.ServeHTTP(rec, req)
 		require.Equal(t, http.StatusOK, rec.Code, "body: %s", rec.Body.String())

@@ -39,7 +39,7 @@ func CreateTestEngine() (engine *xorm.Engine, err error) {
 		return x, nil
 	}
 
-	if os.Getenv("VIKUNJA_TESTS_USE_CONFIG") == "1" {
+	if os.Getenv("NORNA_TESTS_USE_CONFIG") == "1" {
 		config.InitConfig()
 		engine, err = CreateDBEngine()
 		if err != nil {

@@ -1,13 +1,12 @@
 import {describe, it, expect, beforeEach, vi} from 'vitest'
 import {setActivePinia, createPinia} from 'pinia'
-import {AxiosError, AxiosHeaders} from 'axios'
 
 import {useAuthStore} from './auth'
 import {shouldDropEvent} from '@/helpers/sentryFilters'
 import {getErrorText} from '@/message'
 
-const {httpGetMock} = vi.hoisted(() => ({
-	httpGetMock: vi.fn(),
+const {userShowMock} = vi.hoisted(() => ({
+	userShowMock: vi.fn(),
 }))
 
 vi.mock('@/helpers/auth', () => ({
@@ -29,20 +28,9 @@ vi.mock('@/composables/useWebSocket', () => ({
 	useWebSocket: () => ({disconnect: vi.fn(), connect: vi.fn()}),
 }))
 
-function fakeHttp() {
-	return {
-		get: httpGetMock,
-		interceptors: {
-			request: {use: vi.fn()},
-			response: {use: vi.fn()},
-		},
-	}
-}
-
-vi.mock('@/helpers/fetcher', () => ({
-	HTTPFactory: () => fakeHttp(),
-	AuthenticatedHTTPFactory: () => fakeHttp(),
-	getApiBaseUrl: () => 'http://localhost/api/v1/',
+vi.mock('@/client/generated', async (importOriginal) => ({
+	...await importOriginal<typeof import('@/client/generated')>(),
+	userShow: userShowMock,
 }))
 
 vi.mock('@/helpers/redirectToProvider', () => ({
@@ -63,29 +51,28 @@ async function refreshError(): Promise<unknown> {
 describe('auth store refreshUserInfo failures', () => {
 	beforeEach(() => {
 		setActivePinia(createPinia())
-		httpGetMock.mockReset()
+		userShowMock.mockReset()
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 	})
 
 	it('throws an error sentry drops on a network error', async () => {
-		httpGetMock.mockRejectedValue(new AxiosError('Network Error', AxiosError.ERR_NETWORK))
+		userShowMock.mockRejectedValue(new TypeError('Failed to fetch'))
 
 		expect(shouldDropEvent(await refreshError())).toBe(true)
 	})
 
 	it('throws an error that shows the server message on a 5xx', async () => {
-		const config = {headers: new AxiosHeaders()}
-		httpGetMock.mockRejectedValue(new AxiosError('Request failed with status code 500', AxiosError.ERR_BAD_RESPONSE, config, null, {
-			status: 500,
-			statusText: 'Internal Server Error',
-			headers: {},
-			config,
-			data: {message: 'Internal server error'},
-		}))
+		userShowMock.mockRejectedValue({status: 500, title: 'Internal Server Error', detail: 'Internal server error'})
 
 		const e = await refreshError()
 
 		expect(shouldDropEvent(e)).toBe(true)
 		expect(getErrorText(e)).toBe('Error while refreshing user info: Internal server error')
+	})
+
+	it('logs out on a 4xx instead of throwing', async () => {
+		userShowMock.mockRejectedValue({status: 401, code: 11, detail: 'Invalid token'})
+
+		await expect(useAuthStore().refreshUserInfo()).resolves.toBeUndefined()
 	})
 })

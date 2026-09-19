@@ -207,7 +207,7 @@ func TestMCP_Initialize(t *testing.T) {
 	rec := c.post(initializeBody)
 	require.Equal(t, http.StatusOK, rec.Code)
 	result := readMCPJSON(t, rec.Body.String())["result"].(map[string]any)
-	assert.Equal(t, "vikunja", result["serverInfo"].(map[string]any)["name"])
+	assert.Equal(t, "norna", result["serverInfo"].(map[string]any)["name"])
 	assert.Contains(t, result["instructions"], `format: "markdown"`)
 }
 func TestMCP_ToolsListMatchesScopes(t *testing.T) {
@@ -291,7 +291,7 @@ func TestMCP_NonLoopbackHostAccepted(t *testing.T) {
 	require.NoError(t, err)
 	req := mcpRequest(http.MethodPost, initializeBody)
 	req.Header.Set(echo.HeaderAuthorization, "Bearer "+mcpOnlyToken)
-	req.Host = "vikunja.example.com"
+	req.Host = "norna.example.com"
 	addr, err := net.ResolveTCPAddr("tcp", "127.0.0.1:3456")
 	require.NoError(t, err)
 	req = req.WithContext(context.WithValue(req.Context(), http.LocalAddrContextKey, addr))

@@ -148,8 +148,7 @@ func TestHumaBotUser(t *testing.T) {
 
 	t.Run("Update", func(t *testing.T) {
 		t.Run("Normal - rename owned bot", func(t *testing.T) {
-			// Renames bot 23 but keeps it active so the Delete cases below can
-			// still reach it (disabling poisons GetUserByID with a 412).
+			// Renames bot 23 and keeps it active for the Delete cases below.
 			rec, err := h.testUpdateWithUser(nil, map[string]string{"bot": "23"},
 				`{"name":"Renamed Bot"}`)
 			require.NoError(t, err)
@@ -163,10 +162,8 @@ func TestHumaBotUser(t *testing.T) {
 			require.NoError(t, err)
 			assert.Contains(t, rec.Body.String(), `"username":"bot-owner-a-renamed"`)
 		})
-		t.Run("Disable sets status; bot then resolves as disabled (412)", func(t *testing.T) {
-			// Disabling is allowed, but once disabled GetUserByID surfaces
-			// ErrAccountDisabled, so a follow-up read fails the precondition (412)
-			// — same as v1. Use a throwaway bot so bot 23 stays usable.
+		t.Run("Disabled bot stays manageable by its owner", func(t *testing.T) {
+			// A throwaway bot, so bot 23 stays active for the cases below.
 			rec, err := h.testCreateWithUser(nil, nil, `{"username":"bot-to-disable"}`)
 			require.NoError(t, err)
 			id := botID(t, rec.Body.Bytes())
@@ -175,9 +172,25 @@ func TestHumaBotUser(t *testing.T) {
 			require.NoError(t, err)
 			assert.Contains(t, rec.Body.String(), `"status":2`)
 
-			_, err = h.testReadOneWithUser(nil, map[string]string{"bot": id})
-			require.Error(t, err)
-			assert.Equal(t, http.StatusPreconditionFailed, getHTTPErrorCode(err))
+			rec, err = h.testReadOneWithUser(nil, map[string]string{"bot": id})
+			require.NoError(t, err)
+			assert.Contains(t, rec.Body.String(), `"status":2`)
+
+			asOwnerB(func() {
+				_, err := h.testUpdateWithUser(nil, map[string]string{"bot": id}, `{"status":0}`)
+				require.Error(t, err)
+				assert.Equal(t, http.StatusForbidden, getHTTPErrorCode(err))
+			})
+
+			rec, err = h.testUpdateWithUser(nil, map[string]string{"bot": id},
+				`{"name":"Renamed while disabled","status":2}`)
+			require.NoError(t, err)
+			assert.Contains(t, rec.Body.String(), `"name":"Renamed while disabled"`)
+			assert.Contains(t, rec.Body.String(), `"status":2`)
+
+			rec, err = h.testUpdateWithUser(nil, map[string]string{"bot": id}, `{"status":0}`)
+			require.NoError(t, err)
+			assert.Contains(t, rec.Body.String(), `"status":0`)
 		})
 		t.Run("Forbidden - other owner (#24)", func(t *testing.T) {
 			_, err := h.testUpdateWithUser(nil, map[string]string{"bot": "24"}, `{"name":"Nope"}`)
@@ -204,6 +217,23 @@ func TestHumaBotUser(t *testing.T) {
 			_, err := h.testDeleteWithUser(nil, map[string]string{"bot": "999999"})
 			require.Error(t, err)
 			assert.Equal(t, http.StatusForbidden, getHTTPErrorCode(err))
+		})
+		t.Run("Disabled bot", func(t *testing.T) {
+			rec, err := h.testCreateWithUser(nil, nil, `{"username":"bot-disabled-delete"}`)
+			require.NoError(t, err)
+			id := botID(t, rec.Body.Bytes())
+			_, err = h.testUpdateWithUser(nil, map[string]string{"bot": id}, `{"status":2}`)
+			require.NoError(t, err)
+
+			asOwnerB(func() {
+				_, err := h.testDeleteWithUser(nil, map[string]string{"bot": id})
+				require.Error(t, err)
+				assert.Equal(t, http.StatusForbidden, getHTTPErrorCode(err))
+			})
+
+			rec, err = h.testDeleteWithUser(nil, map[string]string{"bot": id})
+			require.NoError(t, err)
+			assert.Equal(t, http.StatusNoContent, rec.Code)
 		})
 		t.Run("Normal", func(t *testing.T) {
 			// Runs last so the deleted bot doesn't disturb the assertions above.

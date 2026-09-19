@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@import "./tokens.css";
+@import "./base.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Mono, spaced, uppercase label that sits above a heading (the Norns' captions, section keys). */
+@utility caption {
+	font-family: var(--font-mono);
+	font-size: var(--text-3xs);
+	line-height: var(--text-3xs--line-height);
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--color-ink-faint);
+}
+
+/* The thread: a 1px line that fills the remaining width after a heading. */
+@utility thread {
+	flex: 1 1 0%;
+	block-size: 1px;
+	min-inline-size: 1rem;
+	background-color: var(--color-line);
+}
+
+/* Long-press targets: keep iOS from showing its own link/image callout. */
+@utility touch-callout-none {
+	-webkit-touch-callout: none;
+}
+
+@utility pt-safe {
+	padding-block-start: env(safe-area-inset-top, 0);
+}
+
+@utility pb-safe {
+	padding-block-end: env(safe-area-inset-bottom, 0);
+}
+
+@utility ps-safe {
+	padding-inline-start: env(safe-area-inset-left, 0);
+}
+
+@utility pe-safe {
+	padding-inline-end: env(safe-area-inset-right, 0);
+}

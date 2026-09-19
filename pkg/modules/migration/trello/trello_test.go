@@ -75,14 +75,14 @@ func getTestBoard(t *testing.T) ([]*trello.Board, time.Time) {
 									Name:     "Testimage.jpg",
 									IsUpload: true,
 									MimeType: "image/jpg",
-									URL:      "https://vikunja.io/testimage.jpg",
+									URL:      "https://example.com/testimage.jpg",
 								},
 								{
 									ID:       "7cc71b16f0c7a57bed3c94e9",
 									Name:     "Website",
 									IsUpload: false,
 									MimeType: "",
-									URL:      "https://vikunja.io",
+									URL:      "https://example.com",
 								},
 							},
 						},
@@ -235,7 +235,7 @@ func getTestBoard(t *testing.T) ([]*trello.Board, time.Time) {
 	return trelloData, time1
 }
 
-func TestConvertTrelloToVikunja(t *testing.T) {
+func TestConvertTrelloToNorna(t *testing.T) {
 	trelloData, time1 := getTestBoard(t)
 
 	exampleFile, err := os.ReadFile("../testimage.jpg")
@@ -289,7 +289,7 @@ func TestConvertTrelloToVikunja(t *testing.T) {
 						Task: models.Task{
 							Title: "Test Card 1",
 							Description: "<p>Card Description <strong>bold</strong></p>\n" +
-								"<p><a href=\"https://vikunja.io\">Website</a></p>\n",
+								"<p><a href=\"https://example.com\">Website</a></p>\n",
 							BucketID: 1,
 							DueDate:  time1,
 							Labels: []*models.Label{
@@ -477,7 +477,7 @@ func TestConvertTrelloToVikunja(t *testing.T) {
 
 	organizationMap := getTrelloOrganizationsWithBoards(trelloData)
 	for organizationID, boards := range organizationMap {
-		hierarchy, err := convertTrelloDataToVikunja(organizationID, boards, &trello.Client{}, nil)
+		hierarchy, err := convertTrelloDataToNorna(organizationID, boards, &trello.Client{}, nil)
 
 		require.NoError(t, err)
 		assert.NotNil(t, hierarchy)

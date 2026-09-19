@@ -17,10 +17,21 @@ const post = vi.hoisted(() => vi.fn(() => {
 	})
 }))
 
-vi.mock('@/helpers/fetcher', () => ({
+vi.mock('@/helpers/apiUrl', () => ({
 	apiV2Url: (path: string) => `/api/v2/${path}`,
-	HTTPFactory: () => ({post}),
 }))
+
+vi.stubGlobal('fetch', post)
+
+function tokenResponse(token: string) {
+	return {ok: true, status: 200, json: async () => ({token})}
+}
+
+function errorResponse(status: number) {
+	return {ok: false, status, json: async () => ({})}
+}
+
+const REFRESH_REQUEST = ['/api/v2/user/token/refresh', {method: 'POST', credentials: 'include'}] as const
 
 const desktop = vi.hoisted(() => ({
 	isDesktop: false,
@@ -73,7 +84,7 @@ describe('getAuthSessionEpoch', () => {
 })
 
 function settlePost() {
-	resolvePost?.({data: {token: FAKE_TOKEN}})
+	resolvePost?.(tokenResponse(FAKE_TOKEN))
 }
 
 describe('refreshToken in-flight dedup', () => {
@@ -115,10 +126,10 @@ describe('refreshToken in-flight dedup', () => {
 		await Promise.all([p1, p2])
 
 		// The Web Locks branch actually ran...
-		expect(requestSpy).toHaveBeenCalledWith('vikunja-token-refresh', expect.any(Function))
+		expect(requestSpy).toHaveBeenCalledWith('norna-token-refresh', expect.any(Function))
 		// ...and the in-flight dedup still collapsed both calls into one POST.
 		expect(post).toHaveBeenCalledTimes(1)
-		expect(post).toHaveBeenCalledWith('/api/v2/user/token/refresh')
+		expect(post).toHaveBeenCalledWith(...REFRESH_REQUEST)
 	})
 
 	it('coalesces concurrent calls into a single POST on insecure HTTP (no Web Locks)', async () => {
@@ -186,7 +197,7 @@ describe('refreshToken in-flight dedup', () => {
 		// slot, since that slot now belongs to B. Without the `=== p` guard,
 		// A's .finally would clobber B and let a concurrent caller fire a
 		// second parallel POST.
-		resolveA?.({data: {token: FAKE_TOKEN}})
+		resolveA?.(tokenResponse(FAKE_TOKEN))
 		await pA
 
 		// A concurrent caller while B is still in flight must dedup to B —
@@ -194,12 +205,12 @@ describe('refreshToken in-flight dedup', () => {
 		const pB2 = refreshToken(true)
 		expect(post).toHaveBeenCalledTimes(2)
 
-		resolveB?.({data: {token: FAKE_TOKEN}})
+		resolveB?.(tokenResponse(FAKE_TOKEN))
 		await Promise.all([pB, pB2])
 	})
 })
 
-describe('refreshToken v1 cookie fallback', () => {
+describe('refreshToken failures', () => {
 	beforeEach(() => {
 		post.mockClear()
 		removeToken()
@@ -207,22 +218,10 @@ describe('refreshToken v1 cookie fallback', () => {
 	})
 
 	it.each([
-		['401', {response: {status: 401}}],
-		['404 (e.g. misconfigured API_URL)', {response: {status: 404}}],
-		['no response (e.g. network/CORS error)', new Error('Network Error')],
-	])('retries against v1 when the v2 refresh fails with %s', async (_label, rejection) => {
-		post.mockRejectedValueOnce(rejection)
-		post.mockResolvedValueOnce({data: {token: FAKE_TOKEN}})
-
-		await refreshToken(true)
-
-		expect(post).toHaveBeenNthCalledWith(1, '/api/v2/user/token/refresh')
-		expect(post).toHaveBeenNthCalledWith(2, 'user/token/refresh')
-		expect(localStorage.getItem('token')).toBe(FAKE_TOKEN)
-	})
-
-	it('does not retry against v1 when the v2 refresh is rate limited (429)', async () => {
-		post.mockRejectedValueOnce({response: {status: 429}})
+		['401', 401],
+		['404 (e.g. misconfigured API_URL)', 404],
+	])('rejects without saving a token when the refresh fails with %s', async (_label, status) => {
+		post.mockResolvedValueOnce(errorResponse(status))
 
 		await expect(refreshToken(true)).rejects.toThrow('Error renewing token')
 
@@ -230,17 +229,28 @@ describe('refreshToken v1 cookie fallback', () => {
 		expect(localStorage.getItem('token')).toBeNull()
 	})
 
-	it('does not fall back to v1 when logout happens between the v2 failure and the fallback call', async () => {
-		// removeToken() runs synchronously as part of the v2 call rejecting, simulating
-		// a logout landing in the gap before the v1 fallback would otherwise fire.
-		post.mockImplementationOnce(() => {
+	it('keeps the status of a rate-limited refresh reachable for callers', async () => {
+		post.mockResolvedValueOnce(errorResponse(429))
+
+		const error = await refreshToken(true).catch(e => e)
+
+		expect(error.cause.response.status).toBe(429)
+	})
+
+	it('rejects on a network error', async () => {
+		post.mockRejectedValueOnce(new Error('Network Error'))
+
+		await expect(refreshToken(true)).rejects.toThrow('Error renewing token')
+	})
+
+	it('does not save the token when logout lands while the response is read', async () => {
+		post.mockImplementationOnce(async () => {
 			removeToken()
-			return Promise.reject({response: {status: 404}})
+			return tokenResponse(FAKE_TOKEN)
 		})
 
 		await refreshToken(true)
 
-		expect(post).toHaveBeenCalledTimes(1)
 		expect(localStorage.getItem('token')).toBeNull()
 	})
 })

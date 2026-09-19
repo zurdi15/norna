@@ -1,14 +1,13 @@
 /// <reference types="vite/client" />
 /// <reference types="vite-svg-loader" />
-/// <reference types="@histoire/plugin-vue/components" />
 
 interface ImportMetaEnv {
-	readonly VIKUNJA_API_URL?: string
-	readonly VIKUNJA_HTTP_PORT?: number
-	readonly VIKUNJA_HTTPS_PORT?: number
+	readonly NORNA_API_URL?: string
+	readonly NORNA_HTTP_PORT?: number
+	readonly NORNA_HTTPS_PORT?: number
 
-	readonly VIKUNJA_SENTRY_ENABLED?: boolean
-	readonly VIKUNJA_SENTRY_DSN?: string
+	readonly NORNA_SENTRY_ENABLED?: boolean
+	readonly NORNA_SENTRY_DSN?: string
 
 	readonly SENTRY_AUTH_TOKEN?: string
 	readonly SENTRY_ORG?: string

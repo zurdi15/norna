@@ -18,11 +18,7 @@
 - When a component test is justified and reads server data, mount it against a real `QueryClient` seeded through the key factories, and mock only the generated client. Don't mock the composable that owns the behaviour under test; a mocked read hid a table that never updated after mutations. If a mutation invalidates a query, the client mock must answer the refetch with data matching the seeded state.
 - A regression test must fail against the unfixed code. Check that before landing the fix.
 - A test that can't fail is a defect. Examples: asserting that an unseeded cache is `toBeUndefined()`, checking for hidden controls on the viewer's own row (it never shows them), asserting two key literals differ, or calling the fix itself (`observer.reset()`) instead of going through the component.
-- Typecheck with `pnpm typecheck` in `frontend/` and read the log. It has well over a thousand pre-existing errors, so compare the normalized error set against the base branch rather than the count; no new entries allowed:
-
-  ```bash
-  pnpm typecheck 2>&1 | grep 'error TS' | sed -E 's/\([0-9]+,[0-9]+\)//' | sort -u > /tmp/tsc-after.txt
-  comm -13 /tmp/tsc-before.txt /tmp/tsc-after.txt
-  ```
-
-  Plain `vue-tsc --build` without `--force` can skip the build and print nothing, which looks like zero errors. Do not use `vue-tsc -p tsconfig.app.json`: it reports a spurious TS2589 on `i18n.global.t` that the project build does not.
+- Typecheck with `pnpm typecheck` in `frontend/` and read the log. It reports no errors, and must stay that way. Plain `vue-tsc --build` without `--force` can skip the build and print nothing, which looks like zero errors. Outside components translate with `translate()` from `@/i18n`; `i18n.global.t` with named parameters hits TS2589.
+- The project is `composite`, so exported functions need nameable types: an object spread over a TanStack options type (`{...mutationOptions(...), gcTime: 0}`) fails with TS2883. Pass the option instead, or annotate the return type.
+- Accessibility: `tests/e2e/a11y/axe.spec.ts` runs axe on the main pages and fails on serious or critical violations. Add a page there when you add one.
+- Phones: specs tagged `@mobile` run on the `mobile` Playwright project (Pixel 7). Long presses need real touch events through CDP (see `tests/e2e/mobile/phone.spec.ts`).

@@ -23,18 +23,18 @@ import (
 	"code.vikunja.io/api/pkg/modules/auth/openid"
 	csvmigrator "code.vikunja.io/api/pkg/modules/migration/csv"
 	microsofttodo "code.vikunja.io/api/pkg/modules/migration/microsoft-todo"
+	norna_file "code.vikunja.io/api/pkg/modules/migration/norna-file"
 	"code.vikunja.io/api/pkg/modules/migration/planka"
 	"code.vikunja.io/api/pkg/modules/migration/ticktick"
 	"code.vikunja.io/api/pkg/modules/migration/todoist"
 	"code.vikunja.io/api/pkg/modules/migration/trello"
-	vikunja_file "code.vikunja.io/api/pkg/modules/migration/vikunja-file"
 	"code.vikunja.io/api/pkg/modules/migration/wekan"
 	"code.vikunja.io/api/pkg/version"
 )
 
-// VikunjaInfos holds public information about this Vikunja instance.
-type VikunjaInfos struct {
-	Version                    string            `json:"version" doc:"The Vikunja version this instance runs."`
+// NornaInfos holds public information about this Norna instance.
+type NornaInfos struct {
+	Version                    string            `json:"version" doc:"The Norna version this instance runs."`
 	FrontendURL                string            `json:"frontend_url" doc:"The publicly configured frontend URL of this instance."`
 	Motd                       string            `json:"motd" doc:"The message of the day, shown to all users."`
 	LinkSharingEnabled         bool              `json:"link_sharing_enabled" doc:"Whether sharing projects via public links is enabled."`
@@ -91,8 +91,8 @@ type LegalInfo struct {
 
 // BuildInfo assembles the public instance information returned by GET /info on
 // both API versions.
-func BuildInfo() VikunjaInfos {
-	info := VikunjaInfos{
+func BuildInfo() NornaInfos {
+	info := NornaInfos{
 		Version:                version.Version,
 		FrontendURL:            config.ServicePublicURL.GetString(),
 		Motd:                   config.ServiceMotd.GetString(),
@@ -112,7 +112,7 @@ func BuildInfo() VikunjaInfos {
 		ConcurrentWrites:       config.DatabaseType.GetString() != "sqlite",
 		EnabledProFeatures:     license.EnabledProFeatures(),
 		AvailableMigrators: []string{
-			(&vikunja_file.FileMigrator{}).Name(),
+			(&norna_file.FileMigrator{}).Name(),
 			(&ticktick.Migrator{}).Name(),
 			(&wekan.Migrator{}).Name(),
 			(&csvmigrator.Migrator{}).Name(),

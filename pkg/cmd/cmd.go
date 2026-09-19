@@ -26,17 +26,12 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "vikunja",
-	Short: "Vikunja is the to-do app to organize your life.",
-	Long: `Vikunja (/vɪˈkuːnjə/)
+	Use:   "norna",
+	Short: "Norna is the to-do app to organize your life.",
+	Long: `Norna
 The to-do app to organize your life.
 
-Also one of the two wild South American camelids which live in the high
-alpine areas of the Andes and a relative of the llama.
-
-Vikunja is a self-hosted To-Do list application with a web app and mobile apps for all platforms. It is licensed under the AGPL-3.0-or-later.
-
-Find out more at vikunja.io.`,
+Norna is a self-hosted to-do list application with a web app. It is licensed under the AGPL-3.0-or-later.`,
 	PreRun: webCmd.PreRun,
 	Run:    webCmd.Run,
 }

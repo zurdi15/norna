@@ -31,7 +31,7 @@ type MigratorName interface {
 // Migrator is the basic migrator interface which is shared among all migrators
 type Migrator interface {
 	MigratorName
-	// Migrate is the interface used to migrate a user's tasks from another platform to vikunja.
+	// Migrate is the interface used to migrate a user's tasks from another platform to Norna.
 	// The user object is the user who's tasks will be migrated.
 	Migrate(user *user.User) error
 	// AuthURL returns a url for clients to authenticate against.
@@ -47,10 +47,10 @@ type CredentialsChecker interface {
 	CheckCredentials() error
 }
 
-// FileMigrator handles importing Vikunja data from a file. The implementation of it determines the format.
+// FileMigrator handles importing Norna data from a file. The implementation of it determines the format.
 type FileMigrator interface {
 	MigratorName
-	// Migrate is the interface used to migrate a user's tasks, project and other things from a file to vikunja.
+	// Migrate is the interface used to migrate a user's tasks, project and other things from a file to Norna.
 	// The user object is the user who's tasks will be migrated.
 	Migrate(user *user.User, file io.ReaderAt, size int64) error
 }

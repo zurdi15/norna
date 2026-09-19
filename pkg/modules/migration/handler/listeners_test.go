@@ -30,8 +30,8 @@ import (
 	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/events"
 	"code.vikunja.io/api/pkg/modules/migration"
+	nornafile "code.vikunja.io/api/pkg/modules/migration/norna-file"
 	"code.vikunja.io/api/pkg/modules/migration/planka"
-	vikunjafile "code.vikunja.io/api/pkg/modules/migration/vikunja-file"
 	"code.vikunja.io/api/pkg/notifications"
 	"code.vikunja.io/api/pkg/user"
 	"code.vikunja.io/api/pkg/web"
@@ -211,19 +211,19 @@ func TestFileMigrationListenerImportsStoredUpload(t *testing.T) {
 	notifications.Fake()
 	t.Cleanup(notifications.Unfake)
 
-	RegisterFileMigrator(func() migration.FileMigrator { return &vikunjafile.FileMigrator{} })
+	RegisterFileMigrator(func() migration.FileMigrator { return &nornafile.FileMigrator{} })
 	u := getTestUser(t)
 
-	export, err := os.ReadFile("../vikunja-file/export.zip")
+	export, err := os.ReadFile("../norna-file/export.zip")
 	require.NoError(t, err)
 
-	status, err := migration.ClaimMigration(&vikunjafile.FileMigrator{}, u)
+	status, err := migration.ClaimMigration(&nornafile.FileMigrator{}, u)
 	require.NoError(t, err)
 	uploadID := storeTestUpload(t, status, export)
 
 	events.TestListener(t, &FileMigrationRequestedEvent{
 		User:              u,
-		MigratorKind:      "vikunja-file",
+		MigratorKind:      "norna-file",
 		MigrationStatusID: status.ID,
 	}, &FileMigrationListener{})
 
@@ -389,7 +389,7 @@ func TestFileMigrationListenerReportedFailureStoresGenericMessage(t *testing.T) 
 	t.Cleanup(notifications.Unfake)
 
 	// The failure a prior review found in a user's inbox: the spool path must not reach them.
-	leaky := &os.PathError{Op: "open", Path: "/var/lib/vikunja/files/migration-spool-4711", Err: os.ErrNotExist}
+	leaky := &os.PathError{Op: "open", Path: "/var/lib/norna/files/migration-spool-4711", Err: os.ErrNotExist}
 	registerStubFileMigrator("reported-file-stub", leaky)
 	u := getTestUser(t)
 
@@ -409,7 +409,7 @@ func TestFileMigrationListenerReportedFailureStoresGenericMessage(t *testing.T) 
 
 	stored, err := migration.GetMigrationStatusByID(status.ID)
 	require.NoError(t, err)
-	assert.NotContains(t, string(stored.ErrorKind)+stored.ErrorMessage, "/var/lib/vikunja")
+	assert.NotContains(t, string(stored.ErrorKind)+stored.ErrorMessage, "/var/lib/norna")
 	assertUploadRemoved(t, status.ID, uploadID)
 }
 

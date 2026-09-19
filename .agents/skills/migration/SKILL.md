@@ -6,7 +6,7 @@ user-invocable: true
 
 # Database Migrations
 
-Migrations are **irreversible in production**. Vikunja supports MySQL, PostgreSQL, and SQLite — every migration must work on all three.
+Migrations are **irreversible in production**. Norna supports MySQL, PostgreSQL, and SQLite — every migration must work on all three.
 
 ## Before writing
 

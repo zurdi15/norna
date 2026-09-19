@@ -58,7 +58,7 @@ func (e *errTaskDoesNotExist) HTTPError() web.HTTPError {
 func TestFingerprintDomainError(t *testing.T) {
 	t.Run("wrapped domain error groups by its code", func(t *testing.T) {
 		err := fmt.Errorf("could not read project: %w", &errProjectDoesNotExist{ID: 42})
-		assert.Equal(t, []string{"vikunja", "3001"}, Fingerprint(err))
+		assert.Equal(t, []string{"norna", "3001"}, Fingerprint(err))
 	})
 	t.Run("the wrapping does not change the fingerprint", func(t *testing.T) {
 		inner := &errProjectDoesNotExist{ID: 42}
@@ -122,7 +122,7 @@ func TestFingerprintDriverError(t *testing.T) {
 
 func TestFingerprintGenericError(t *testing.T) {
 	t.Run("ids and paths are normalised away", func(t *testing.T) {
-		first := fmt.Errorf("wrapped: %w", errors.New("could not open file /var/lib/vikunja/files/12345 for user 42"))
+		first := fmt.Errorf("wrapped: %w", errors.New("could not open file /var/lib/norna/files/12345 for user 42"))
 		second := errors.New("could not open file /srv/data/files/98 for user 7")
 		assert.Equal(t, Fingerprint(first), Fingerprint(second))
 		assert.Equal(t, []string{"*errors.errorString", "could not open file ? for user ?"}, Fingerprint(first))
@@ -130,7 +130,7 @@ func TestFingerprintGenericError(t *testing.T) {
 	t.Run("mail addresses and uuids are normalised away", func(t *testing.T) {
 		assert.Equal(t,
 			Fingerprint(errors.New("could not notify test@example.com about 0195a2f3-1b7c-7c3a-9b6e-2f8a1c4d5e6f")),
-			Fingerprint(errors.New("could not notify someone@vikunja.io about 7b2c0d11-aaaa-4bbb-8ccc-1d2e3f4a5b6c")),
+			Fingerprint(errors.New("could not notify someone@example.com about 7b2c0d11-aaaa-4bbb-8ccc-1d2e3f4a5b6c")),
 		)
 	})
 	t.Run("different messages do not group together", func(t *testing.T) {
@@ -165,7 +165,7 @@ func TestFingerprintHTTPAndPanic(t *testing.T) {
 	t.Run("a panic does not group with the same error returned normally", func(t *testing.T) {
 		inner := &errProjectDoesNotExist{ID: 42}
 		panicked := &middleware.PanicStackError{Err: inner, Stack: []byte("goroutine 1 [running]")}
-		assert.Equal(t, []string{"panic", "vikunja", "3001"}, Fingerprint(panicked))
+		assert.Equal(t, []string{"panic", "norna", "3001"}, Fingerprint(panicked))
 		assert.NotEqual(t, Fingerprint(inner), Fingerprint(panicked))
 	})
 }
@@ -188,7 +188,7 @@ func TestApply(t *testing.T) {
 		err := fmt.Errorf("could not read project: %w", &errProjectDoesNotExist{ID: 42})
 		event := applied(t, func(scope *sentry.Scope) { Apply(scope, err) })
 
-		assert.Equal(t, []string{"vikunja", "3001"}, event.Fingerprint)
+		assert.Equal(t, []string{"norna", "3001"}, event.Fingerprint)
 		assert.Equal(t, "*errorreport.errProjectDoesNotExist", event.Tags["error.type"])
 	})
 	t.Run("keeps an explicit fingerprint", func(t *testing.T) {

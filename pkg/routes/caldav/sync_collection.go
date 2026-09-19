@@ -115,7 +115,7 @@ func writeForbiddenValidSyncToken(c *echo.Context) error {
 //   - Valid sync-token  → return only tasks changed/created since the token timestamp
 //     plus 404 entries for tasks deleted since then
 //   - Invalid/unknown token → 403 + <D:valid-sync-token/> so client resets
-func handleSyncCollectionReport(c *echo.Context, body string, storage *VikunjaCaldavProjectStorage) error {
+func handleSyncCollectionReport(c *echo.Context, body string, storage *NornaCaldavProjectStorage) error {
 	rawToken := extractSyncTokenFromBody(body)
 	includeCalendarData := requestsCalendarData(body)
 
@@ -214,7 +214,7 @@ func handleSyncCollectionReport(c *echo.Context, body string, storage *VikunjaCa
 // changed tasks as 200 entries, deleted tasks as 404 entries.
 func writeSyncResponse(
 	c *echo.Context,
-	rr VikunjaProjectResourceAdapter,
+	rr NornaProjectResourceAdapter,
 	tasks []*models.TaskWithComments,
 	deletions []*models.Task,
 	newToken string,

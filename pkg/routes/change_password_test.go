@@ -35,8 +35,8 @@ func TestChangePasswordRedirect(t *testing.T) {
 	}{
 		{
 			name:      "with public url",
-			publicURL: "https://vikunja.example.com/sub/",
-			location:  "https://vikunja.example.com/sub/user/settings/password-update",
+			publicURL: "https://norna.example.com/sub/",
+			location:  "https://norna.example.com/sub/user/settings/password-update",
 		},
 		{
 			name:      "without public url",

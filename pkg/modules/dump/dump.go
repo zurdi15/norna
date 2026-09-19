@@ -31,7 +31,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Dump creates a zip file with all vikunja files at filename
+// Dump creates a zip file with all Norna files at filename
 func Dump(filename string) error {
 	dumpFile, err := os.Create(filename)
 	if err != nil {
@@ -57,7 +57,7 @@ func Dump(filename string) error {
 	env := os.Environ()
 	dotEnv := ""
 	for _, e := range env {
-		if strings.Contains(e, "VIKUNJA_") {
+		if strings.Contains(e, "NORNA_") {
 			dotEnv += e + "\n"
 		}
 	}

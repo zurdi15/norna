@@ -76,7 +76,7 @@ type tickTickTime struct {
 // the numeric ID columns (taskId, parentId) of TickTick exports. Such values can
 // occur through column misalignment caused by unescaped delimiters, which would
 // otherwise make gocsv fail the entire import with an internal server error
-// (go-vikunja/vikunja#2822). Rather than aborting the import, we fall back to 0
+// (upstream issue #2822). Rather than aborting the import, we fall back to 0
 // for any value we cannot parse.
 type tickTickNumber int64
 
@@ -101,7 +101,7 @@ func (n *tickTickNumber) UnmarshalCSV(csv string) error {
 // priority either as a plain number (0, 1, 3, 5) or, in some exports, prefixed
 // with "p" (p1, p2, p3). We accept both forms and fall back to 0 (no priority)
 // for anything we cannot parse, so a stray value never fails the whole import
-// (go-vikunja/vikunja#2822). Vikunja's task priority is a free-form sortable
+// (upstream issue #2822). Norna's task priority is a free-form sortable
 // integer, so the parsed value is carried over as-is.
 type tickTickPriority int64
 
@@ -187,11 +187,11 @@ func sortParentsBeforeChildren(tasks []*tickTickTask) []*tickTickTask {
 	return result
 }
 
-func convertTickTickToVikunja(tasks []*tickTickTask) (result []*models.ProjectWithTasksAndBuckets) {
+func convertTickTickToNorna(tasks []*tickTickTask) (result []*models.ProjectWithTasksAndBuckets) {
 	// Sort tasks so that parent tasks always come before their children.
 	// Without this, create_from_structure.go would try to create a
 	// placeholder for a not-yet-seen parent, which fails because the
-	// placeholder has no title.  (go-vikunja/vikunja#2487)
+	// placeholder has no title.  (upstream issue #2487)
 	tasks = sortParentsBeforeChildren(tasks)
 
 	var pseudoParentID int64 = 1
@@ -403,9 +403,9 @@ func linesToSkipBeforeHeader(file io.ReaderAt, size int64) (int, error) {
 	return lines, nil
 }
 
-// Migrate takes a ticktick export, parses it and imports everything in it into Vikunja.
+// Migrate takes a ticktick export, parses it and imports everything in it into Norna.
 // @Summary Import all projects, tasks etc. from a TickTick backup export
-// @Description Imports all projects, tasks, notes, reminders, subtasks and files from a TickTick backup export into Vikunja.
+// @Description Imports all projects, tasks, notes, reminders, subtasks and files from a TickTick backup export into Norna.
 // @tags migration
 // @Accept x-www-form-urlencoded
 // @Produce json
@@ -472,9 +472,9 @@ func (m *Migrator) Migrate(user *user.User, file io.ReaderAt, size int64) error 
 		task.Tags = strings.Split(task.TagsList, ", ")
 	}
 
-	vikunjaTasks := convertTickTickToVikunja(allTasks)
+	nornaTasks := convertTickTickToNorna(allTasks)
 
-	return migration.InsertFromStructure(vikunjaTasks, user)
+	return migration.InsertFromStructure(nornaTasks, user)
 }
 
 // isValidCSV performs a basic check to determine if the content looks like a CSV file

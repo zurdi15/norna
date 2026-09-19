@@ -148,7 +148,7 @@ This is a line
 			Subject("Testmail").
 			Greeting("Hi there,").
 			Line("This is a line").
-			Line("This **line** contains [a link](https://vikunja.io)").
+			Line("This **line** contains [a link](https://example.com)").
 			Line("And another one").
 			Action("The action", "https://example.com").
 			Line("This should be an outro line").
@@ -164,7 +164,7 @@ Hi there,
 
 This is a line
 
-This line contains a link (https://vikunja.io)
+This line contains a link (https://example.com)
 
 And another one
 
@@ -187,7 +187,7 @@ And one more, because why not?
 
 		// Check for markdown conversion
 		assert.Contains(t, mailopts.HTMLMessage, `<strong>line</strong>`)
-		assert.Contains(t, mailopts.HTMLMessage, `<a href="https://vikunja.io" rel="nofollow">a link</a>`)
+		assert.Contains(t, mailopts.HTMLMessage, `<a href="https://example.com" rel="nofollow">a link</a>`)
 
 		// Check for outro lines
 		assert.Contains(t, mailopts.HTMLMessage, `This should be an outro line`)
@@ -234,13 +234,13 @@ This is a footer line
 	t.Run("with link to notification settings in footer", func(t *testing.T) {
 		originalPublicURL := config.ServicePublicURL.GetString()
 		t.Cleanup(func() { config.ServicePublicURL.Set(originalPublicURL) })
-		config.ServicePublicURL.Set("https://vikunja.example.com/")
+		config.ServicePublicURL.Set("https://norna.example.com/")
 
 		mailopts, err := RenderMail(NewMail().IncludeLinkToSettings("en"), "en")
 		require.NoError(t, err)
 
-		assert.Contains(t, mailopts.Message, "here (https://vikunja.example.com/user/settings/general)")
-		assert.Contains(t, mailopts.HTMLMessage, `<a href="https://vikunja.example.com/user/settings/general" rel="nofollow">here</a>`)
+		assert.Contains(t, mailopts.Message, "here (https://norna.example.com/user/settings/general)")
+		assert.Contains(t, mailopts.HTMLMessage, `<a href="https://norna.example.com/user/settings/general" rel="nofollow">here</a>`)
 	})
 	t.Run("with footer and action", func(t *testing.T) {
 		mail := NewMail().
@@ -249,7 +249,7 @@ This is a footer line
 			Subject("Testmail").
 			Greeting("Hi there,").
 			Line("This is a line").
-			Line("This **line** contains [a link](https://vikunja.io)").
+			Line("This **line** contains [a link](https://example.com)").
 			Line("And another one").
 			Action("The action", "https://example.com").
 			Line("This should be an outro line").
@@ -266,7 +266,7 @@ Hi there,
 
 This is a line
 
-This line contains a link (https://vikunja.io)
+This line contains a link (https://example.com)
 
 And another one
 
@@ -298,13 +298,13 @@ This is a footer line
 			Subject("Testmail").
 			Greeting("Hi there,").
 			Line("This is a line").
-			ThreadID("<task-123@vikunja>")
+			ThreadID("<task-123@norna>")
 
 		mailopts, err := RenderMail(mail, "en")
 		require.NoError(t, err)
 		assert.Equal(t, mail.from, mailopts.From)
 		assert.Equal(t, mail.to, mailopts.To)
-		assert.Equal(t, "<task-123@vikunja>", mailopts.ThreadID)
+		assert.Equal(t, "<task-123@norna>", mailopts.ThreadID)
 	})
 	t.Run("with special characters in task title", func(t *testing.T) {
 		mail := NewMail().
@@ -333,16 +333,16 @@ This is a footer line
 			To("test@otherdomain.com").
 			Subject("Testmail").
 			Greeting("Hi there,").
-			Line(`A **friendly** reminder for "` + title + `". See [the task](https://vikunja.io/tasks/1).`).
-			Line(`* [` + title + `](https://vikunja.io/tasks/1)`)
+			Line(`A **friendly** reminder for "` + title + `". See [the task](https://example.com/tasks/1).`).
+			Line(`* [` + title + `](https://example.com/tasks/1)`)
 
 		mailopts, err := RenderMail(mail, "en")
 		require.NoError(t, err)
 
-		assert.Contains(t, mailopts.Message, `A friendly reminder for "Test - xyz - 123|456@789! Keep \!". See the task (https://vikunja.io/tasks/1).`)
+		assert.Contains(t, mailopts.Message, `A friendly reminder for "Test - xyz - 123|456@789! Keep \!". See the task (https://example.com/tasks/1).`)
 		assert.NotContains(t, mailopts.Message, `\-`)
 		assert.NotContains(t, mailopts.Message, `**`)
-		assert.Contains(t, mailopts.Message, `- Test - xyz - 123|456@789! Keep \! (https://vikunja.io/tasks/1)`)
+		assert.Contains(t, mailopts.Message, `- Test - xyz - 123|456@789! Keep \! (https://example.com/tasks/1)`)
 		assert.Contains(t, mailopts.HTMLMessage, `<strong>friendly</strong>`)
 		assert.Contains(t, mailopts.HTMLMessage, `Test - xyz - 123|456@789! Keep \!`)
 	})
@@ -563,7 +563,7 @@ func TestConversationalMail(t *testing.T) {
 
 		// Should NOT have logo (completely removed)
 		assert.NotContains(t, mailopts.HTMLMessage, "logo.png")
-		assert.NotContains(t, mailopts.HTMLMessage, "Vikunja")
+		assert.NotContains(t, mailopts.HTMLMessage, "Norna")
 		assert.NotContains(t, mailopts.EmbedFS, "logo.png")
 
 		// Should have inline action link with arrow
@@ -602,7 +602,7 @@ func TestConversationalMail(t *testing.T) {
 
 		// Should HAVE logo in formal emails
 		assert.Contains(t, mailopts.HTMLMessage, "logo.png")
-		assert.Contains(t, mailopts.HTMLMessage, "Vikunja")
+		assert.Contains(t, mailopts.HTMLMessage, "Norna")
 		assert.Contains(t, mailopts.EmbedFS, "logo.png")
 
 		// Should have formal button styling

@@ -1,6 +1,6 @@
-import { getCurrentInstance, ref } from 'vue'
+import { getCurrentInstance, inject, ref } from 'vue'
 import { createGlobalState, useIntervalFn } from '@vueuse/core'
-import { onBeforeRouteUpdate } from 'vue-router'
+import { routerKey } from 'vue-router'
 
 import { MILLISECONDS_A_SECOND } from '@/constants/date'
 
@@ -18,13 +18,11 @@ export const useGlobalNow = createGlobalState(() => {
 
 	useIntervalFn(update, GLOBAL_NOW_INTERVAL, { immediate: true })
 
-	// Now that this state can be initialised from a plain helper (formatDateSince), the
-	// first caller is not guaranteed to be a component — guard the route hook accordingly.
+	// Refreshed on every navigation too. The state is global, so the hook goes on the
+	// router, not on whichever component happened to ask first (which may even sit outside
+	// any RouterView). A plain helper (formatDateSince) may be the first caller, or a test without a router.
 	if (getCurrentInstance()) {
-		// ensure the now value is refreshed when the route changes
-		onBeforeRouteUpdate(() => {
-			update()
-		})
+		inject(routerKey, null)?.afterEach(() => update())
 	}
 
 	return {

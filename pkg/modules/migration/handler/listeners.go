@@ -53,7 +53,7 @@ func (m *migrationFailedError) Error() string {
 
 // shouldReportMigrationError filters out failures we cannot fix: a 4xx from the service we migrate from,
 // or a domain error that maps to a 4xx, means the user's account, token, url or data is the problem, not
-// Vikunja. The user still gets notified, with the actual message instead of the "we have been notified" one.
+// Norna. The user still gets notified, with the actual message instead of the "we have been notified" one.
 func shouldReportMigrationError(err error) bool {
 	// ErrUpstreamRequestFailed maps to 502 no matter what the upstream said, so it needs its own check.
 	var upstreamErr *migration.ErrUpstreamRequestFailed

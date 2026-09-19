@@ -30,13 +30,13 @@ describe('useProject', () => {
 		useQuery.mockReset()
 	})
 
-	it('waits for the initial refresh and does not overwrite an edited draft later', async () => {
+	it('shows the cached project, follows cache updates and loads once fetched fresh', async () => {
 		const data = ref(normalizeProject({id: 1, title: 'Cached'}))
 		const isFetching = ref(true)
 		useQuery.mockReturnValue({data, isFetching, isError: ref(false), error: ref(null)})
 
 		const {wrapper, state} = mountProject(1)
-		expect(state.value.project.value.title).toBe('')
+		expect(state.value.project.value.title).toBe('Cached')
 		expect(state.value.isLoading.value).toBe(true)
 		expect(state.value.isLoaded.value).toBe(false)
 
@@ -46,13 +46,17 @@ describe('useProject', () => {
 		expect(state.value.project.value.title).toBe('Fresh')
 		expect(state.value.isLoaded.value).toBe(true)
 
-		state.value.project.value.title = 'Local edit'
-		isFetching.value = true
-		data.value = normalizeProject({id: 1, title: 'Background refresh'})
-		isFetching.value = false
+		data.value = normalizeProject({id: 1, title: 'Renamed elsewhere'})
 		await nextTick()
+		expect(state.value.project.value.title).toBe('Renamed elsewhere')
+		wrapper.unmount()
+	})
 
-		expect(state.value.project.value.title).toBe('Local edit')
+	it('never shows another project while the current one loads', () => {
+		useQuery.mockReturnValue({data: ref(normalizeProject({id: 2, title: 'Other'})), isFetching: ref(true), isError: ref(false), error: ref(null)})
+
+		const {wrapper, state} = mountProject(1)
+		expect(state.value.project.value).toMatchObject({id: 1, title: ''})
 		wrapper.unmount()
 	})
 

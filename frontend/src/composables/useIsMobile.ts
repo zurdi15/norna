@@ -1,6 +1,10 @@
-import {createSharedComposable, useMediaQuery} from '@vueuse/core'
+import {computed} from 'vue'
+import {createSharedComposable} from '@vueuse/core'
 
-// Bulma's $tablet is 769px, so "mobile" is everything up to 768px.
-const BULMA_MOBILE_BREAKPOINT = 768
+import {useBreakpoints} from '@/ui/composables/useBreakpoints'
 
-export const useIsMobile = createSharedComposable(() => useMediaQuery(`(max-width: ${BULMA_MOBILE_BREAKPOINT}px)`))
+// "Mobile" is everything below Tailwind's md breakpoint.
+export const useIsMobile = createSharedComposable(() => {
+	const {isMd} = useBreakpoints()
+	return computed(() => !isMd.value)
+})

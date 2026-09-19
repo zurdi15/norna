@@ -79,7 +79,7 @@ func (m *Migrator) connect(ctx context.Context) (*client, error) {
 	return c, nil
 }
 
-// Migrate gets all projects, boards and cards from planka for a user and puts them into vikunja.
+// Migrate gets all projects, boards and cards from planka for a user and puts them into Norna.
 func (m *Migrator) Migrate(u *user.User) error {
 	log.Debugf("[Planka Migration] Starting migration for user %d", u.ID)
 
@@ -97,7 +97,7 @@ func (m *Migrator) Migrate(u *user.User) error {
 
 	log.Debugf("[Planka Migration] Fetched all planka data for user %d, converting", u.ID)
 
-	hierarchy, err := convertPlankaToVikunja(data, func(a *plankaAttachment) (*bytes.Buffer, error) {
+	hierarchy, err := convertPlankaToNorna(data, func(a *plankaAttachment) (*bytes.Buffer, error) {
 		return c.download(a.ID, a.Name)
 	})
 	if err != nil {

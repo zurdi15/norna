@@ -460,7 +460,7 @@ func TestReplaceFilterOperators(t *testing.T) {
 
 // Date filter boundaries must be emitted in UTC — the driver drops a bound
 // parameter's offset against the naive UTC column, so a service-timezone wall
-// clock shifts the boundary. https://github.com/go-vikunja/vikunja/issues/3181
+// clock shifts the boundary. upstream issue #3181
 func TestDateFilterTimezone(t *testing.T) {
 	la, err := time.LoadLocation("America/Los_Angeles")
 	require.NoError(t, err)

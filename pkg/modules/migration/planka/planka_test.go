@@ -94,7 +94,7 @@ func TestFetchBoardV1Unsupported(t *testing.T) {
 	require.ErrorAs(t, err, &errVersion)
 }
 
-func TestConvertPlankaToVikunja(t *testing.T) {
+func TestConvertPlankaToNorna(t *testing.T) {
 	f, srv := newFake(t)
 	f.validAPIKey = "key"
 	f.fixtures = plankaFixtures
@@ -107,7 +107,7 @@ func TestConvertPlankaToVikunja(t *testing.T) {
 	require.NoError(t, err)
 
 	downloads := []string{}
-	projects, err := convertPlankaToVikunja(data, func(a *plankaAttachment) (*bytes.Buffer, error) {
+	projects, err := convertPlankaToNorna(data, func(a *plankaAttachment) (*bytes.Buffer, error) {
 		downloads = append(downloads, a.ID)
 		if a.ID == "3001" {
 			return nil, errors.New("boom")
@@ -229,7 +229,7 @@ func TestConvertPlankaToVikunja(t *testing.T) {
 		assert.Contains(t, first.Description, "<h2>Base Group</h2>", "group name derived from base group")
 		assert.Contains(t, first.Description, "<td>Estimate</td>")
 		assert.Contains(t, first.Description, "<td>3d</td>")
-		assert.Contains(t, first.Description, `<a href="https://vikunja.io">Vikunja</a>`)
+		assert.Contains(t, first.Description, `<a href="https://example.org">Example</a>`)
 	})
 
 	t.Run("attachments and cover", func(t *testing.T) {

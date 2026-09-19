@@ -5,7 +5,7 @@ import {contextMutationOptions} from './contextMutation'
 import {fetchAllPages} from './fetchAllPages'
 import {projectKeys} from './projects'
 import {userSearchKeys} from './userSearch'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 
 export const teamKeys = {
 	lists: ['teams', 'list'] as const,
@@ -47,7 +47,7 @@ export function createTeamMutationOptions() {
 	return contextMutationOptions({
 		mutationFn: async (team: TeamWritable) => (await teamsCreate({body: team})).data,
 		onSettled: (_input, client) => invalidateTeams(client),
-		successMessage: () => i18n.global.t('team.create.success'),
+		successMessage: () => translate('team.create.success'),
 	})
 }
 
@@ -56,7 +56,7 @@ export function updateTeamMutationOptions() {
 		mutationFn: async ({id, team}: {id: number, team: TeamWritable}) => (await teamsUpdate({path: {id}, body: team})).data,
 		onSuccess: (updated, {id}, client) => updateCachedTeam(client, id, team => ({...team, ...updated})),
 		onSettled: ({id}, client) => invalidateTeams(client, id),
-		successMessage: () => i18n.global.t('team.edit.success'),
+		successMessage: () => translate('team.edit.success'),
 	})
 }
 
@@ -68,7 +68,7 @@ export function deleteTeamMutationOptions() {
 			client.removeQueries({queryKey: teamKeys.detail(id), exact: true})
 		},
 		onSettled: (_id, client) => invalidateTeams(client),
-		successMessage: () => i18n.global.t('team.edit.delete.success'),
+		successMessage: () => translate('team.edit.delete.success'),
 	})
 }
 
@@ -86,7 +86,7 @@ export function addTeamMemberMutationOptions() {
 	return contextMutationOptions({
 		mutationFn: async ({teamId, username}: MemberInput) => (await teamsMembersAdd({path: {team: teamId}, body: {username, admin: false}})).data,
 		onSettled: ({teamId}, client) => invalidateMembership(client, teamId),
-		successMessage: () => i18n.global.t('team.edit.userAddedSuccess'),
+		successMessage: () => translate('team.edit.userAddedSuccess'),
 	})
 }
 
@@ -99,7 +99,7 @@ export function removeTeamMemberMutationOptions() {
 		mutationFn: removeTeamMember,
 		onSuccess: (_data, {teamId, username}, client) => updateCachedTeam(client, teamId, team => ({...team, members: team.members?.filter(member => member.username !== username)})),
 		onSettled: ({teamId}, client) => invalidateMembership(client, teamId),
-		successMessage: () => i18n.global.t('team.edit.deleteUser.success'),
+		successMessage: () => translate('team.edit.deleteUser.success'),
 	})
 }
 
@@ -108,7 +108,7 @@ export function leaveTeamMutationOptions() {
 		mutationFn: removeTeamMember,
 		onSuccess: (_data, {teamId}, client) => client.removeQueries({queryKey: teamKeys.detail(teamId), exact: true}),
 		onSettled: (_input, client) => invalidateMembership(client),
-		successMessage: () => i18n.global.t('team.edit.leave.success'),
+		successMessage: () => translate('team.edit.leave.success'),
 	})
 }
 
@@ -117,7 +117,7 @@ export function toggleTeamMemberAdminMutationOptions() {
 		mutationFn: async ({teamId, username}: MemberInput) => (await teamsMembersToggleAdmin({path: {team: teamId, user: username}})).data,
 		onSuccess: (updated, {teamId, username}, client) => updateCachedTeam(client, teamId, team => ({...team, members: team.members?.map(member => member.username === username ? {...member, admin: updated.admin} : member)})),
 		onSettled: ({teamId}, client) => invalidateMembership(client, teamId),
-		successMessage: (updated) => i18n.global.t(updated.admin ? 'team.edit.madeAdmin' : 'team.edit.madeMember'),
+		successMessage: (updated) => translate(updated.admin ? 'team.edit.madeAdmin' : 'team.edit.madeMember'),
 	})
 }
 

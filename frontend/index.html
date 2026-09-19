@@ -2,18 +2,26 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1.0">
-	<title>Vikunja</title>
-	<meta name="description" content="Vikunja (/vɪˈkuːnjə/) - The to-do app to organize your life.">
-	<meta name="theme-color" content="#1973ff"/>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,interactive-widget=resizes-content">
+	<title>Norna</title>
+	<meta name="description" content="Norna: tareas y proyectos, tejidos con calma.">
+	<!-- Keep in sync with --color-canvas; useColorScheme() rewrites both once the theme is known. -->
+	<meta name="theme-color" content="#f9fafc" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#0b0e13" media="(prefers-color-scheme: dark)">
+	<meta name="color-scheme" content="light dark">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Norna">
 
-	<link rel="icon" href="/favicon.ico">
+	<link rel="icon" href="/favicon.ico" sizes="32x32">
+	<link rel="icon" href="/images/icons/icon.svg" type="image/svg+xml">
 	<link rel="apple-touch-icon" href="/images/icons/apple-touch-icon-180x180.png"/>
-	<!--__vite-plugin-inject-preload__-->
+	<!--__unplugin-inject-preload__-->
 </head>
 <body>
 <noscript>
-	<strong>We're sorry but Vikunja doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+	<strong>Norna necesita JavaScript para funcionar. / Norna needs JavaScript to work.</strong>
 </noscript>
 <div id="app"></div>
 <script type="module" src="/src/main.ts"></script>

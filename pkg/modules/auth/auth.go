@@ -54,7 +54,7 @@ type Token struct {
 	Token string `json:"token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"`
 }
 
-const RefreshTokenCookieName = "vikunja_refresh_token" //nolint:gosec // not a credential
+const RefreshTokenCookieName = "norna_refresh_token" //nolint:gosec // not a credential
 
 const (
 	RefreshTokenPathV1 = "/api/v1/user/token/refresh" //nolint:gosec // a route path, not a credential
@@ -474,7 +474,7 @@ func SessionIDFromContext(c *echo.Context) string {
 }
 
 // GetAuthFromContext retrieves the authenticated web.Auth from a plain
-// context.Context, bridging Huma handlers to Vikunja's echo JWT flow. The
+// context.Context, bridging Huma handlers to Norna's echo JWT flow. The
 // humabridge group middleware stashes the *echo.Context under EchoContextKey
 // first.
 func GetAuthFromContext(ctx context.Context) (web.Auth, error) {

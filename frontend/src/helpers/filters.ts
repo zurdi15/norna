@@ -75,7 +75,8 @@ export const FILTER_JOIN_OPERATOR = [
 	')',
 ]
 
-export const FILTER_OPERATORS_REGEX = '('+FILTER_OPERATORS.map(op => {
+// Longest first, so ">=" isn't read as ">" followed by a value starting with "=".
+export const FILTER_OPERATORS_REGEX = '('+[...FILTER_OPERATORS].sort((a, b) => b.length - a.length).map(op => {
 	// Only add word boundaries for operators that are words (like 'in', 'like', 'not in')
 	const needsWordBoundary = /^[a-zA-Z]/.test(op) || /[a-zA-Z]$/.test(op)
 	const escaped = op.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -83,7 +84,7 @@ export const FILTER_OPERATORS_REGEX = '('+FILTER_OPERATORS.map(op => {
 }).join('|')+')'
 
 export function hasFilterQuery(filter: string): boolean {
-	return FILTER_OPERATORS.find(o => filter.includes(o)) || false
+	return FILTER_OPERATORS.some(o => filter.includes(o))
 }
 
 export function getFilterFieldRegexPattern(field: string): RegExp {

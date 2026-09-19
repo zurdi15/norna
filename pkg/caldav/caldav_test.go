@@ -538,7 +538,7 @@ END:VCALENDAR`,
 }
 
 func TestParseTodosRichTextDescription(t *testing.T) {
-	cfg := &Config{Name: "test", ProdID: "Vikunja"}
+	cfg := &Config{Name: "test", ProdID: "Norna"}
 	ts := time.Unix(1543626724, 0).In(config.GetTimeZone())
 
 	t.Run("rich html serializes as markdown", func(t *testing.T) {

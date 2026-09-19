@@ -1,57 +1,56 @@
-import type {ITask} from '@/modelTypes/ITask'
+import type {Task} from '@/client/generated'
+import {getTaskDate} from '@/modules/task/task'
 
 const MAX_INDENT_LEVEL = 4
 
 export interface GanttTaskTreeNode {
-	task: ITask
+	task: Task
 	indentLevel: number
 	isParent: boolean
+	/** The parent this task is nested under, when that parent is part of the tree. */
+	parentId: number | null
 	childIds: number[]
 	derivedStartDate: Date | null
 	derivedEndDate: Date | null
 	hasDerivedDates: boolean
 }
 
+function relatedIds(task: Task, kind: 'subtask' | 'parenttask'): number[] {
+	return (task.related_tasks?.[kind] ?? [])
+		.map(related => related.id)
+		.filter((id): id is number => typeof id === 'number')
+}
+
+function hasOwnDates(task: Task): boolean {
+	return Boolean(getTaskDate(task.start_date) || getTaskDate(task.end_date) || getTaskDate(task.due_date))
+}
+
 /**
- * Builds a hierarchical task tree from a flat task map using relatedTasks data,
- * then flattens it in depth-first order for Gantt row rendering.
+ * Builds the parent/subtask tree of the tasks from their related tasks and flattens it
+ * depth first, the order of Gantt rows. Roots and siblings keep the map's order, so the
+ * caller decides how rows sort. A dateless parent gets the span of its subtasks.
  */
-export function buildGanttTaskTree(tasks: Map<number, ITask>): GanttTaskTreeNode[] {
-	// Step 1: Build parent -> children mapping
+export function buildGanttTaskTree(tasks: Map<number, Task>): GanttTaskTreeNode[] {
+	const order = new Map([...tasks.keys()].map((id, index) => [id, index]))
 	const childrenMap = new Map<number, number[]>()
 	const hasParentInView = new Set<number>()
 
 	for (const [taskId, task] of tasks) {
-		const subtasks = task.relatedTasks?.subtask ?? []
-		const childIds = subtasks
-			.map(s => s.id)
+		const childIds = relatedIds(task, 'subtask')
 			.filter(id => tasks.has(id))
-
+			.sort((a, b) => order.get(a)! - order.get(b)!)
 		if (childIds.length > 0) {
 			childrenMap.set(taskId, childIds)
 		}
-
-		const parents = task.relatedTasks?.parenttask ?? []
-		for (const parent of parents) {
-			if (tasks.has(parent.id)) {
-				hasParentInView.add(taskId)
-			}
+		if (relatedIds(task, 'parenttask').some(id => tasks.has(id))) {
+			hasParentInView.add(taskId)
 		}
 	}
 
-	// Step 2: Find root tasks (no parent in the current view)
-	const rootIds: number[] = []
-	for (const [taskId] of tasks) {
-		if (!hasParentInView.has(taskId)) {
-			rootIds.push(taskId)
-		}
-	}
-
-	// Step 3: Depth-first flatten
 	const result: GanttTaskTreeNode[] = []
 	const visited = new Set<number>()
 
-	function visit(taskId: number, level: number) {
+	function visit(taskId: number, level: number, parentId: number | null) {
 		if (visited.has(taskId)) return
 		visited.add(taskId)
 
@@ -60,53 +59,40 @@ export function buildGanttTaskTree(tasks: Map<number, ITask>): GanttTaskTreeNode
 
 		const childIds = childrenMap.get(taskId) ?? []
 		const isParent = childIds.length > 0
-		const clampedLevel = Math.min(level, MAX_INDENT_LEVEL)
 
-		// Calculate derived dates for dateless parents
 		let derivedStartDate: Date | null = null
 		let derivedEndDate: Date | null = null
-		let hasDerivedDates = false
-
-		if (isParent && !task.startDate && !task.endDate && !task.dueDate) {
-			const dates = collectChildDates(childIds, tasks, childrenMap)
+		if (isParent && !hasOwnDates(task)) {
+			const dates = collectChildDates(childIds, tasks, childrenMap, new Set([taskId]))
 			derivedStartDate = dates.minStart
 			derivedEndDate = dates.maxEnd
-			hasDerivedDates = derivedStartDate !== null || derivedEndDate !== null
 		}
 
 		result.push({
 			task,
-			indentLevel: clampedLevel,
+			indentLevel: Math.min(level, MAX_INDENT_LEVEL),
 			isParent,
+			parentId,
 			childIds,
 			derivedStartDate,
 			derivedEndDate,
-			hasDerivedDates,
+			hasDerivedDates: derivedStartDate !== null || derivedEndDate !== null,
 		})
 
 		for (const childId of childIds) {
-			visit(childId, level + 1)
+			visit(childId, level + 1, taskId)
 		}
 	}
 
-	for (const rootId of rootIds) {
-		visit(rootId, 0)
+	for (const taskId of tasks.keys()) {
+		if (!hasParentInView.has(taskId)) {
+			visit(taskId, 0, null)
+		}
 	}
 
-	// Add any unvisited tasks (shouldn't happen normally, but safety net)
-	for (const [taskId] of tasks) {
-		if (!visited.has(taskId)) {
-			const task = tasks.get(taskId)!
-			result.push({
-				task,
-				indentLevel: 0,
-				isParent: false,
-				childIds: [],
-				derivedStartDate: null,
-				derivedEndDate: null,
-				hasDerivedDates: false,
-			})
-		}
+	// Tasks only reachable through a cycle of parents have no root; they still get a row.
+	for (const taskId of tasks.keys()) {
+		visit(taskId, 0, null)
 	}
 
 	return result
@@ -114,41 +100,35 @@ export function buildGanttTaskTree(tasks: Map<number, ITask>): GanttTaskTreeNode
 
 function collectChildDates(
 	childIds: number[],
-	tasks: Map<number, ITask>,
+	tasks: Map<number, Task>,
 	childrenMap: Map<number, number[]>,
-): { minStart: Date | null; maxEnd: Date | null } {
+	seen: Set<number>,
+): {minStart: Date | null, maxEnd: Date | null} {
 	let minStart: Date | null = null
 	let maxEnd: Date | null = null
 
-	for (const childId of childIds) {
-		const child = tasks.get(childId)
-		if (!child) continue
-
-		const start = child.startDate ? new Date(child.startDate) : null
-		const end = child.endDate || child.dueDate
-			? new Date((child.endDate || child.dueDate) as Date)
-			: null
-
+	function include(start: Date | null, end: Date | null) {
 		if (start && (!minStart || start < minStart)) {
 			minStart = start
 		}
 		if (end && (!maxEnd || end > maxEnd)) {
 			maxEnd = end
 		}
+	}
 
-		// Recurse into grandchildren
+	for (const childId of childIds) {
+		const child = tasks.get(childId)
+		if (!child || seen.has(childId)) continue
+		seen.add(childId)
+
+		include(getTaskDate(child.start_date), getTaskDate(child.end_date) ?? getTaskDate(child.due_date))
+
 		const grandchildIds = childrenMap.get(childId) ?? []
 		if (grandchildIds.length > 0) {
-			const grandDates = collectChildDates(grandchildIds, tasks, childrenMap)
-			if (grandDates.minStart && (!minStart || grandDates.minStart < minStart)) {
-				minStart = grandDates.minStart
-			}
-			if (grandDates.maxEnd && (!maxEnd || grandDates.maxEnd > maxEnd)) {
-				maxEnd = grandDates.maxEnd
-			}
+			const grand = collectChildDates(grandchildIds, tasks, childrenMap, seen)
+			include(grand.minStart, grand.maxEnd)
 		}
 	}
 
 	return {minStart, maxEnd}
 }
-

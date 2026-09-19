@@ -9,9 +9,10 @@ import {computed, toValue, type MaybeRefOrGetter} from 'vue'
 import {useDateDisplay} from '@/composables/useDateDisplay'
 import {useGlobalNow} from '@/composables/useGlobalNow'
 import {useTimeFormat} from '@/composables/useTimeFormat'
+import {MILLISECONDS_A_MINUTE} from '@/constants/date'
 import {DATE_DISPLAY, type DateDisplay} from '@/constants/dateDisplay'
 import {TIME_FORMAT, type TimeFormat} from '@/constants/timeFormat'
-import {DAYJS_LOCALE_MAPPING} from '@/i18n/useDayjsLanguageSync.ts'
+import {getDayjsLocale} from '@/i18n/useDayjsLanguageSync.ts'
 
 export function dateIsValid(date: Date | string | null | undefined): boolean {
 	return toDate(date) !== null
@@ -31,16 +32,16 @@ export const formatDate = (date: Date | string | null | undefined, f: string) =>
 		return ''
 	}
 
-	const locale = DAYJS_LOCALE_MAPPING[i18n.global.locale.value.toLowerCase()] ?? 'en'
+	const locale = getDayjsLocale(i18n.global.locale.value)
 
 	return dayjs(parsed).locale(locale).format(f)
 }
 
-export function formatDateLong(date) {
+export function formatDateLong(date: Date | string | null | undefined) {
 	return formatDate(date, 'LLLL')
 }
 
-export function formatDateShort(date) {
+export function formatDateShort(date: Date | string | null | undefined) {
 	return formatDate(date, 'lll')
 }
 
@@ -50,14 +51,16 @@ export const formatDateSince = (date: Date | string | null | undefined) => {
 		return ''
 	}
 
-	const locale = DAYJS_LOCALE_MAPPING[i18n.global.locale.value.toLowerCase()] ?? 'en'
+	const locale = getDayjsLocale(i18n.global.locale.value)
 
 	// Computing the relative string against the shared, ticking `now` (instead of fromNow's
 	// internal Date.now()) makes every reactive caller re-render on the 60s tick, so open views
 	// don't keep showing a stale "x minutes ago".
 	const {now} = useGlobalNow()
+	// That clock lags up to a minute: something just created would read "in a few seconds".
+	const reference = parsed > now.value && parsed.getTime() - now.value.getTime() <= MILLISECONDS_A_MINUTE ? parsed : now.value
 
-	return dayjs(parsed).locale(locale).from(now.value)
+	return dayjs(parsed).locale(locale).from(reference)
 }
 
 export function formatISO(date: Date | string | null | undefined) {

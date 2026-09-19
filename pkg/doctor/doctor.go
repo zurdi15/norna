@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// Package doctor provides diagnostic checks for Vikunja installations.
+// Package doctor provides diagnostic checks for Norna installations.
 package doctor
 
 // Run executes all diagnostic checks in order and returns the results. Each group is

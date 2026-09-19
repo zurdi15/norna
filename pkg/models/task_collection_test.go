@@ -2509,7 +2509,7 @@ func TestTaskCollection_ExpandSubtasksMultiParentCrossScope(t *testing.T) {
 	assert.Len(t, tasks, 2)
 }
 
-// Reproduces https://github.com/go-vikunja/vikunja/issues/3181: with a non-UTC
+// Reproduces upstream issue #3181: with a non-UTC
 // service timezone, a task due in the last hours of the local day must still
 // match "due_date < now/d+1d" when filter_timezone matches that timezone.
 func TestTaskCollection_DateFilterTimezoneBoundary(t *testing.T) {

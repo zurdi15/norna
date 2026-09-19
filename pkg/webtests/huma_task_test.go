@@ -384,7 +384,7 @@ func TestHumaTask_ReadByIndexOpenAPI(t *testing.T) {
 	require.True(t, ok)
 	schema, ok := problem["schema"].(map[string]any)
 	require.True(t, ok)
-	assert.Equal(t, "#/components/schemas/VikunjaErrorModel", schema["$ref"])
+	assert.Equal(t, "#/components/schemas/NornaErrorModel", schema["$ref"])
 }
 
 // TestHumaTask_Expand asserts the expand query param populates the extra,

@@ -12,7 +12,7 @@ import type {Image, Project} from '@/client/generated'
 import {contextMutationOptions} from '@/client/queries/contextMutation'
 import {mapProjectNavigationItem, projectKeys} from '@/client/queries/projects'
 import type {ProjectListResult, ProjectResponse} from '@/client/queries/projects'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 
 export const projectBackgroundKeys = {
 	all: ['project-backgrounds'] as const,
@@ -122,7 +122,7 @@ export function setUnsplashProjectBackgroundMutationOptions(shouldNotify: Should
 			body: {id: imageId},
 		})).data,
 		shouldNotify,
-		() => i18n.global.t('project.background.success'),
+		() => translate('projectBackground.toasts.set'),
 	)
 }
 
@@ -133,7 +133,7 @@ export function uploadProjectBackgroundMutationOptions(shouldNotify: ShouldNotif
 			body: {background: file},
 		})).data,
 		shouldNotify,
-		() => i18n.global.t('project.background.success'),
+		() => translate('projectBackground.toasts.set'),
 	)
 }
 
@@ -141,7 +141,7 @@ export function deleteProjectBackgroundMutationOptions(shouldNotify: ShouldNotif
 	return backgroundMutationOptions(
 		async ({projectId}: {projectId: number}) => (await projectsBackgroundDelete({path: {project: projectId}})).data,
 		shouldNotify,
-		() => i18n.global.t('project.background.removeSuccess'),
+		() => translate('projectBackground.toasts.removed'),
 	)
 }
 

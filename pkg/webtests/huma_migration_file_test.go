@@ -90,10 +90,10 @@ func assertClaimReleased(t *testing.T, status *migration.Status) {
 }
 
 // TestHumaMigrationFile covers the always-registered file migrators
-// (vikunja-file, ticktick, wekan) status + migrate endpoints. There is no v1
+// (norna-file, ticktick, wekan) status + migrate endpoints. There is no v1
 // webtest for these handlers to mirror, so this is the parity baseline.
 func TestHumaMigrationFile(t *testing.T) {
-	migrators := []string{"vikunja-file", "ticktick", "wekan"}
+	migrators := []string{"norna-file", "ticktick", "wekan"}
 
 	t.Run("status - never migrated", func(t *testing.T) {
 		e := setupMigrationTestEnv(t)
@@ -106,15 +106,15 @@ func TestHumaMigrationFile(t *testing.T) {
 		}
 	})
 
-	// vikunja-file is the only migrator still validating in the request: reading
+	// norna-file is the only migrator still validating in the request: reading
 	// the zip central directory is cheap, while ticktick and wekan would have to
 	// parse the whole upload to say anything about it.
-	t.Run("vikunja-file rejects a non-zip upload", func(t *testing.T) {
+	t.Run("norna-file rejects a non-zip upload", func(t *testing.T) {
 		e := setupMigrationTestEnv(t)
 		token := humaTokenFor(t, &testuser1)
 
 		body, contentType := multipartImportBody(t, "bad.zip", []byte("not a zip archive"), nil)
-		rec := migrationUploadRequest(t, e, "/api/v2/migration/vikunja-file/migrate", body, contentType, token)
+		rec := migrationUploadRequest(t, e, "/api/v2/migration/norna-file/migrate", body, contentType, token)
 		require.Equal(t, http.StatusBadRequest, rec.Code, "body: %s", rec.Body.String())
 		assert.Contains(t, rec.Body.String(), strconv.Itoa(migration.ErrCodeNotAZipFile), "body: %s", rec.Body.String())
 	})
@@ -152,17 +152,17 @@ func TestHumaMigrationFile_QueuesTheImport(t *testing.T) {
 	e := setupMigrationTestEnv(t)
 	token := humaTokenFor(t, &testuser1)
 
-	export, err := os.ReadFile("../modules/migration/vikunja-file/export.zip")
+	export, err := os.ReadFile("../modules/migration/norna-file/export.zip")
 	require.NoError(t, err)
 
 	body, contentType := multipartImportBody(t, "export.zip", export, nil)
-	rec := migrationUploadRequest(t, e, "/api/v2/migration/vikunja-file/migrate", body, contentType, token)
+	rec := migrationUploadRequest(t, e, "/api/v2/migration/norna-file/migrate", body, contentType, token)
 	require.Equal(t, http.StatusOK, rec.Code, "body: %s", rec.Body.String())
 	assert.Contains(t, rec.Body.String(), `"message":"Migration was started successfully."`)
 	events.AssertDispatched(t, &migrationHandler.FileMigrationRequestedEvent{})
 
 	body, contentType = multipartImportBody(t, "export.zip", export, nil)
-	rec = migrationUploadRequest(t, e, "/api/v2/migration/vikunja-file/migrate", body, contentType, token)
+	rec = migrationUploadRequest(t, e, "/api/v2/migration/norna-file/migrate", body, contentType, token)
 	assert.Equal(t, http.StatusPreconditionFailed, rec.Code,
 		"the queued import must keep holding the claim; body: %s", rec.Body.String())
 }

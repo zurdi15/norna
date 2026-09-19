@@ -258,7 +258,7 @@ func getCacheControlHeader(info os.FileInfo, file io.ReadSeeker) (header string,
 
 func serveFile(c *echo.Context, file io.ReadSeeker, info os.FileInfo, etag string) error {
 
-	c.Response().Header().Set("Server", "Vikunja")
+	c.Response().Header().Set("Server", "Norna")
 	c.Response().Header().Set("Vary", "Accept-Encoding")
 	if etag != "" {
 		c.Response().Header().Set("Etag", etag)

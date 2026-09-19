@@ -114,7 +114,7 @@ func TestHumaNotification_ProjectPermissions(t *testing.T) {
 }
 
 func feedEntryID(notificationID int64) string {
-	return "vikunja-notification-" + strconv.FormatInt(notificationID, 10)
+	return "norna-notification-" + strconv.FormatInt(notificationID, 10)
 }
 
 func seedNotification(t *testing.T, s *xorm.Session, notifiableID int64, n notifications.Notification) int64 {

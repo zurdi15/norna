@@ -211,7 +211,7 @@ func TestHumaOAuth(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("authorize requires authentication", func(t *testing.T) {
-		body := authorizeRequestBody("code", "vikunja", "vikunja-flutter://callback", "abc", "S256", "s")
+		body := authorizeRequestBody("code", "norna", "http://127.0.0.1:8080/callback", "abc", "S256", "s")
 		rec := humaRequest(t, e, http.MethodPost, "/api/v2/oauth/authorize", string(body), "", "")
 		assert.Equal(t, http.StatusUnauthorized, rec.Code)
 	})
@@ -221,7 +221,7 @@ func TestHumaOAuth(t *testing.T) {
 	t.Run("authorize rejects legacy oauth-scoped API token", func(t *testing.T) {
 		apiToken := insertLegacyOAuthScopedToken(t)
 
-		body := authorizeRequestBody("code", "vikunja", "vikunja-flutter://callback", "abc", "S256", "")
+		body := authorizeRequestBody("code", "norna", "http://127.0.0.1:8080/callback", "abc", "S256", "")
 		rec := humaRequest(t, e, http.MethodPost, "/api/v2/oauth/authorize", string(body), apiToken, "")
 		assert.Equal(t, http.StatusUnauthorized, rec.Code)
 		assert.NotContains(t, rec.Body.String(), `"code":"`)
@@ -235,8 +235,8 @@ func TestHumaOAuth(t *testing.T) {
 		body, _ := json.Marshal(map[string]string{ //nolint:errchkjson
 			"grant_type":    "authorization_code",
 			"code":          code,
-			"client_id":     "vikunja",
-			"redirect_uri":  "vikunja-flutter://callback",
+			"client_id":     "norna",
+			"redirect_uri":  "http://127.0.0.1:8080/callback",
 			"code_verifier": verifier,
 		})
 		rec := humaRequest(t, e, http.MethodPost, "/api/v2/oauth/token", string(body), "", "application/json")
@@ -258,8 +258,8 @@ func TestHumaOAuth(t *testing.T) {
 		form := url.Values{
 			"grant_type":    {"authorization_code"},
 			"code":          {code},
-			"client_id":     {"vikunja"},
-			"redirect_uri":  {"vikunja-flutter://callback"},
+			"client_id":     {"norna"},
+			"redirect_uri":  {"http://127.0.0.1:8080/callback"},
 			"code_verifier": {verifier},
 		}
 		rec := humaRequest(t, e, http.MethodPost, "/api/v2/oauth/token", form.Encode(), "", "application/x-www-form-urlencoded")
@@ -272,7 +272,7 @@ func TestHumaOAuth(t *testing.T) {
 	})
 
 	t.Run("invalid grant type", func(t *testing.T) {
-		form := url.Values{"grant_type": {"password"}, "client_id": {"vikunja"}}
+		form := url.Values{"grant_type": {"password"}, "client_id": {"norna"}}
 		rec := humaRequest(t, e, http.MethodPost, "/api/v2/oauth/token", form.Encode(), "", "application/x-www-form-urlencoded")
 		assert.Equal(t, http.StatusBadRequest, rec.Code)
 	})
@@ -287,7 +287,7 @@ func pkceChallenge(verifier string) string {
 func authorizeV2(t *testing.T, e *echo.Echo, challenge, state string) string {
 	t.Helper()
 	token := humaTokenFor(t, &testuser1)
-	body := authorizeRequestBody("code", "vikunja", "vikunja-flutter://callback", challenge, "S256", state)
+	body := authorizeRequestBody("code", "norna", "http://127.0.0.1:8080/callback", challenge, "S256", state)
 	rec := humaRequest(t, e, http.MethodPost, "/api/v2/oauth/authorize", string(body), token, "")
 	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
 
@@ -297,7 +297,7 @@ func authorizeV2(t *testing.T, e *echo.Echo, challenge, state string) string {
 	return resp.Code
 }
 
-// problemCode pulls the Vikunja numeric error code out of an RFC 9457 body.
+// problemCode pulls the Norna numeric error code out of an RFC 9457 body.
 func problemCode(t *testing.T, rec *httptest.ResponseRecorder) int {
 	t.Helper()
 	var body struct {

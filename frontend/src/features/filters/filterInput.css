@@ -1,0 +1,74 @@
+/*
+ * The filter query input: one wrapping line of Plex Mono, with the highlighter's decorations
+ * (fields, operators, values, && and ||). Tokens only, so both themes follow.
+ * 16px on touch keeps iOS from zooming in; pointer screens use the compact size.
+ */
+
+.norna-filter-input {
+	min-block-size: 1.5rem;
+	color: var(--color-ink);
+	font-family: var(--font-mono);
+	font-size: var(--text-lg);
+	line-height: 1.5rem;
+	overflow-wrap: anywhere;
+	outline: none;
+}
+
+@media (pointer: fine) {
+	.norna-filter-input {
+		min-block-size: 1.25rem;
+		font-size: var(--text-sm);
+		line-height: 1.25rem;
+	}
+}
+
+/* Absolute rather than the usual zero-height float, so a long placeholder can end in an ellipsis. */
+.norna-filter-input p.is-empty {
+	position: relative;
+}
+
+.norna-filter-input p.is-empty::before {
+	position: absolute;
+	inset-inline: 0;
+	overflow: hidden;
+	color: var(--color-ink-faint);
+	content: attr(data-placeholder);
+	pointer-events: none;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.norna-filter-input .field {
+	color: var(--color-accent);
+	font-weight: 500;
+}
+
+.norna-filter-input .operator {
+	color: var(--color-ink-faint);
+}
+
+.norna-filter-input .logical {
+	color: var(--color-warning);
+	font-weight: 500;
+}
+
+.norna-filter-input :is(.value, .date-value, .label-value) {
+	padding-inline: 0.2em;
+	border-radius: var(--radius-sm);
+	background-color: var(--color-canvas-subtle);
+	box-decoration-break: clone;
+	box-shadow: inset 0 0 0 1px var(--color-line);
+}
+
+.norna-filter-input .date-value {
+	background-color: var(--color-accent-subtle);
+	box-shadow: inset 0 0 0 1px var(--color-accent-line);
+}
+
+/* --label-color comes from the highlighter; labels without a color keep the neutral value look. */
+.norna-filter-input .label-value[style] {
+	background-color: color-mix(in oklch, var(--label-color) 16%, var(--color-surface));
+	box-shadow:
+		inset 0 0 0 1px color-mix(in oklch, var(--label-color) 38%, var(--color-surface)),
+		inset 2px 0 0 var(--label-color);
+}

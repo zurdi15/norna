@@ -37,7 +37,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestConvertTicktickTasksToVikunja(t *testing.T) {
+func TestConvertTicktickTasksToNorna(t *testing.T) {
 	t1, err := time.Parse(time.RFC3339Nano, "2022-11-18T03:00:00.4770000Z")
 	require.NoError(t, err)
 	time1 := tickTickTime{Time: t1}
@@ -105,67 +105,67 @@ func TestConvertTicktickTasksToVikunja(t *testing.T) {
 		},
 	}
 
-	vikunjaTasks := convertTickTickToVikunja(tickTickTasks)
+	nornaTasks := convertTickTickToNorna(tickTickTasks)
 
-	assert.Len(t, vikunjaTasks, 3)
+	assert.Len(t, nornaTasks, 3)
 
-	assert.Equal(t, vikunjaTasks[0].ID, *vikunjaTasks[1].ParentProjectID)
-	assert.Equal(t, vikunjaTasks[0].ID, *vikunjaTasks[2].ParentProjectID)
+	assert.Equal(t, nornaTasks[0].ID, *nornaTasks[1].ParentProjectID)
+	assert.Equal(t, nornaTasks[0].ID, *nornaTasks[2].ParentProjectID)
 
-	assert.Len(t, vikunjaTasks[1].Tasks, 4)
-	assert.Equal(t, vikunjaTasks[1].Title, tickTickTasks[0].ProjectName)
+	assert.Len(t, nornaTasks[1].Tasks, 4)
+	assert.Equal(t, nornaTasks[1].Title, tickTickTasks[0].ProjectName)
 
-	assert.Equal(t, vikunjaTasks[1].Tasks[0].Title, tickTickTasks[0].Title)
-	assert.Equal(t, vikunjaTasks[1].Tasks[0].Description, tickTickTasks[0].Content)
-	assert.Equal(t, vikunjaTasks[1].Tasks[0].StartDate, tickTickTasks[0].StartDate.Time)
-	assert.Equal(t, vikunjaTasks[1].Tasks[0].EndDate, tickTickTasks[0].DueDate.Time)
-	assert.Equal(t, vikunjaTasks[1].Tasks[0].DueDate, tickTickTasks[0].DueDate.Time)
+	assert.Equal(t, nornaTasks[1].Tasks[0].Title, tickTickTasks[0].Title)
+	assert.Equal(t, nornaTasks[1].Tasks[0].Description, tickTickTasks[0].Content)
+	assert.Equal(t, nornaTasks[1].Tasks[0].StartDate, tickTickTasks[0].StartDate.Time)
+	assert.Equal(t, nornaTasks[1].Tasks[0].EndDate, tickTickTasks[0].DueDate.Time)
+	assert.Equal(t, nornaTasks[1].Tasks[0].DueDate, tickTickTasks[0].DueDate.Time)
 	assert.Equal(t, []*models.Label{
 		{Title: "label1"},
 		{Title: "label2"},
-	}, vikunjaTasks[1].Tasks[0].Labels)
-	assert.Equal(t, vikunjaTasks[1].Tasks[0].Reminders[0].RelativeTo, models.ReminderRelation("due_date"))
-	assert.Equal(t, vikunjaTasks[1].Tasks[0].Reminders[0].RelativePeriod, int64(-24*3600))
-	assert.Equal(t, vikunjaTasks[1].Tasks[0].Position, tickTickTasks[0].Order)
-	assert.False(t, vikunjaTasks[1].Tasks[0].Done)
+	}, nornaTasks[1].Tasks[0].Labels)
+	assert.Equal(t, nornaTasks[1].Tasks[0].Reminders[0].RelativeTo, models.ReminderRelation("due_date"))
+	assert.Equal(t, nornaTasks[1].Tasks[0].Reminders[0].RelativePeriod, int64(-24*3600))
+	assert.Equal(t, nornaTasks[1].Tasks[0].Position, tickTickTasks[0].Order)
+	assert.False(t, nornaTasks[1].Tasks[0].Done)
 
-	assert.Equal(t, vikunjaTasks[1].Tasks[1].Title, tickTickTasks[1].Title)
-	assert.Equal(t, vikunjaTasks[1].Tasks[1].Position, tickTickTasks[1].Order)
-	assert.True(t, vikunjaTasks[1].Tasks[1].Done)
-	assert.Equal(t, vikunjaTasks[1].Tasks[1].DoneAt, tickTickTasks[1].CompletedTime.Time)
+	assert.Equal(t, nornaTasks[1].Tasks[1].Title, tickTickTasks[1].Title)
+	assert.Equal(t, nornaTasks[1].Tasks[1].Position, tickTickTasks[1].Order)
+	assert.True(t, nornaTasks[1].Tasks[1].Done)
+	assert.Equal(t, nornaTasks[1].Tasks[1].DoneAt, tickTickTasks[1].CompletedTime.Time)
 	assert.Equal(t, models.RelatedTaskMap{
 		models.RelationKindParenttask: []*models.Task{
 			{
 				ID: int64(tickTickTasks[1].ParentID),
 			},
 		},
-	}, vikunjaTasks[1].Tasks[1].RelatedTasks)
+	}, nornaTasks[1].Tasks[1].RelatedTasks)
 
-	assert.Equal(t, vikunjaTasks[1].Tasks[2].Title, tickTickTasks[2].Title)
-	assert.Equal(t, vikunjaTasks[1].Tasks[2].Description, tickTickTasks[2].Content)
-	assert.Equal(t, vikunjaTasks[1].Tasks[2].StartDate, tickTickTasks[2].StartDate.Time)
-	assert.Equal(t, vikunjaTasks[1].Tasks[2].EndDate, tickTickTasks[2].DueDate.Time)
-	assert.Equal(t, vikunjaTasks[1].Tasks[2].DueDate, tickTickTasks[2].DueDate.Time)
+	assert.Equal(t, nornaTasks[1].Tasks[2].Title, tickTickTasks[2].Title)
+	assert.Equal(t, nornaTasks[1].Tasks[2].Description, tickTickTasks[2].Content)
+	assert.Equal(t, nornaTasks[1].Tasks[2].StartDate, tickTickTasks[2].StartDate.Time)
+	assert.Equal(t, nornaTasks[1].Tasks[2].EndDate, tickTickTasks[2].DueDate.Time)
+	assert.Equal(t, nornaTasks[1].Tasks[2].DueDate, tickTickTasks[2].DueDate.Time)
 	assert.Equal(t, []*models.Label{
 		{Title: "label1"},
 		{Title: "label2"},
 		{Title: "other label"},
-	}, vikunjaTasks[1].Tasks[2].Labels)
-	assert.Equal(t, vikunjaTasks[1].Tasks[2].Reminders[0].RelativeTo, models.ReminderRelation("due_date"))
-	assert.Equal(t, vikunjaTasks[1].Tasks[2].Reminders[0].RelativePeriod, int64(-24*3600))
-	assert.Equal(t, vikunjaTasks[1].Tasks[2].Position, tickTickTasks[2].Order)
-	assert.False(t, vikunjaTasks[1].Tasks[2].Done)
+	}, nornaTasks[1].Tasks[2].Labels)
+	assert.Equal(t, nornaTasks[1].Tasks[2].Reminders[0].RelativeTo, models.ReminderRelation("due_date"))
+	assert.Equal(t, nornaTasks[1].Tasks[2].Reminders[0].RelativePeriod, int64(-24*3600))
+	assert.Equal(t, nornaTasks[1].Tasks[2].Position, tickTickTasks[2].Order)
+	assert.False(t, nornaTasks[1].Tasks[2].Done)
 
-	assert.Equal(t, vikunjaTasks[1].Tasks[3].Title, tickTickTasks[3].Title)
-	assert.Equal(t, vikunjaTasks[1].Tasks[3].Position, tickTickTasks[3].Order)
-	assert.True(t, vikunjaTasks[1].Tasks[3].Done)
-	assert.Equal(t, vikunjaTasks[1].Tasks[3].DoneAt, tickTickTasks[3].CompletedTime.Time)
+	assert.Equal(t, nornaTasks[1].Tasks[3].Title, tickTickTasks[3].Title)
+	assert.Equal(t, nornaTasks[1].Tasks[3].Position, tickTickTasks[3].Order)
+	assert.True(t, nornaTasks[1].Tasks[3].Done)
+	assert.Equal(t, nornaTasks[1].Tasks[3].DoneAt, tickTickTasks[3].CompletedTime.Time)
 
-	assert.Len(t, vikunjaTasks[2].Tasks, 1)
-	assert.Equal(t, vikunjaTasks[2].Title, tickTickTasks[4].ProjectName)
+	assert.Len(t, nornaTasks[2].Tasks, 1)
+	assert.Equal(t, nornaTasks[2].Title, tickTickTasks[4].ProjectName)
 
-	assert.Equal(t, vikunjaTasks[2].Tasks[0].Title, tickTickTasks[4].Title)
-	assert.Equal(t, vikunjaTasks[2].Tasks[0].Position, tickTickTasks[4].Order)
+	assert.Equal(t, nornaTasks[2].Tasks[0].Title, tickTickTasks[4].Title)
+	assert.Equal(t, nornaTasks[2].Tasks[0].Position, tickTickTasks[4].Order)
 }
 
 func TestConvertTicktickTasksChildBeforeParent(t *testing.T) {
@@ -191,11 +191,11 @@ func TestConvertTicktickTasksChildBeforeParent(t *testing.T) {
 		},
 	}
 
-	vikunjaTasks := convertTickTickToVikunja(tickTickTasks)
+	nornaTasks := convertTickTickToNorna(tickTickTasks)
 
 	// Find the project with tasks
 	var projectTasks []*models.TaskWithComments
-	for _, p := range vikunjaTasks {
+	for _, p := range nornaTasks {
 		if len(p.Tasks) > 0 {
 			projectTasks = p.Tasks
 			break
@@ -243,10 +243,10 @@ func TestConvertTicktickTasksDeeplyNested(t *testing.T) {
 		},
 	}
 
-	vikunjaTasks := convertTickTickToVikunja(tickTickTasks)
+	nornaTasks := convertTickTickToNorna(tickTickTasks)
 
 	var projectTasks []*models.TaskWithComments
-	for _, p := range vikunjaTasks {
+	for _, p := range nornaTasks {
 		if len(p.Tasks) > 0 {
 			projectTasks = p.Tasks
 			break
@@ -305,9 +305,9 @@ func TestSortParentsBeforeChildrenWithCycle(t *testing.T) {
 			}
 			assert.ElementsMatch(t, tt.expectedTitles, titles, "every input task must be returned exactly once")
 
-			vikunjaTasks := convertTickTickToVikunja(tt.tasks)
+			nornaTasks := convertTickTickToNorna(tt.tasks)
 			convertedTitles := []string{}
-			for _, project := range vikunjaTasks {
+			for _, project := range nornaTasks {
 				for _, task := range project.Tasks {
 					convertedTitles = append(convertedTitles, task.Title)
 				}
@@ -471,12 +471,12 @@ func TestEmptyLabelHandling(t *testing.T) {
 		}
 		task.Tags = strings.Split(task.TagsList, ", ")
 
-		vikunjaTasks := convertTickTickToVikunja([]*tickTickTask{task})
-		projectWithTasks := findProjectWithTasks(t, vikunjaTasks)
-		vikunjaTask := projectWithTasks.Tasks[0]
+		nornaTasks := convertTickTickToNorna([]*tickTickTask{task})
+		projectWithTasks := findProjectWithTasks(t, nornaTasks)
+		nornaTask := projectWithTasks.Tasks[0]
 
 		expectedTags := []string{"work", "personal", "urgent"}
-		assertLabelsMatch(t, vikunjaTask, expectedTags)
+		assertLabelsMatch(t, nornaTask, expectedTags)
 	})
 
 	t.Run("Tags with extra spaces", func(t *testing.T) {
@@ -487,12 +487,12 @@ func TestEmptyLabelHandling(t *testing.T) {
 		}
 		task.Tags = strings.Split(task.TagsList, ", ")
 
-		vikunjaTasks := convertTickTickToVikunja([]*tickTickTask{task})
-		projectWithTasks := findProjectWithTasks(t, vikunjaTasks)
-		vikunjaTask := projectWithTasks.Tasks[0]
+		nornaTasks := convertTickTickToNorna([]*tickTickTask{task})
+		projectWithTasks := findProjectWithTasks(t, nornaTasks)
+		nornaTask := projectWithTasks.Tasks[0]
 
 		expectedTags := []string{"work", "personal", "urgent"}
-		assertLabelsMatch(t, vikunjaTask, expectedTags)
+		assertLabelsMatch(t, nornaTask, expectedTags)
 	})
 
 	t.Run("Empty tags mixed with valid ones", func(t *testing.T) {
@@ -503,12 +503,12 @@ func TestEmptyLabelHandling(t *testing.T) {
 		}
 		task.Tags = strings.Split(task.TagsList, ", ")
 
-		vikunjaTasks := convertTickTickToVikunja([]*tickTickTask{task})
-		projectWithTasks := findProjectWithTasks(t, vikunjaTasks)
-		vikunjaTask := projectWithTasks.Tasks[0]
+		nornaTasks := convertTickTickToNorna([]*tickTickTask{task})
+		projectWithTasks := findProjectWithTasks(t, nornaTasks)
+		nornaTask := projectWithTasks.Tasks[0]
 
 		expectedTags := []string{"work", "urgent"}
-		assertLabelsMatch(t, vikunjaTask, expectedTags)
+		assertLabelsMatch(t, nornaTask, expectedTags)
 	})
 
 	t.Run("Only whitespace tags", func(t *testing.T) {
@@ -519,12 +519,12 @@ func TestEmptyLabelHandling(t *testing.T) {
 		}
 		task.Tags = strings.Split(task.TagsList, ", ")
 
-		vikunjaTasks := convertTickTickToVikunja([]*tickTickTask{task})
-		projectWithTasks := findProjectWithTasks(t, vikunjaTasks)
-		vikunjaTask := projectWithTasks.Tasks[0]
+		nornaTasks := convertTickTickToNorna([]*tickTickTask{task})
+		projectWithTasks := findProjectWithTasks(t, nornaTasks)
+		nornaTask := projectWithTasks.Tasks[0]
 
 		expectedTags := []string{}
-		assertLabelsMatch(t, vikunjaTask, expectedTags)
+		assertLabelsMatch(t, nornaTask, expectedTags)
 	})
 
 	t.Run("Empty string", func(t *testing.T) {
@@ -535,12 +535,12 @@ func TestEmptyLabelHandling(t *testing.T) {
 		}
 		task.Tags = strings.Split(task.TagsList, ", ")
 
-		vikunjaTasks := convertTickTickToVikunja([]*tickTickTask{task})
-		projectWithTasks := findProjectWithTasks(t, vikunjaTasks)
-		vikunjaTask := projectWithTasks.Tasks[0]
+		nornaTasks := convertTickTickToNorna([]*tickTickTask{task})
+		projectWithTasks := findProjectWithTasks(t, nornaTasks)
+		nornaTask := projectWithTasks.Tasks[0]
 
 		expectedTags := []string{}
-		assertLabelsMatch(t, vikunjaTask, expectedTags)
+		assertLabelsMatch(t, nornaTask, expectedTags)
 	})
 
 	t.Run("Single valid tag", func(t *testing.T) {
@@ -551,12 +551,12 @@ func TestEmptyLabelHandling(t *testing.T) {
 		}
 		task.Tags = strings.Split(task.TagsList, ", ")
 
-		vikunjaTasks := convertTickTickToVikunja([]*tickTickTask{task})
-		projectWithTasks := findProjectWithTasks(t, vikunjaTasks)
-		vikunjaTask := projectWithTasks.Tasks[0]
+		nornaTasks := convertTickTickToNorna([]*tickTickTask{task})
+		projectWithTasks := findProjectWithTasks(t, nornaTasks)
+		nornaTask := projectWithTasks.Tasks[0]
 
 		expectedTags := []string{"important"}
-		assertLabelsMatch(t, vikunjaTask, expectedTags)
+		assertLabelsMatch(t, nornaTask, expectedTags)
 	})
 
 	t.Run("Single empty tag", func(t *testing.T) {
@@ -567,12 +567,12 @@ func TestEmptyLabelHandling(t *testing.T) {
 		}
 		task.Tags = strings.Split(task.TagsList, ", ")
 
-		vikunjaTasks := convertTickTickToVikunja([]*tickTickTask{task})
-		projectWithTasks := findProjectWithTasks(t, vikunjaTasks)
-		vikunjaTask := projectWithTasks.Tasks[0]
+		nornaTasks := convertTickTickToNorna([]*tickTickTask{task})
+		projectWithTasks := findProjectWithTasks(t, nornaTasks)
+		nornaTask := projectWithTasks.Tasks[0]
 
 		expectedTags := []string{}
-		assertLabelsMatch(t, vikunjaTask, expectedTags)
+		assertLabelsMatch(t, nornaTask, expectedTags)
 	})
 
 	t.Run("Tags with leading/trailing spaces", func(t *testing.T) {
@@ -583,25 +583,25 @@ func TestEmptyLabelHandling(t *testing.T) {
 		}
 		task.Tags = strings.Split(task.TagsList, ", ")
 
-		vikunjaTasks := convertTickTickToVikunja([]*tickTickTask{task})
-		projectWithTasks := findProjectWithTasks(t, vikunjaTasks)
-		vikunjaTask := projectWithTasks.Tasks[0]
+		nornaTasks := convertTickTickToNorna([]*tickTickTask{task})
+		projectWithTasks := findProjectWithTasks(t, nornaTasks)
+		nornaTask := projectWithTasks.Tasks[0]
 
 		expectedTags := []string{"work", "personal", "urgent"}
-		assertLabelsMatch(t, vikunjaTask, expectedTags)
+		assertLabelsMatch(t, nornaTask, expectedTags)
 	})
 }
 
 // Helper function to find the project that contains tasks
-func findProjectWithTasks(t *testing.T, vikunjaTasks []*models.ProjectWithTasksAndBuckets) *models.ProjectWithTasksAndBuckets {
+func findProjectWithTasks(t *testing.T, nornaTasks []*models.ProjectWithTasksAndBuckets) *models.ProjectWithTasksAndBuckets {
 	t.Helper()
 
 	// The function creates a parent project and child projects
 	// We expect 2 projects: parent "Migrated from TickTick" and child "Test Project"
-	require.Len(t, vikunjaTasks, 2)
+	require.Len(t, nornaTasks, 2)
 
 	// Find the project with tasks (should be the child project)
-	for _, project := range vikunjaTasks {
+	for _, project := range nornaTasks {
 		if len(project.Tasks) > 0 {
 			require.Len(t, project.Tasks, 1)
 			return project
@@ -613,22 +613,22 @@ func findProjectWithTasks(t *testing.T, vikunjaTasks []*models.ProjectWithTasksA
 }
 
 // Helper function to assert that labels match expected tags
-func assertLabelsMatch(t *testing.T, vikunjaTask *models.TaskWithComments, expectedTags []string) {
+func assertLabelsMatch(t *testing.T, nornaTask *models.TaskWithComments, expectedTags []string) {
 	t.Helper()
 
 	// Check that only non-empty labels were created
-	assert.Len(t, vikunjaTask.Labels, len(expectedTags), "Number of labels should match expected")
+	assert.Len(t, nornaTask.Labels, len(expectedTags), "Number of labels should match expected")
 
 	// Check that the label titles match expected tags
-	actualTags := make([]string, len(vikunjaTask.Labels))
-	for i, label := range vikunjaTask.Labels {
+	actualTags := make([]string, len(nornaTask.Labels))
+	for i, label := range nornaTask.Labels {
 		actualTags[i] = label.Title
 	}
 
 	assert.ElementsMatch(t, expectedTags, actualTags, "Label titles should match expected tags")
 
 	// Ensure no empty labels were created
-	for _, label := range vikunjaTask.Labels {
+	for _, label := range nornaTask.Labels {
 		assert.NotEmpty(t, strings.TrimSpace(label.Title), "No label should be empty or whitespace-only")
 	}
 }
@@ -716,12 +716,12 @@ func TestSpaceSeparatedDatesCSV(t *testing.T) {
 	assert.Equal(t, time.Date(2026, 2, 10, 8, 0, 0, 0, time.UTC), tasks[1].CreatedTime.Time)
 	assert.Equal(t, time.Date(2026, 2, 25, 16, 45, 30, 0, time.UTC), tasks[1].CompletedTime.Time)
 
-	// Verify the tasks convert to Vikunja format without error
+	// Verify the tasks convert to Norna format without error
 	for _, task := range tasks {
 		task.Tags = strings.Split(task.TagsList, ", ")
 	}
-	vikunjaTasks := convertTickTickToVikunja(tasks)
-	require.Greater(t, len(vikunjaTasks), 0)
+	nornaTasks := convertTickTickToNorna(tasks)
+	require.Greater(t, len(nornaTasks), 0)
 }
 
 func TestMultilineDescriptions(t *testing.T) {
@@ -835,12 +835,12 @@ func TestEmptyLabelHandlingWithRealCSV(t *testing.T) {
 			task.Tags = strings.Split(task.TagsList, ", ")
 		}
 
-		// Convert to Vikunja format
-		vikunjaTasks := convertTickTickToVikunja(tasks)
+		// Convert to Norna format
+		nornaTasks := convertTickTickToNorna(tasks)
 
 		// Check all tasks for empty labels
 		totalLabels := 0
-		for _, project := range vikunjaTasks {
+		for _, project := range nornaTasks {
 			for _, task := range project.Tasks {
 				totalLabels += len(task.Labels)
 				for _, label := range task.Labels {
@@ -880,8 +880,8 @@ func TestTickTickPriorityParsing(t *testing.T) {
 }
 
 // TestNonNumericNumberColumns ensures that exports containing non-numeric values
-// in columns Vikunja parses as integers (Priority, taskId, parentId) do not fail
-// the whole import. See go-vikunja/vikunja#2822.
+// in columns Norna parses as integers (Priority, taskId, parentId) do not fail
+// the whole import. See upstream issue #2822.
 func TestNonNumericNumberColumns(t *testing.T) {
 	file, err := os.Open("testdata_ticktick_invalid_numbers.csv")
 	require.NoError(t, err)
@@ -911,16 +911,16 @@ func TestNonNumericNumberColumns(t *testing.T) {
 	assert.Equal(t, tickTickNumber(0), tasks[1].TaskID)
 	assert.Equal(t, tickTickNumber(0), tasks[1].ParentID)
 
-	// And the tasks still convert to the Vikunja structure, carrying the parsed
+	// And the tasks still convert to the Norna structure, carrying the parsed
 	// priority over to the resulting task.
 	for _, task := range tasks {
 		task.Tags = strings.Split(task.TagsList, ", ")
 	}
-	vikunjaTasks := convertTickTickToVikunja(tasks)
-	require.Greater(t, len(vikunjaTasks), 0)
+	nornaTasks := convertTickTickToNorna(tasks)
+	require.Greater(t, len(nornaTasks), 0)
 
 	var priority int64
-	for _, project := range vikunjaTasks {
+	for _, project := range nornaTasks {
 		for _, task := range project.Tasks {
 			if task.Title == "Task with non-numeric priority" {
 				priority = task.Priority
@@ -943,9 +943,9 @@ func TestMultipleTasksWithMalformedIDsAreNotDropped(t *testing.T) {
 	sorted := sortParentsBeforeChildren(tasks)
 	require.Len(t, sorted, 3, "no task with a zero ID should be dropped")
 
-	vikunjaTasks := convertTickTickToVikunja(tasks)
+	nornaTasks := convertTickTickToNorna(tasks)
 	titles := []string{}
-	for _, project := range vikunjaTasks {
+	for _, project := range nornaTasks {
 		for _, task := range project.Tasks {
 			titles = append(titles, task.Title)
 		}

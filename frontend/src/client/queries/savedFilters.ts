@@ -13,7 +13,7 @@ import type {
 	TaskCollection,
 } from '@/client/generated'
 import {removeProjectFromHistory} from '@/modules/projectHistory'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 import type {EditableTaskCollection} from '@/types/EditableTaskCollection'
 
 import {contextMutationOptions} from './contextMutation'
@@ -159,7 +159,7 @@ export function updateSavedFilterMutationOptions(shouldNotify: UpdateNotify = ()
 			updateNavigation(client, input.id, {title: updated.title, is_favorite: updated.is_favorite})
 		},
 		onSettled: ({id}, client) => invalidateSavedFilter(client, id),
-		successMessage: (_updated, input) => shouldNotify(input) ? i18n.global.t('filters.edit.success') : undefined,
+		successMessage: (_updated, input) => shouldNotify(input) ? translate('filters.edit.success') : undefined,
 		toastError: shouldNotify,
 	})
 }
@@ -213,7 +213,7 @@ export function deleteSavedFilterMutationOptions(shouldNotify: DeleteNotify = ()
 			removeProjectFromHistory({id: projectId})
 		},
 		onSettled: (id, client) => invalidateSavedFilter(client, id),
-		successMessage: (_data, id) => shouldNotify(id) ? i18n.global.t('filters.delete.success') : undefined,
+		successMessage: (_data, id) => shouldNotify(id) ? translate('filters.delete.success') : undefined,
 		toastError: shouldNotify,
 	})
 }

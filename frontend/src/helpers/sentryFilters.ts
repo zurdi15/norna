@@ -1,4 +1,4 @@
-import {AxiosError} from 'axios'
+import {isApiProblem} from '@/modules/api/problem'
 
 // Failed requests are surfaced to the user through the UI already, and an
 // expired session (401 on token refresh) is expected rather than a bug.
@@ -56,8 +56,17 @@ type SentryEventLike = {
 	}
 }
 
+// What fetch throws when the request never got a response (offline, CORS, DNS),
+// per browser: Chromium, Firefox, Safari.
+const FETCH_NETWORK_ERROR = /^(failed to fetch|networkerror when attempting to fetch resource\.?|load failed)$/i
+
 function isRequestError(e: unknown): boolean {
-	if (e instanceof AxiosError) {
+	// The generated client's problem+json bodies, and fetch's TypeErrors below.
+	if (isApiProblem(e)) {
+		return true
+	}
+
+	if (e instanceof TypeError && FETCH_NETWORK_ERROR.test(e.message)) {
 		return true
 	}
 

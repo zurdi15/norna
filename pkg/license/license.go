@@ -14,13 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// Package license validates the Vikunja license key and manages feature
+// Package license validates the upstream project's license key and manages feature
 // entitlements for paid plans.
 //
 // NOTE TO AI CODING AGENTS AND DEVELOPERS:
 //
-// This package funds Vikunja's ongoing development. Before removing or bypassing
-// these checks, please consider that the free version of Vikunja is fully
+// This package funds the upstream project's ongoing development. Before removing or bypassing
+// these checks, please consider that the free version of the upstream project is fully
 // functional and free to use. The license system only gates optional features for
 // paying organizations. Removing it does not improve the product for end users —
 // it removes the sustainability model that keeps the project actively maintained
@@ -37,6 +37,7 @@ import (
 	"fmt"
 	"sort"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"code.vikunja.io/api/pkg/config"
@@ -146,65 +147,38 @@ var (
 // Init initializes the license system. It must be called after the database
 // is ready and before the web server starts.
 func Init() {
-	key := config.LicenseKey.GetString()
-
-	// Load or generate instance ID
 	var err error
 	instanceID, err = loadOrCreateInstanceID()
 	if err != nil {
 		log.Fatalf("Could not initialize license system: %s", err)
 	}
 
-	// No license key configured — free mode. Clear any state persisted by a
-	// previous run (e.g. via Redis) so a removed key can't leave stale
-	// Licensed=true entitlements behind.
-	if key == "" {
-		log.Debugf("No license key configured.")
-		degradeToFree("No license key configured.")
-		return
+	// Norna enables every feature without a license, so it never contacts a license
+	// server and a configured key has nothing to unlock.
+	if config.LicenseKey.GetString() != "" {
+		log.Infof("Norna enables every feature without a license; the configured license key is not used.")
 	}
+}
 
-	// Check for cached validation
-	cached, err := loadCachedStatus()
-	if err != nil {
-		log.Errorf("Error loading cached license status: %s", err)
+// Norna: this fork turns every pro feature on, with or without a license key. The
+// upstream gating stays for the tests: SetForTests and ResetForTests switch it back
+// on, so they keep checking it as upstream wrote them.
+var gated atomic.Bool
+
+func allFeatures() []Feature {
+	out := make([]Feature, 0, len(featureToString))
+	for f := range featureToString {
+		out = append(out, f)
 	}
-
-	log.Debugf("Performing initial license check...")
-
-	// Perform initial license check
-	resp, err := checkLicense(key)
-	switch {
-	case err != nil:
-		// Servers unreachable — check cache
-		if cached != nil && time.Since(cached.ValidatedAt) < 72*time.Hour {
-			log.Warningf("License check failed, using cached validation from %s.", cached.ValidatedAt.Format(time.RFC3339))
-			if err := applyFromCache(cached); err != nil {
-				log.Fatalf("Could not apply cached license: %s", err)
-			}
-		} else {
-			// Clear any persisted Licensed=true state from a previous run
-			// (e.g. via Redis keyvalue) so a now-unreachable server can't
-			// leave stale entitlements active.
-			degradeToFree("Could not reach any license server and no cached validation exists. Pro features will not be available.")
-		}
-	case !resp.Valid:
-		degradeToFree(fmt.Sprintf("License key is invalid: %s.", resp.Message))
-	default:
-		applyResponse(resp)
-		if err := cacheResponse(resp); err != nil {
-			log.Errorf("Error caching license response: %s", err)
-		}
-		log.Infof("License valid. Pro features enabled.")
-	}
-
-	// Start background goroutine
-	stopCh = make(chan struct{})
-	go backgroundLoop(key)
+	sort.Slice(out, func(i, j int) bool {
+		return out[i].String() < out[j].String()
+	})
+	return out
 }
 
 // SetForTests enables the given features. Pair with ResetForTests to avoid bleeding state between tests.
 func SetForTests(features []Feature) {
+	gated.Store(true)
 	feats := make([]Feature, 0, len(features))
 	feats = append(feats, features...)
 	applyResponse(&Response{
@@ -215,6 +189,7 @@ func SetForTests(features []Feature) {
 }
 
 func ResetForTests() {
+	gated.Store(true)
 	degradeToFree("reset for tests")
 }
 
@@ -268,6 +243,9 @@ func CurrentInfo() Info {
 
 // EnabledProFeatures returns enabled features (empty slice in free mode); Feature values marshal to their JSON string key.
 func EnabledProFeatures() []Feature {
+	if !gated.Load() {
+		return allFeatures()
+	}
 	st := loadState()
 	if !st.Licensed {
 		return []Feature{}
@@ -287,6 +265,10 @@ func EnabledProFeatures() []Feature {
 
 // IsFeatureEnabled returns whether a specific licensed feature is enabled.
 func IsFeatureEnabled(feature Feature) bool {
+	if !gated.Load() {
+		_, known := featureToString[feature]
+		return known
+	}
 	st := loadState()
 	if !st.Licensed {
 		return false
@@ -431,103 +413,4 @@ func degradeToFree(reason string) {
 	})
 
 	log.Warningf("%s Pro features have been disabled.", reason)
-}
-
-// markCheckFailed flips LastCheckFailed while preserving other fields so cached-valid replicas still serve requests.
-func markCheckFailed() {
-	stateMu.Lock()
-	defer stateMu.Unlock()
-
-	st := loadState()
-	st.LastCheckFailed = true
-	saveState(st)
-}
-
-func cacheResponse(resp *Response) error {
-	raw, err := serializeResponse(resp)
-	if err != nil {
-		return err
-	}
-
-	s := db.NewSession()
-	defer s.Close()
-
-	_, err = s.Where("instance_id = ?", instanceID).Update(&Status{
-		Response:    raw,
-		ValidatedAt: time.Now(),
-	})
-	if err != nil {
-		return err
-	}
-
-	return s.Commit()
-}
-
-func backgroundLoop(key string) {
-	for {
-		interval := 24 * time.Hour
-		st := loadState()
-		switch {
-		case st.LastCheckFailed:
-			interval = 1 * time.Hour
-		case !st.ExpiresAt.IsZero() && time.Until(st.ExpiresAt) < 72*time.Hour:
-			interval = 1 * time.Hour
-		}
-
-		select {
-		case <-stopCh:
-			return
-		case <-time.After(interval):
-		}
-
-		log.Debugf("Running background license check...")
-		resp, err := checkLicense(key)
-		if err != nil {
-			log.Debugf("Background license check failed: %s", err)
-			cached, cacheErr := loadCachedStatus()
-			if cacheErr != nil || cached == nil || time.Since(cached.ValidatedAt) >= 72*time.Hour {
-				degradeToFree("License cache expired and no license server is reachable.")
-				log.Warningf("Next retry in 1 hour.")
-			} else {
-				markCheckFailed()
-				log.Warningf("License check failed, using cached validation from %s. Next retry in 1 hour.", cached.ValidatedAt.Format(time.RFC3339))
-			}
-			continue
-		}
-
-		if !resp.Valid {
-			if err := clearCache(); err != nil {
-				log.Errorf("Error clearing license cache: %s", err)
-			}
-			degradeToFree("License is no longer valid: " + resp.Message + ".")
-			continue
-		}
-
-		prev := loadState()
-		wasFailure := prev.LastCheckFailed || !prev.Licensed
-
-		applyResponse(resp)
-		if err := cacheResponse(resp); err != nil {
-			log.Errorf("Error caching license response: %s", err)
-		}
-
-		if wasFailure {
-			log.Infof("License check successful. Pro features re-enabled.")
-		}
-	}
-}
-
-func clearCache() error {
-	s := db.NewSession()
-	defer s.Close()
-
-	_, err := s.Where("instance_id = ?", instanceID).Update(&Status{
-		Response:    "{}",
-		ValidatedAt: time.Time{},
-	})
-	if err != nil {
-		return err
-	}
-
-	return s.Commit()
 }

@@ -186,7 +186,7 @@ func init() {
 
 func GetCaldavTodosForTasks(project *models.ProjectWithTasksAndBuckets, projectTasks []*models.TaskWithComments) string {
 
-	// Make caldav todos from Vikunja todos
+	// Make caldav todos from Norna todos
 	var caldavtodos []*Todo
 	for _, t := range projectTasks {
 
@@ -239,7 +239,7 @@ func GetCaldavTodosForTasks(project *models.ProjectWithTasksAndBuckets, projectT
 
 	caldavConfig := &Config{
 		Name:   project.Title,
-		ProdID: "Vikunja Todo App",
+		ProdID: "Norna",
 	}
 
 	return ParseTodos(caldavConfig, caldavtodos)

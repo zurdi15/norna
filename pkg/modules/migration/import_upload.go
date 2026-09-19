@@ -84,7 +84,7 @@ func OpenImportUpload(status *Status) (file io.ReaderAt, size int64, closeFile f
 	}
 	defer stored.File.Close()
 
-	local, err := os.CreateTemp("", "vikunja-import-*")
+	local, err := os.CreateTemp("", "norna-import-*")
 	if err != nil {
 		return nil, 0, nil, fmt.Errorf("could not create a local copy of the import upload: %w", err)
 	}

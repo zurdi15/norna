@@ -1,10 +1,13 @@
-import {error} from '@/message'
+import {ref} from 'vue'
 import {useI18n} from 'vue-i18n'
+import {useTimeoutFn} from '@vueuse/core'
+
+import {error} from '@/message'
 
 export function useCopyToClipboard() {
 	const {t} = useI18n({useScope: 'global'})
 	
-	function fallbackCopyTextToClipboard(text: string) {
+	function fallbackCopyTextToClipboard(text: string): boolean {
 		const textArea = document.createElement('textarea')
 		textArea.value = text
 		
@@ -17,31 +20,51 @@ export function useCopyToClipboard() {
 		textArea.focus()
 		textArea.select()
 	
+		let copied: boolean
 		try {
 			// NOTE: the execCommand is deprecated but as of 2022_09
 			// widely supported and works without https
-			const successful = document.execCommand('copy')
-			if (!successful) {
-				throw new Error()
-			}
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		} catch (e) {
+			copied = document.execCommand('copy')
+		} catch {
+			copied = false
+		}
+		document.body.removeChild(textArea)
+		if (!copied) {
 			error(t('misc.copyError'))
 		}
-	
-		document.body.removeChild(textArea)
+		return copied
 	}
-	
-	return async (text: string) => {
+
+	// Resolves to whether the text made it to the clipboard; failures are reported here.
+	return async (text: string): Promise<boolean> => {
 		if (!navigator.clipboard) {
-			fallbackCopyTextToClipboard(text)
-			return
+			return fallbackCopyTextToClipboard(text)
 		}
 		try {
 			await navigator.clipboard.writeText(text)
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		} catch(e) {
+			return true
+		} catch {
 			error(t('misc.copyError'))
+			return false
 		}
 	}
+}
+
+/**
+ * A copy button's feedback: `copied` turns true for a moment after a successful copy,
+ * for the button to show a check instead of toasting.
+ */
+export function useCopyFeedback(duration = 1600) {
+	const copyToClipboard = useCopyToClipboard()
+	const copied = ref(false)
+	const {start} = useTimeoutFn(() => copied.value = false, duration, {immediate: false})
+
+	async function copy(text: string) {
+		if (await copyToClipboard(text)) {
+			copied.value = true
+			start()
+		}
+	}
+
+	return {copied, copy}
 }

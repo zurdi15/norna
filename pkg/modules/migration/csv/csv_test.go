@@ -425,7 +425,7 @@ Task 6,Description 6,0,low`
 	assert.Equal(t, 2, result.Tasks[1].Priority) // "low" -> 2
 }
 
-func TestConvertToVikunja(t *testing.T) {
+func TestConvertToNorna(t *testing.T) {
 	rows := [][]string{
 		{"Task 1", "Description 1", "Project A"},
 		{"Task 2", "Description 2", "Project A"},
@@ -444,7 +444,7 @@ func TestConvertToVikunja(t *testing.T) {
 		},
 	}
 
-	result := convertToVikunja(rows, &config)
+	result := convertToNorna(rows, &config)
 
 	// Should have parent project + child projects
 	require.GreaterOrEqual(t, len(result), 2)

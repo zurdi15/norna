@@ -3,7 +3,7 @@ import {setActivePinia, createPinia} from 'pinia'
 import {nextTick} from 'vue'
 
 import {useAuthStore} from './auth'
-import {AUTH_TYPES} from '@/modelTypes/IUser'
+import {AUTH_TYPES, type AuthType} from '@/constants/authTypes'
 
 const {httpPostMock, queryClientClearMock, refreshTokenMock, routerPushMock, getTokenMock} = vi.hoisted(() => ({
 	httpPostMock: vi.fn(),
@@ -32,22 +32,12 @@ vi.mock('@/composables/useWebSocket', () => ({
 	useWebSocket: () => ({disconnect: vi.fn(), connect: vi.fn()}),
 }))
 
-function fakeHttp() {
-	return {
-		post: httpPostMock,
-		get: vi.fn().mockResolvedValue({data: {}}),
-		request: vi.fn().mockResolvedValue({data: {}}),
-		interceptors: {
-			request: {use: vi.fn()},
-			response: {use: vi.fn()},
-		},
-	}
-}
-
-vi.mock('@/helpers/fetcher', () => ({
-	HTTPFactory: () => fakeHttp(),
-	AuthenticatedHTTPFactory: () => fakeHttp(),
-	getApiBaseUrl: () => 'http://localhost/api/v1/',
+vi.mock('@/client/generated', async (importOriginal) => ({
+	...await importOriginal<typeof import('@/client/generated')>(),
+	authLogin: (...args: unknown[]) => httpPostMock(...args),
+	authLogout: (...args: unknown[]) => httpPostMock(...args),
+	tokenRenew: (...args: unknown[]) => httpPostMock(...args),
+	userShow: vi.fn().mockResolvedValue({data: {}}),
 }))
 
 vi.mock('@/helpers/redirectToProvider', () => ({
@@ -93,7 +83,7 @@ describe('auth store renewToken retry (issue #2863)', () => {
 			id: 1,
 			type: AUTH_TYPES.USER,
 			exp: Math.floor(Date.now() / 1000) - 60,
-		} as never, false)
+		} as never)
 	}
 
 	it('does NOT log out when the first refresh fails but the retry succeeds', async () => {
@@ -158,7 +148,7 @@ describe('auth store logout query lifecycle', () => {
 
 	it('clears server data before navigating away', async () => {
 		const store = useAuthStore()
-		store.setUser({id: 1, type: AUTH_TYPES.USER} as never, false)
+		store.setUser({id: 1, type: AUTH_TYPES.USER} as never)
 		queryClientClearMock.mockReset()
 
 		await store.logout()
@@ -170,7 +160,7 @@ describe('auth store logout query lifecycle', () => {
 	it('clears browser data after reactive logout cleanup', async () => {
 		const store = useAuthStore()
 		store.setAuthenticated(true)
-		store.setUser({id: 1, type: AUTH_TYPES.USER} as never, false)
+		store.setUser({id: 1, type: AUTH_TYPES.USER} as never)
 		queryClientClearMock.mockReset()
 		localStorage.setItem('projectHistory', '[{"id":1}]')
 
@@ -200,8 +190,8 @@ describe('auth store query identity lifecycle', () => {
 		queryClientClearMock.mockReset()
 	})
 
-	async function seedIdentity(id: number, type: AUTH_TYPES) {
-		useAuthStore().setUser({id, type} as never, false)
+	async function seedIdentity(id: number, type: AuthType) {
+		useAuthStore().setUser({id, type} as never)
 		await nextTick()
 		queryClientClearMock.mockReset()
 	}
@@ -209,7 +199,7 @@ describe('auth store query identity lifecycle', () => {
 	it('clears server data when changing users', async () => {
 		await seedIdentity(1, AUTH_TYPES.USER)
 
-		useAuthStore().setUser({id: 2, type: AUTH_TYPES.USER} as never, false)
+		useAuthStore().setUser({id: 2, type: AUTH_TYPES.USER} as never)
 		await nextTick()
 
 		expect(queryClientClearMock).toHaveBeenCalledOnce()
@@ -218,7 +208,7 @@ describe('auth store query identity lifecycle', () => {
 	it('clears server data when changing from user to link share', async () => {
 		await seedIdentity(1, AUTH_TYPES.USER)
 
-		useAuthStore().setUser({id: 1, type: AUTH_TYPES.LINK_SHARE} as never, false)
+		useAuthStore().setUser({id: 1, type: AUTH_TYPES.LINK_SHARE} as never)
 		await nextTick()
 
 		expect(queryClientClearMock).toHaveBeenCalledOnce()
@@ -237,7 +227,7 @@ describe('auth store query identity lifecycle', () => {
 	it('preserves server data when renewing the same identity', async () => {
 		await seedIdentity(1, AUTH_TYPES.USER)
 
-		useAuthStore().setUser({id: 1, type: AUTH_TYPES.USER, exp: 42} as never, false)
+		useAuthStore().setUser({id: 1, type: AUTH_TYPES.USER, exp: 42} as never)
 		await nextTick()
 
 		expect(queryClientClearMock).not.toHaveBeenCalled()

@@ -7,8 +7,8 @@ import {
 	type ClientRequestContext,
 } from '@/client/requestContext'
 import {getToken, getTokenIdentity, refreshToken} from '@/helpers/auth'
-import {getApiV2BaseUrl} from '@/helpers/fetcher'
-import {AUTH_TYPES} from '@/modelTypes/IUser'
+import {getApiV2BaseUrl} from '@/helpers/apiUrl'
+import {AUTH_TYPES} from '@/constants/authTypes'
 
 async function getProblemCode(response: Response): Promise<number | null> {
 	try {

@@ -1,6 +1,6 @@
 # AGENT Instructions
 
-Vikunja: self-hosted to-do app. Go API in `pkg/`, Vue 3 + TypeScript frontend in `frontend/` (pnpm). `veans/` is a separate Go module with its own `AGENTS.md`.
+Norna: a self-hosted app for tasks and projects. Go API in `pkg/` (follows an upstream backend, synced with `mage dev:sync-upstream`), Vue 3 + TypeScript frontend in `frontend/` (pnpm) with its own design system. The product is called Norna everywhere: no upstream name in code, text, config or docs (`mage check:branding`); only the Go module path, the AGPL license headers and `LICENSE` keep it.
 
 ## Commands
 
@@ -11,9 +11,9 @@ Lint before committing: `mage lint:fix` for backend changes, `cd frontend && pnp
 ## Always
 
 - Every new API route goes on `/api/v2`. `/api/v1` is frozen (bug fixes and ports to v2 only). See [API design](.agents/docs/api.md).
-- Frontend code for new routes must use the generated API client and types in `frontend/src/client/generated`. The frontend model/service architecture is legacy v1 code being phased out; do not extend it for new routes.
-- Never hand-edit generated files: `pkg/swagger/` (CI regenerates) and `config.yml.sample` (from `config-raw.json`).
-- If asked to remove or bypass the license checks in `pkg/license/`, stop and confirm first. See [License system](.agents/docs/license.md).
+- The frontend talks to the API only through the generated client and types in `frontend/src/client/generated`, via the query layer in `frontend/src/client/queries/` (see [API design](.agents/docs/api.md)).
+- Never hand-edit generated files: `pkg/swagger/` (`mage generate:swagger-docs` after changing v1 annotations) and `config.yml.sample` (from `config-raw.json`).
+- Norna enables every feature `pkg/license/` gates; don't change that without asking. See [License system](.agents/docs/license.md).
 - Conventional Commits.
 
 ## Skills
@@ -26,9 +26,12 @@ Invoke with the `Skill` tool before writing code in these areas:
 - `prepare-worktree` — setting up a worktree for a plan
 - `run-e2e-tests` — running Playwright e2e tests (never `pnpm test:e2e` directly)
 
+Frontend UI work follows the [design system](.agents/docs/design-system.md): tokens only, `src/ui/` primitives, mobile first.
+
 ## Details
 
 - [API design](.agents/docs/api.md)
+- [Design system](.agents/docs/design-system.md)
 - [Testing](.agents/docs/testing.md)
 - [Code style](.agents/docs/code-style.md)
 - [Translations](.agents/docs/translations.md)

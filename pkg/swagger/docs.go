@@ -10,13 +10,12 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "General Vikunja contact",
-            "url": "https://vikunja.io/contact/",
-            "email": "hello@vikunja.io"
+            "name": "Norna",
+            "url": "https://github.com/zurdi15/norna"
         },
         "license": {
             "name": "AGPL-3.0-or-later",
-            "url": "https://code.vikunja.io/api/src/branch/main/LICENSE"
+            "url": "https://github.com/zurdi15/norna/blob/main/LICENSE"
         },
         "version": "{{.Version}}"
     },
@@ -824,7 +823,7 @@ const docTemplate = `{
         },
         "/info": {
             "get": {
-                "description": "Returns the version, frontendurl, motd and various settings of Vikunja",
+                "description": "Returns the version, frontendurl, motd and various settings of Norna",
                 "produces": [
                     "application/json"
                 ],
@@ -836,7 +835,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/shared.VikunjaInfos"
+                            "$ref": "#/definitions/shared.NornaInfos"
                         }
                     }
                 }
@@ -1232,7 +1231,7 @@ const docTemplate = `{
                         "JWTKeyAuth": []
                     }
                 ],
-                "description": "Imports tasks from a CSV file into Vikunja with the provided configuration.",
+                "description": "Imports tasks from a CSV file into Norna with the provided configuration.",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -1375,7 +1374,7 @@ const docTemplate = `{
                         "JWTKeyAuth": []
                     }
                 ],
-                "description": "Returns the auth url where the user needs to get its auth code. This code can then be used to migrate everything from Microsoft Todo to Vikunja.",
+                "description": "Returns the auth url where the user needs to get its auth code. This code can then be used to migrate everything from Microsoft Todo to Norna.",
                 "produces": [
                     "application/json"
                 ],
@@ -1406,7 +1405,7 @@ const docTemplate = `{
                         "JWTKeyAuth": []
                     }
                 ],
-                "description": "Migrates all tasklinsts, tasks, notes and reminders from Microsoft Todo to Vikunja.",
+                "description": "Migrates all tasklinsts, tasks, notes and reminders from Microsoft Todo to Norna.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1475,6 +1474,80 @@ const docTemplate = `{
                 }
             }
         },
+        "/migration/norna-file/migrate": {
+            "post": {
+                "security": [
+                    {
+                        "JWTKeyAuth": []
+                    }
+                ],
+                "description": "Imports all projects, tasks, notes, reminders, subtasks and files from a Norna data export into Norna.",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "migration"
+                ],
+                "summary": "Import all projects, tasks etc. from a Norna data export",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The Norna export zip file.",
+                        "name": "import",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A message telling you the migration was started.",
+                        "schema": {
+                            "$ref": "#/definitions/models.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/migration/norna-file/status": {
+            "get": {
+                "security": [
+                    {
+                        "JWTKeyAuth": []
+                    }
+                ],
+                "description": "Returns if the current user already did the migation or not. This is useful to show a confirmation message in the frontend if the user is trying to do the same migration again.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "migration"
+                ],
+                "summary": "Get migration status",
+                "responses": {
+                    "200": {
+                        "description": "The migration status",
+                        "schema": {
+                            "$ref": "#/definitions/migration.Status"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/models.Message"
+                        }
+                    }
+                }
+            }
+        },
         "/migration/ticktick/migrate": {
             "put": {
                 "security": [
@@ -1482,7 +1555,7 @@ const docTemplate = `{
                         "JWTKeyAuth": []
                     }
                 ],
-                "description": "Imports all projects, tasks, notes, reminders, subtasks and files from a TickTick backup export into Vikunja.",
+                "description": "Imports all projects, tasks, notes, reminders, subtasks and files from a TickTick backup export into Norna.",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -1556,7 +1629,7 @@ const docTemplate = `{
                         "JWTKeyAuth": []
                     }
                 ],
-                "description": "Returns the auth url where the user needs to get its auth code. This code can then be used to migrate everything from todoist to Vikunja.",
+                "description": "Returns the auth url where the user needs to get its auth code. This code can then be used to migrate everything from todoist to Norna.",
                 "produces": [
                     "application/json"
                 ],
@@ -1587,7 +1660,7 @@ const docTemplate = `{
                         "JWTKeyAuth": []
                     }
                 ],
-                "description": "Migrates all projects, tasks, notes, reminders, subtasks and files from todoist to vikunja.",
+                "description": "Migrates all projects, tasks, notes, reminders, subtasks and files from todoist to Norna.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1663,7 +1736,7 @@ const docTemplate = `{
                         "JWTKeyAuth": []
                     }
                 ],
-                "description": "Returns the auth url where the user needs to get its auth code. This code can then be used to migrate everything from trello to Vikunja.",
+                "description": "Returns the auth url where the user needs to get its auth code. This code can then be used to migrate everything from trello to Norna.",
                 "produces": [
                     "application/json"
                 ],
@@ -1694,7 +1767,7 @@ const docTemplate = `{
                         "JWTKeyAuth": []
                     }
                 ],
-                "description": "Migrates all projects, tasks, notes, reminders, subtasks and files from trello to vikunja.",
+                "description": "Migrates all projects, tasks, notes, reminders, subtasks and files from trello to Norna.",
                 "consumes": [
                     "application/json"
                 ],
@@ -1763,80 +1836,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/migration/vikunja-file/migrate": {
-            "post": {
-                "security": [
-                    {
-                        "JWTKeyAuth": []
-                    }
-                ],
-                "description": "Imports all projects, tasks, notes, reminders, subtasks and files from a Vikunjda data export into Vikunja.",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "migration"
-                ],
-                "summary": "Import all projects, tasks etc. from a Vikunja data export",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "The Vikunja export zip file.",
-                        "name": "import",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "A message telling you the migration was started.",
-                        "schema": {
-                            "$ref": "#/definitions/models.Message"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/models.Message"
-                        }
-                    }
-                }
-            }
-        },
-        "/migration/vikunja-file/status": {
-            "get": {
-                "security": [
-                    {
-                        "JWTKeyAuth": []
-                    }
-                ],
-                "description": "Returns if the current user already did the migation or not. This is useful to show a confirmation message in the frontend if the user is trying to do the same migration again.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "migration"
-                ],
-                "summary": "Get migration status",
-                "responses": {
-                    "200": {
-                        "description": "The migration status",
-                        "schema": {
-                            "$ref": "#/definitions/migration.Status"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/models.Message"
-                        }
-                    }
-                }
-            }
-        },
         "/migration/wekan/migrate": {
             "put": {
                 "security": [
@@ -1844,7 +1843,7 @@ const docTemplate = `{
                         "JWTKeyAuth": []
                     }
                 ],
-                "description": "Imports all projects, tasks, labels, checklists, comments, and attachments from a WeKan board JSON export into Vikunja.",
+                "description": "Imports all projects, tasks, labels, checklists, comments, and attachments from a WeKan board JSON export into Norna.",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -2241,7 +2240,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "If set to ` + "`" + `permissions` + "`" + `, Vikunja will return the max permission the current user has on this project. You can currently only set this to ` + "`" + `permissions` + "`" + `.",
+                        "description": "If set to ` + "`" + `permissions` + "`" + `, Norna will return the max permission the current user has on this project. You can currently only set this to ` + "`" + `permissions` + "`" + `.",
                         "name": "expand",
                         "in": "query"
                     }
@@ -3312,7 +3311,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "The filter query to match tasks by. Check out https://vikunja.io/docs/filters for a full explanation of the feature.",
+                        "description": "The filter query to match tasks by.",
                         "name": "filter",
                         "in": "query"
                     },
@@ -3330,7 +3329,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "If set to ` + "`" + `subtasks` + "`" + `, Vikunja will fetch only tasks which do not have subtasks and then in a second step, will fetch all of these subtasks. This may result in more tasks than the pagination limit being returned, but all subtasks will be present in the response. If set to ` + "`" + `buckets` + "`" + `, the buckets of each task will be present in the response. If set to ` + "`" + `reactions` + "`" + `, the reactions of each task will be present in the response. If set to ` + "`" + `comments` + "`" + `, the first 50 comments of each task will be present in the response. You can set this multiple times with different values.",
+                        "description": "If set to ` + "`" + `subtasks` + "`" + `, Norna will fetch only tasks which do not have subtasks and then in a second step, will fetch all of these subtasks. This may result in more tasks than the pagination limit being returned, but all subtasks will be present in the response. If set to ` + "`" + `buckets` + "`" + `, the buckets of each task will be present in the response. If set to ` + "`" + `reactions` + "`" + `, the reactions of each task will be present in the response. If set to ` + "`" + `comments` + "`" + `, the first 50 comments of each task will be present in the response. You can set this multiple times with different values.",
                         "name": "expand",
                         "in": "query"
                     }
@@ -4326,7 +4325,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "If set to ` + "`" + `subtasks` + "`" + `, Vikunja will fetch only tasks which do not have subtasks and then in a second step, will fetch all of these subtasks. This may result in more tasks than the pagination limit being returned, but all subtasks will be present in the response. You can only set this to ` + "`" + `subtasks` + "`" + `.",
+                        "description": "If set to ` + "`" + `subtasks` + "`" + `, Norna will fetch only tasks which do not have subtasks and then in a second step, will fetch all of these subtasks. This may result in more tasks than the pagination limit being returned, but all subtasks will be present in the response. You can only set this to ` + "`" + `subtasks` + "`" + `.",
                         "name": "expand",
                         "in": "query"
                     }
@@ -5012,7 +5011,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "The filter query to match tasks by. Check out https://vikunja.io/docs/filters for a full explanation of the feature.",
+                        "description": "The filter query to match tasks by.",
                         "name": "filter",
                         "in": "query"
                     },
@@ -5030,7 +5029,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "If set to ` + "`" + `subtasks` + "`" + `, Vikunja will fetch only tasks which do not have subtasks and then in a second step, will fetch all of these subtasks. This may result in more tasks than the pagination limit being returned, but all subtasks will be present in the response. If set to ` + "`" + `buckets` + "`" + `, the buckets of each task will be present in the response. If set to ` + "`" + `reactions` + "`" + `, the reactions of each task will be present in the response. If set to ` + "`" + `comments` + "`" + `, the first 50 comments of each task will be present in the response. You can set this multiple times with different values.",
+                        "description": "If set to ` + "`" + `subtasks` + "`" + `, Norna will fetch only tasks which do not have subtasks and then in a second step, will fetch all of these subtasks. This may result in more tasks than the pagination limit being returned, but all subtasks will be present in the response. If set to ` + "`" + `buckets` + "`" + `, the buckets of each task will be present in the response. If set to ` + "`" + `reactions` + "`" + `, the reactions of each task will be present in the response. If set to ` + "`" + `comments` + "`" + `, the first 50 comments of each task will be present in the response. You can set this multiple times with different values.",
                         "name": "expand",
                         "in": "query"
                     }
@@ -5142,7 +5141,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "If set to ` + "`" + `subtasks` + "`" + `, Vikunja will fetch only tasks which do not have subtasks and then in a second step, will fetch all of these subtasks. This may result in more tasks than the pagination limit being returned, but all subtasks will be present in the response. If set to ` + "`" + `buckets` + "`" + `, the buckets of each task will be present in the response. If set to ` + "`" + `reactions` + "`" + `, the reactions of each task will be present in the response. If set to ` + "`" + `comments` + "`" + `, the first 50 comments of each task will be present in the response. You can set this multiple times with different values.",
+                        "description": "If set to ` + "`" + `subtasks` + "`" + `, Norna will fetch only tasks which do not have subtasks and then in a second step, will fetch all of these subtasks. This may result in more tasks than the pagination limit being returned, but all subtasks will be present in the response. If set to ` + "`" + `buckets` + "`" + `, the buckets of each task will be present in the response. If set to ` + "`" + `reactions` + "`" + `, the reactions of each task will be present in the response. If set to ` + "`" + `comments` + "`" + `, the first 50 comments of each task will be present in the response. You can set this multiple times with different values.",
                         "name": "expand",
                         "in": "query"
                     }
@@ -7018,7 +7017,7 @@ const docTemplate = `{
         },
         "/test/all": {
             "delete": {
-                "description": "Removes all data from every Vikunja table. Used by e2e tests to ensure clean state before each test. Requires the testing token.",
+                "description": "Removes all data from every Norna table. Used by e2e tests to ensure clean state before each test. Requires the testing token.",
                 "produces": [
                     "application/json"
                 ],
@@ -8622,7 +8621,7 @@ const docTemplate = `{
                         "JWTKeyAuth": []
                     }
                 ],
-                "description": "Because available time zones depend on the system Vikunja is running on, this endpoint returns a project of all valid time zones this particular Vikunja instance can handle. The project of time zones is not sorted, you should sort it on the client.",
+                "description": "Because available time zones depend on the system Norna is running on, this endpoint returns a project of all valid time zones this particular Norna instance can handle. The project of time zones is not sorted, you should sort it on the client.",
                 "consumes": [
                     "application/json"
                 ],
@@ -8632,7 +8631,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Get all available time zones on this vikunja instance",
+                "summary": "Get all available time zones on this Norna instance",
                 "responses": {
                     "200": {
                         "description": "All available time zones.",
@@ -9531,7 +9530,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "language": {
-                    "description": "The language of the new user. Must be a valid IETF BCP 47 language code and exist in Vikunja.",
+                    "description": "The language of the new user. Must be a valid IETF BCP 47 language code and exist in Norna.",
                     "type": "string"
                 },
                 "name": {
@@ -9539,7 +9538,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
-                    "description": "The user's password in clear text. Only used when registering the user. The maximum limi is 72 bytes, which may be less than 72 characters. This is due to the limit in the bcrypt hashing algorithm used to store passwords in Vikunja.",
+                    "description": "The user's password in clear text. Only used when registering the user. The maximum limi is 72 bytes, which may be less than 72 characters. This is due to the limit in the bcrypt hashing algorithm used to store passwords in Norna.",
                     "type": "string",
                     "maxLength": 72,
                     "minLength": 8
@@ -9920,7 +9919,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "filter": {
-                    "description": "The filter query to match tasks by. Check out https://vikunja.io/docs/filters for a full explanation.",
+                    "description": "The filter query to match tasks by.",
                     "allOf": [
                         {
                             "$ref": "#/definitions/models.TaskCollection"
@@ -10406,7 +10405,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "filter": {
-                    "description": "The filter query to match tasks by. Check out https://vikunja.io/docs/filters for a full explanation.",
+                    "description": "The filter query to match tasks by.",
                     "type": "string"
                 },
                 "filter_include_nulls": {
@@ -10898,7 +10897,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "secret": {
-                    "description": "If provided, webhook requests will be signed using HMAC. Check out the docs about how to use this: https://vikunja.io/docs/webhooks/#signing",
+                    "description": "If provided, webhook requests will be signed using HMAC-SHA256 over the request body, sent hex-encoded in the X-Norna-Signature header.",
                     "type": "string"
                 },
                 "target_url": {
@@ -11129,21 +11128,7 @@ const docTemplate = `{
                 }
             }
         },
-        "shared.OpenIDAuthInfo": {
-            "type": "object",
-            "properties": {
-                "enabled": {
-                    "type": "boolean"
-                },
-                "providers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/code_vikunja_io_api_pkg_modules_auth_openid.Provider"
-                    }
-                }
-            }
-        },
-        "shared.VikunjaInfos": {
+        "shared.NornaInfos": {
             "type": "object",
             "properties": {
                 "allow_icon_changes": {
@@ -11221,6 +11206,20 @@ const docTemplate = `{
                 },
                 "webhooks_enabled": {
                     "type": "boolean"
+                }
+            }
+        },
+        "shared.OpenIDAuthInfo": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "providers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/code_vikunja_io_api_pkg_modules_auth_openid.Provider"
+                    }
                 }
             }
         },
@@ -11463,11 +11462,11 @@ const docTemplate = `{
                     "maxLength": 250
                 },
                 "language": {
-                    "description": "The language of the new user. Must be a valid IETF BCP 47 language code and exist in Vikunja.",
+                    "description": "The language of the new user. Must be a valid IETF BCP 47 language code and exist in Norna.",
                     "type": "string"
                 },
                 "password": {
-                    "description": "The user's password in clear text. Only used when registering the user. The maximum limi is 72 bytes, which may be less than 72 characters. This is due to the limit in the bcrypt hashing algorithm used to store passwords in Vikunja.",
+                    "description": "The user's password in clear text. Only used when registering the user. The maximum limi is 72 bytes, which may be less than 72 characters. This is due to the limit in the bcrypt hashing algorithm used to store passwords in Norna.",
                     "type": "string",
                     "maxLength": 72,
                     "minLength": 8
@@ -11571,8 +11570,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Vikunja API",
-	Description:      "# Pagination\nEvery endpoint capable of pagination will return two headers:\n* `x-pagination-total-pages`: The total number of available pages for this request\n* `x-pagination-result-count`: The number of items returned for this request.\n# Permissions\nAll endpoints which return a single item (project, task, etc.) - no array - will also return a `x-max-permission` header with the max permission the user has on this item as an int where `0` is `Read Only`, `1` is `Read & Write` and `2` is `Admin`.\nThis can be used to show or hide ui elements based on the permissions the user has.\n# Errors\nAll errors have an error code and a human-readable error message in addition to the http status code. You should always check for the status code in the response, not only the http status code.\nDue to limitations in the swagger library we're using for this document, only one error per http status code is documented here. Make sure to check the [error docs](https://vikunja.io/docs/errors/) in Vikunja's documentation for a full list of available error codes.\n# Authorization\n**JWT-Auth:** Main authorization method, used for most of the requests. Needs `Authorization: Bearer <jwt-token>`-header to authenticate successfully.\n\n**API Token:** You can create scoped API tokens for your user and use the token to make authenticated requests in the context of that user. The token must be provided via an `Authorization: Bearer <token>` header, similar to jwt auth. See the documentation for the `api` group to manage token creation and revocation.\n\n**BasicAuth:** Only used when requesting tasks via CalDAV.\n<!-- ReDoc-Inject: <security-definitions> -->",
+	Title:            "Norna API",
+	Description:      "# Pagination\nEvery endpoint capable of pagination will return two headers:\n* `x-pagination-total-pages`: The total number of available pages for this request\n* `x-pagination-result-count`: The number of items returned for this request.\n# Permissions\nAll endpoints which return a single item (project, task, etc.) - no array - will also return a `x-max-permission` header with the max permission the user has on this item as an int where `0` is `Read Only`, `1` is `Read & Write` and `2` is `Admin`.\nThis can be used to show or hide ui elements based on the permissions the user has.\n# Errors\nAll errors have an error code and a human-readable error message in addition to the http status code. You should always check for the status code in the response, not only the http status code.\nDue to limitations in the swagger library we're using for this document, only one error per http status code is documented here. The `code` field in an error response identifies the exact error.\n# Authorization\n**JWT-Auth:** Main authorization method, used for most of the requests. Needs `Authorization: Bearer <jwt-token>`-header to authenticate successfully.\n\n**API Token:** You can create scoped API tokens for your user and use the token to make authenticated requests in the context of that user. The token must be provided via an `Authorization: Bearer <token>` header, similar to jwt auth. See the documentation for the `api` group to manage token creation and revocation.\n\n**BasicAuth:** Only used when requesting tasks via CalDAV.\n<!-- ReDoc-Inject: <security-definitions> -->",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

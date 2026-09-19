@@ -158,7 +158,7 @@ func TestInitializeUnavailableProviders(t *testing.T) {
 	CleanupSavedOpenIDProviders()
 
 	// Reserve a port, then release it to simulate a provider that is down
-	// while Vikunja starts.
+	// while Norna starts.
 	var lc net.ListenConfig
 	listener, err := lc.Listen(t.Context(), "tcp", "127.0.0.1:0")
 	require.NoError(t, err)

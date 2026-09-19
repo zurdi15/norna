@@ -13,16 +13,10 @@ import {visualizer} from 'rollup-plugin-visualizer'
 
 import { sentryVitePlugin, type SentryVitePluginOptions } from '@sentry/vite-plugin'
 import svgLoader from 'vite-svg-loader'
-import postcssPresetEnv from 'postcss-preset-env'
-import postcssEasingGradients from 'postcss-easing-gradients'
 import tailwindcss from '@tailwindcss/vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
 const pathSrc = fileURLToPath(new URL('./src', import.meta.url)).replaceAll('\\', '/')
-
-// the @use rules have to be the first in the compiled stylesheets
-const PREFIXED_SCSS_STYLES = `@use "sass:math";
-@import "${pathSrc}/styles/common-imports.scss";`
 
 /*
 ** Configure sentry plugin
@@ -47,9 +41,9 @@ function getSentryConfig(env: Record<string, string>): SentryVitePluginOptions {
 		telemetry: false,
 
 		// sourcemaps: {
-			// assets: [], // TODO
-			// deleteFilesAfterUpload: [], // TODO define glob
-			// rewriteSources // might need that instead of `urlPrefix`
+		// assets: [], // TODO
+		// deleteFilesAfterUpload: [], // TODO define glob
+		// rewriteSources // might need that instead of `urlPrefix`
 		// },
 
 		release: {
@@ -71,19 +65,9 @@ function getSentryConfig(env: Record<string, string>): SentryVitePluginOptions {
 	}
 }
 
-/**
- * @param fontNames Array of the file names of the fonts without axis and hash suffixes
- */
-function createFontMatcher(fontNames: string[]) {
-	// The `match` option for the files of VitePluginInjectPreload
-	// matches the _output_ files.
-	// Since we only want to mach variable fonts, we exploit here the fact
-	// that we added the `wght` term to indicate the variable weight axis.
-	// The format is something like:
-	// `/assets/OpenSans-Italic_wght__c9a8fe68-5f21f1e7.woff2`
-	// see: https://regex101.com/r/UgUWr1/1
-	return new RegExp(`^.+\\/(${fontNames.join('|')})_wght__[a-z1-9]{8}-[a-z1-9]{8}\\.woff2$`)
-}
+// Preload only the latin files every page renders with; other subsets load on demand
+// through their unicode-range. Output names look like /assets/ibm-plex-sans-latin-wght-normal-<hash>.woff2
+const FONT_PRELOAD_MATCHER = /^.+\/ibm-plex-(sans-latin-wght-normal|mono-latin-400-normal)-[\w-]+\.woff2$/
 
 // https://vitejs.dev/config/
 export default defineConfig(({command, mode}) => {
@@ -108,37 +92,18 @@ function getBuildConfig(env: Record<string, string>) {
 	const workboxVersion = JSON.parse(readFileSync(workboxPkgPath, 'utf-8')).version
 
 	return {
-		base: env.VIKUNJA_FRONTEND_BASE,
+		base: env.NORNA_FRONTEND_BASE,
 		define: {
 			__WORKBOX_VERSION__: JSON.stringify(`v${workboxVersion}`),
 		},
 		// https://vitest.dev/config/
 		test: {
 			environment: 'happy-dom',
-			exclude: [...configDefaults.exclude, 'e2e/**'],
+			exclude: [
+				...configDefaults.exclude,
+				'e2e/**',
+			],
 			'vitest.commandLine': 'pnpm test:unit',
-		},
-		css: {
-			preprocessorOptions: {
-				sass: {
-					quietDeps: true, // silence deprecation warnings
-				},
-				scss: {
-					additionalData: PREFIXED_SCSS_STYLES,
-					charset: false, // fixes  "@charset" must be the first rule in the file" warnings,
-					quietDeps: true, // silence deprecation warnings
-				},
-			},
-			postcss: {
-				plugins: [
-					postcssEasingGradients(),
-					postcssPresetEnv({
-						features: {
-							'logical-properties-and-values': false,
-						}
-					}),
-				],
-			},
 		},
 		plugins: [
 			tailwindcss(),
@@ -158,7 +123,7 @@ function getBuildConfig(env: Record<string, string>) {
 			// https://github.com/Applelo/unplugin-inject-preload
 			UnpluginInjectPreload({
 				files: [{
-					outputMatch: createFontMatcher(['Quicksand', 'OpenSans', 'OpenSans-Italic']),
+					outputMatch: FONT_PRELOAD_MATCHER,
 					attributes: {crossorigin: 'anonymous'},
 				}],
 				injectTo: 'custom',
@@ -170,9 +135,11 @@ function getBuildConfig(env: Record<string, string>) {
 				injectRegister: false,
 				useCredentials: true,
 				manifest: {
-					name: 'Vikunja',
-					short_name: 'Vikunja',
-					theme_color: '#1973ff',
+					name: 'Norna',
+					short_name: 'Norna',
+					description: 'Tareas y proyectos, tejidos con calma.',
+					// Canvas of the dark theme; the runtime theme-color meta takes over once the app loads.
+					theme_color: '#0b0e13',
 					icons: [
 						{
 							src: './images/icons/android-chrome-192x192.png',
@@ -193,31 +160,19 @@ function getBuildConfig(env: Record<string, string>) {
 					],
 					start_url: '.',
 					display: 'standalone',
-					background_color: '#000000',
+					background_color: '#0b0e13',
 					shortcuts: [
 						{
-							name: 'Overview',
+							name: 'Hoy',
 							url: '/',
 						},
 						{
-							name: 'Namespaces And Projects Overview',
-							short_name: 'Namespaces & Projects',
-							url: '/namespaces',
+							name: 'Próximas',
+							url: '/tasks/by/upcoming',
 						},
 						{
-							name: 'Tasks Next Week',
-							short_name: 'Next Week',
-							url: '/tasks/by/week',
-						},
-						{
-							name: 'Tasks Next Month',
-							short_name: 'Next Month',
-							url: '/tasks/by/month',
-						},
-						{
-							name: 'Teams Overview',
-							short_name: 'Teams',
-							url: '/teams',
+							name: 'Proyectos',
+							url: '/projects',
 						},
 					],
 				},
@@ -239,7 +194,7 @@ function getBuildConfig(env: Record<string, string>) {
 		},
 		server: {
 			host: '127.0.0.1', // see: https://github.com/vitejs/vite/pull/8543
-			port: parseInt(env.VIKUNJA_FRONTEND_PORT || '4173', 10),
+			port: parseInt(env.NORNA_FRONTEND_PORT || '4173', 10),
 			strictPort: true,
 		},
 		output: {
@@ -270,10 +225,10 @@ function getServeConfig(env: Record<string, string>) {
 	// get some default settings from prod mod
 	const buildConfig = getBuildConfig(env)
 
-	// Build the proxy pattern from VIKUNJA_FRONTEND_BASE so that custom base
-	// paths like /vikunja proxy /vikunja/api/* correctly.
+	// Build the proxy pattern from NORNA_FRONTEND_BASE so that custom base
+	// paths like /norna proxy /norna/api/* correctly.
 	// Falls back to /api.
-	const base = (env.VIKUNJA_FRONTEND_BASE || '/').replace(/\/+$/, '')
+	const base = (env.NORNA_FRONTEND_BASE || '/').replace(/\/+$/, '')
 	const proxyPath = `${base}/api`
 
 	// override prod settings with dev settings

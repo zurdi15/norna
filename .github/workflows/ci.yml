@@ -1,35 +1,61 @@
-name: ci
-
-env:
-  DO_NOT_TRACK: 1
+name: CI
 
 on:
-  pull_request:
-  merge_group:
   push:
-    tags:
-      - v*
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
 
 concurrency:
-  # main merges use a unique run_id so they don't cancel each other
-  # other branches or PRs share a group to auto-cancel old runs
-  group: ${{ github.ref == 'refs/heads/main' &&
-    format('{0}-{1}', github.workflow, github.run_id) ||
-    format('{0}-{1}', github.workflow, github.event.pull_request.number || github.ref) }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test
-    uses: ./.github/workflows/test.yml
-    secrets: inherit
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # go, node y pnpm salen de mise.toml: las mismas versiones que en local
+      - uses: jdx/mise-action@v2
+      - uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.13.0
+      # ningún nombre de upstream fuera de las excepciones (módulo Go, cabeceras AGPL, LICENSE)
+      - run: go tool mage check:branding
+      - run: go tool mage check:translations
+      - run: go tool mage test:feature
+      - run: go tool mage test:web
 
-  release:
-    name: Release
-    if: ${{ github.ref_type == 'tag' || github.ref_name == 'main' }}
-    uses: ./.github/workflows/release.yml
-    needs:
-      - test
-    secrets: inherit
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm lint:styles
+      - run: pnpm typecheck
+      - run: pnpm vitest run --dir ./src
+      - run: pnpm build
+
+  docker:
+    name: Imagen
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

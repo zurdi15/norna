@@ -19,7 +19,7 @@ FROM --platform=$BUILDPLATFORM ghcr.io/techknowlogick/xgo:go-1.27.x@sha256:8cc74
 RUN go install github.com/magefile/mage@latest && \
     mv /go/bin/mage /usr/local/go/bin
 
-WORKDIR /go/src/code.vikunja.io/api
+WORKDIR /go/src/norna
 COPY . ./
 COPY --from=frontendbuilder /build/dist ./frontend/dist
 
@@ -28,9 +28,9 @@ ENV RELEASE_VERSION=$RELEASE_VERSION
 
 RUN export PATH=$PATH:$GOPATH/bin && \
 	mage build:clean && \
-    (cd build && mage release:xgo vikunja "${TARGETOS}/${TARGETARCH}/${TARGETVARIANT}")
+    (cd build && mage release:xgo norna "${TARGETOS}/${TARGETARCH}/${TARGETVARIANT}")
 
-RUN mkdir -p /tmp && chmod 1777 /tmp
+RUN mkdir -p /tmp && chmod 1777 /tmp && mkdir -p /data/files
 
 #  ┬─┐┬ ┐┌┐┐┌┐┐┬─┐┬─┐
 #  │┬┘│ │││││││├─ │┬┘
@@ -39,23 +39,27 @@ RUN mkdir -p /tmp && chmod 1777 /tmp
 # The actual image
 FROM scratch
 
-LABEL org.opencontainers.image.authors='maintainers@vikunja.io'
-LABEL org.opencontainers.image.url='https://vikunja.io'
-LABEL org.opencontainers.image.documentation='https://vikunja.io/docs'
-LABEL org.opencontainers.image.source='https://code.vikunja.io/vikunja'
-LABEL org.opencontainers.image.licenses='AGPLv3'
-LABEL org.opencontainers.image.title='Vikunja'
+LABEL org.opencontainers.image.url='https://github.com/zurdi15/norna'
+LABEL org.opencontainers.image.documentation='https://github.com/zurdi15/norna#readme'
+LABEL org.opencontainers.image.source='https://github.com/zurdi15/norna'
+LABEL org.opencontainers.image.licenses='AGPL-3.0-or-later'
+LABEL org.opencontainers.image.title='Norna'
+LABEL org.opencontainers.image.description='Tasks and projects, woven together.'
 
-WORKDIR /app/vikunja
-ENTRYPOINT [ "/app/vikunja/vikunja" ]
+WORKDIR /app/norna
+ENTRYPOINT [ "/app/norna/norna" ]
 EXPOSE 3456
 
 COPY --from=apibuilder --chown=1000:1000 --chmod=1777 /tmp /tmp
+# Owned by the app's user, so a new named volume starts writable.
+COPY --from=apibuilder --chown=1000:1000 /data /data
 
 USER 1000
 
-ENV VIKUNJA_SERVICE_ROOTPATH=/app/vikunja/
-ENV VIKUNJA_DATABASE_PATH=/db/vikunja.db
+ENV NORNA_SERVICE_ROOTPATH=/app/norna/
+# Everything worth keeping lives in /data: the sqlite database and the uploaded files.
+ENV NORNA_DATABASE_PATH=/data/norna.db
+ENV NORNA_FILES_BASEPATH=/data/files
 
-COPY --from=apibuilder /build/vikunja-* vikunja
+COPY --from=apibuilder /build/norna-* norna
 COPY --from=apibuilder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/

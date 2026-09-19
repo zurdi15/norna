@@ -31,11 +31,11 @@ import (
 )
 
 func initBenchmarkConfig() {
-	if os.Getenv("VIKUNJA_TESTS_USE_CONFIG") == "1" {
+	if os.Getenv("NORNA_TESTS_USE_CONFIG") == "1" {
 		config.InitConfig()
 	} else {
 		config.InitDefaultConfig()
-		config.ServiceRootpath.Set(os.Getenv("VIKUNJA_SERVICE_ROOTPATH"))
+		config.ServiceRootpath.Set(os.Getenv("NORNA_SERVICE_ROOTPATH"))
 	}
 }
 

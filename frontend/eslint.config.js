@@ -5,6 +5,7 @@ import pluginDepend from 'eslint-plugin-depend'
 import { fileURLToPath } from 'node:url'
 import { dirname } from 'node:path'
 import iconButtonAccessibleName from './eslint-rules/icon-button-accessible-name.js'
+import betterTailwindcss from 'eslint-plugin-better-tailwindcss'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -21,14 +22,14 @@ export default [
 	},
 	{
 		plugins: {
-			vikunja: {
+			norna: {
 				rules: {
 					'icon-button-accessible-name': iconButtonAccessibleName,
 				},
 			},
 		},
 		rules: {
-			'vikunja/icon-button-accessible-name': 'error',
+			'norna/icon-button-accessible-name': 'error',
 
 			'quotes': ['error', 'single'],
 			'comma-dangle': ['error', 'always-multiline'],
@@ -37,66 +38,13 @@ export default [
 
 			'vue/v-on-event-hyphenation': ['warn', 'never', {'autofix': true}],
 			'vue/multi-word-component-names': ['error', {
-				ignores: [
-					// Existing single-word components grandfathered in.
-					// New components must use multi-word names per Vue style guide.
-					'404',
-					'About',
-					'Attachments',
-					'Auth',
-					'Button.story',
-					'Caldav',
-					'Card',
-					'Card.story',
-					'Comments',
-					'Datepicker',
-					'Description',
-					'Done',
-					'Dropdown',
-					'Error',
-					'Expandable',
-					'Filters',
-					'Flatpickr',
-					'Heading',
-					'Home',
-					'Icon',
-					'index',
-					'Label',
-					'Labels',
-					'Legal',
-					'List',
-					'Loading',
-					'Login',
-					'Logo',
-					'Message',
-					'Migration',
-					'Modal',
-					'Multiselect',
-					'Navigation',
-					'Nothing',
-					'Notification',
-					'Notifications',
-					'Pagination',
-					'Password',
-					'Popup',
-					'Reactions',
-					'Ready',
-					'Register',
-					'Reminders',
-					'Reminders.story',
-					'Sessions',
-					'Settings',
-					'Shortcut',
-					'Sort',
-					'Subscription',
-					'User',
-				],
+				ignores: ['index'],
 			}],
 
 			// uncategorized rules:
 			'vue/component-api-style': ['error', ['script-setup']],
 			'vue/component-name-in-template-casing': ['error', 'PascalCase', {
-				'globals': ['RouterView', 'RouterLink', 'Icon', 'Notifications', 'Modal', 'Card'],
+				'globals': ['RouterView', 'RouterLink'],
 			}],
 			'vue/custom-event-name-casing': ['error', 'camelCase'],
 			'vue/define-macros-order': 'error',
@@ -125,7 +73,7 @@ export default [
 
 			'no-restricted-syntax': ['error', {
 				selector: 'ForInStatement',
-				message: 'Use for...of with Object.keys/entries, or .forEach, instead of for...in. See https://github.com/go-vikunja/vikunja/issues/513',
+				message: 'Use for...of with Object.keys/entries, or .forEach, instead of for...in.',
 			}],
 
 			'@typescript-eslint/no-unused-vars': [
@@ -153,5 +101,29 @@ export default [
 
 
 	},
-
+	{
+		...betterTailwindcss.configs.recommended,
+		files: ['src/**/*.vue', 'src/**/*.ts'],
+		settings: {
+			'better-tailwindcss': {
+				entryPoint: 'src/styles/main.css',
+			},
+		},
+		rules: {
+			...betterTailwindcss.configs.recommended.rules,
+			'better-tailwindcss/enforce-consistent-line-wrapping': ['warn', {
+				indent: 'tab',
+				tabWidth: 4,
+				printWidth: 120,
+				preferSingleLine: true,
+			}],
+			// Colors only come from tokens: no palette escapes like bg-[#fff] or text-[oklch(...)].
+			'better-tailwindcss/no-restricted-classes': ['error', {
+				restrict: [{
+					pattern: '^(.*:)?(bg|text|border|ring|outline|fill|stroke|from|via|to|decoration|shadow|accent|caret|divide|placeholder)-\\[(#|rgb|hsl|oklch|oklab|lab|lch|color)',
+					message: 'Use a color token from src/styles/tokens.css instead of an arbitrary color.',
+				}],
+			}],
+		},
+	},
 ]

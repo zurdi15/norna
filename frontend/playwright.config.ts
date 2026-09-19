@@ -31,12 +31,19 @@ export default defineConfig({
 			executablePath: getChromiumPath(),
 		},
 	},
+	// Specs tagged @mobile run on a phone viewport with touch; everything else on desktop.
 	projects: [
 		{
 			name: 'chromium',
 			use: {...devices['Desktop Chrome']},
+			grepInvert: /@mobile/,
+		},
+		{
+			name: 'mobile',
+			use: {...devices['Pixel 7']},
+			grep: /@mobile/,
 		},
 	],
 	// webServer configuration removed - we manually start services in CI
-	// For local development, run `pnpm preview` and `pnpm preview:vikunja` separately
+	// For local development, run `pnpm preview` and `pnpm preview:api` separately
 })

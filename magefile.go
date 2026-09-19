@@ -53,7 +53,7 @@ const (
 )
 
 var (
-	Executable    = "vikunja"
+	Executable    = "norna"
 	Ldflags       = ""
 	Tags          = ""
 	VersionNumber = "dev"
@@ -64,6 +64,7 @@ var (
 	// Aliases are mage aliases of targets
 	Aliases = map[string]any{
 		"build":                    Build.Build,
+		"check:branding":           Check.Branding,
 		"check:frontend-client":    Check.FrontendClient,
 		"check:got-swag":           Check.GotSwag,
 		"dev:make-migration":       Dev.MakeMigration,
@@ -71,6 +72,7 @@ var (
 		"dev:make-listener":        Dev.MakeListener,
 		"dev:make-notification":    Dev.MakeNotification,
 		"dev:prepare-worktree":     Dev.PrepareWorktree,
+		"dev:sync-upstream":        Dev.SyncUpstream,
 		"dev:tag-release":          Dev.TagRelease,
 		"test:e2e":                 Test.E2E,
 		"test:e2e-api":             Test.E2EApi,
@@ -184,7 +186,7 @@ func initVars(ctx context.Context) error {
 	// Always include osusergo to use pure Go os/user implementation instead of CGO.
 	// This prevents SIGFPE crashes when running under systemd without HOME set,
 	// caused by glibc's getpwuid_r() failing in certain environments.
-	// See: https://github.com/go-vikunja/vikunja/issues/2170
+	// See upstream issue #2170.
 	Tags = "osusergo " + strings.ReplaceAll(os.Getenv("TAGS"), ",", " ")
 	if err := setVersion(ctx); err != nil {
 		return err
@@ -490,25 +492,25 @@ func (Test) E2EApi(ctx context.Context) error {
 //	mage test:e2e "--headed tests/e2e/misc/menu.spec.ts" # combine flags
 //
 // Environment variable overrides:
-//   - VIKUNJA_E2E_API_PORT: API port (default: random)
-//   - VIKUNJA_E2E_FRONTEND_PORT: Frontend port (default: random)
-//   - VIKUNJA_E2E_TESTING_TOKEN: Testing token for seed endpoints (default: random)
-//   - VIKUNJA_E2E_SKIP_BUILD: Set to "true" to skip rebuilding the API binary (default: false)
+//   - NORNA_E2E_API_PORT: API port (default: random)
+//   - NORNA_E2E_FRONTEND_PORT: Frontend port (default: random)
+//   - NORNA_E2E_TESTING_TOKEN: Testing token for seed endpoints (default: random)
+//   - NORNA_E2E_SKIP_BUILD: Set to "true" to skip rebuilding the API binary (default: false)
 func (Test) E2E(ctx context.Context, args string) error {
 	mg.Deps(initVars)
 
 	// Determine ports
-	apiPort, err := getE2EPort(ctx, "VIKUNJA_E2E_API_PORT")
+	apiPort, err := getE2EPort(ctx, "NORNA_E2E_API_PORT")
 	if err != nil {
 		return fmt.Errorf("could not get API port: %w", err)
 	}
-	frontendPort, err := getE2EPort(ctx, "VIKUNJA_E2E_FRONTEND_PORT")
+	frontendPort, err := getE2EPort(ctx, "NORNA_E2E_FRONTEND_PORT")
 	if err != nil {
 		return fmt.Errorf("could not get frontend port: %w", err)
 	}
 
 	// Generate a random testing token
-	testingToken := os.Getenv("VIKUNJA_E2E_TESTING_TOKEN")
+	testingToken := os.Getenv("NORNA_E2E_TESTING_TOKEN")
 	if testingToken == "" {
 		testingToken = fmt.Sprintf("e2e-test-token-%d", time.Now().UnixNano())
 	}
@@ -519,7 +521,7 @@ func (Test) E2E(ctx context.Context, args string) error {
 	fmt.Printf("  Testing token: %s\n", testingToken)
 
 	// Build the API binary (unless skipped)
-	if os.Getenv("VIKUNJA_E2E_SKIP_BUILD") != "true" {
+	if os.Getenv("NORNA_E2E_SKIP_BUILD") != "true" {
 		fmt.Println("\n--- Building API binary ---")
 		if err := (Build{}).Build(ctx); err != nil {
 			return fmt.Errorf("failed to build API: %w", err)
@@ -527,7 +529,7 @@ func (Test) E2E(ctx context.Context, args string) error {
 	}
 
 	// Create temp directory for file uploads and rootpath
-	tmpDir, err := os.MkdirTemp("", "vikunja-e2e-*")
+	tmpDir, err := os.MkdirTemp("", "norna-e2e-*")
 	if err != nil {
 		return fmt.Errorf("failed to create temp dir: %w", err)
 	}
@@ -543,20 +545,20 @@ func (Test) E2E(ctx context.Context, args string) error {
 	// Start the API server — all config via env vars, no config file
 	// Uses in-memory SQLite (no DB file on disk)
 	fmt.Println("\n--- Starting API server ---")
-	apiCmd := exec.CommandContext(ctx, "./vikunja", "web")
+	apiCmd := exec.CommandContext(ctx, "./norna", "web")
 	apiCmd.Env = append(os.Environ(),
-		fmt.Sprintf("VIKUNJA_SERVICE_INTERFACE=:%d", apiPort),
-		fmt.Sprintf("VIKUNJA_SERVICE_PUBLICURL=http://127.0.0.1:%d/", apiPort),
-		fmt.Sprintf("VIKUNJA_SERVICE_TESTINGTOKEN=%s", testingToken),
-		fmt.Sprintf("VIKUNJA_SERVICE_ROOTPATH=%s", tmpDir),
-		"VIKUNJA_SERVICE_JWTSECRET=e2e-test-jwt-secret-do-not-use-in-production",
-		"VIKUNJA_DATABASE_TYPE=sqlite",
-		"VIKUNJA_DATABASE_PATH=memory",
-		fmt.Sprintf("VIKUNJA_FILES_BASEPATH=%s", filepath.Join(tmpDir, "files")),
-		"VIKUNJA_LOG_LEVEL=WARNING",
-		"VIKUNJA_MAILER_ENABLED=false",
-		"VIKUNJA_REDIS_ENABLED=false",
-		"VIKUNJA_RATELIMIT_NOAUTHLIMIT=1000",
+		fmt.Sprintf("NORNA_SERVICE_INTERFACE=:%d", apiPort),
+		fmt.Sprintf("NORNA_SERVICE_PUBLICURL=http://127.0.0.1:%d/", apiPort),
+		fmt.Sprintf("NORNA_SERVICE_TESTINGTOKEN=%s", testingToken),
+		fmt.Sprintf("NORNA_SERVICE_ROOTPATH=%s", tmpDir),
+		"NORNA_SERVICE_JWTSECRET=e2e-test-jwt-secret-do-not-use-in-production",
+		"NORNA_DATABASE_TYPE=sqlite",
+		"NORNA_DATABASE_PATH=memory",
+		fmt.Sprintf("NORNA_FILES_BASEPATH=%s", filepath.Join(tmpDir, "files")),
+		"NORNA_LOG_LEVEL=WARNING",
+		"NORNA_MAILER_ENABLED=false",
+		"NORNA_REDIS_ENABLED=false",
+		"NORNA_RATELIMIT_NOAUTHLIMIT=1000",
 	)
 	apiCmd.Stdout = os.Stdout
 	apiCmd.Stderr = os.Stderr
@@ -626,7 +628,7 @@ func (Test) E2E(ctx context.Context, args string) error {
 	playwrightCmd.Env = append(os.Environ(),
 		fmt.Sprintf("API_URL=%s/", apiBase),
 		fmt.Sprintf("BASE_URL=%s", frontendBase),
-		fmt.Sprintf("VIKUNJA_SERVICE_TESTINGTOKEN=%s", testingToken),
+		fmt.Sprintf("NORNA_SERVICE_TESTINGTOKEN=%s", testingToken),
 		fmt.Sprintf("TEST_SECRET=%s", testingToken),
 	)
 	playwrightCmd.Stdout = os.Stdout
@@ -1233,7 +1235,127 @@ func (Check) All() {
 		Check.GotSwag,
 		Check.Translations,
 		Check.YaegiSymbols,
+		Check.Branding,
 	)
+}
+
+// upstreamName is the name of the project Norna forks. It is spelled in two
+// halves so check:branding doesn't flag the tooling that has to name it.
+const upstreamName = "vi" + "kunja"
+
+var (
+	brandingMention = regexp.MustCompile("(?i)" + upstreamName)
+	// The AGPL header names the upstream project and must stay byte for byte.
+	brandingLicenseLine = regexp.MustCompile(
+		strings.ToUpper(upstreamName[:1]) + upstreamName[1:] + ` is a to-do list application to facilitate your life\.` +
+			`|Copyright 2018-present ` + strings.ToUpper(upstreamName[:1]) + upstreamName[1:] + ` and contributors\. All rights reserved\.`)
+	// The Go module path, and the identifiers yaegi derives from it. A URL on
+	// that host is not a module path and still counts.
+	brandingModulePath = regexp.MustCompile(`code[._]` + upstreamName + `[._]io[\w./-]*`)
+	brandingReadmeFork = regexp.MustCompile(`(?i)fork of ` + upstreamName)
+)
+
+// brandingExemptFiles may name the upstream project anywhere.
+var brandingExemptFiles = map[string]bool{
+	"LICENSE":                  true,
+	"code-header-template.txt": true,
+	"CHANGELOG.md":             true,
+	"go.mod":                   true,
+	"go.sum":                   true,
+}
+
+// Branding fails listing every file name and line that mentions the upstream
+// project outside the allowed exceptions: the Go module path, the two AGPL
+// header lines, LICENSE, code-header-template.txt, CHANGELOG.md, go.mod/go.sum
+// and the README line saying Norna is a fork. Tracked and untracked files are
+// checked; ignored files (node_modules, build output) and binaries are not.
+func (Check) Branding(ctx context.Context) error {
+	mentions, err := brandingMentions(ctx)
+	if err != nil {
+		return err
+	}
+	if len(mentions) == 0 {
+		printSuccess("No mentions of the upstream name found.")
+		return nil
+	}
+	for _, m := range mentions {
+		fmt.Println(m)
+	}
+	return fmt.Errorf("found %d mentions of the upstream name", len(mentions))
+}
+
+func brandingMentions(ctx context.Context) ([]string, error) {
+	out, err := runGitCommandWithOutput(ctx, "ls-files", "-z", "--cached", "--others", "--exclude-standard")
+	if err != nil {
+		return nil, fmt.Errorf("failed to list files: %w", err)
+	}
+	var mentions []string
+	seen := map[string]bool{}
+	for _, path := range strings.Split(string(out), "\x00") {
+		if path == "" || seen[path] || brandingPathExempt(path) {
+			continue
+		}
+		seen[path] = true
+		if brandingMention.MatchString(path) {
+			mentions = append(mentions, path+": file name")
+		}
+		info, err := os.Lstat(path)
+		if errors.Is(err, os.ErrNotExist) {
+			continue // deleted in the working tree
+		}
+		if err != nil {
+			return nil, fmt.Errorf("failed to stat %s: %w", path, err)
+		}
+		if !info.Mode().IsRegular() {
+			continue // symlinks and submodules
+		}
+		content, err := os.ReadFile(path)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read %s: %w", path, err)
+		}
+		if bytes.IndexByte(content[:min(len(content), 8000)], 0) >= 0 {
+			continue // binary
+		}
+		for i, line := range strings.Split(string(content), "\n") {
+			if brandingLineMentions(path, line) {
+				mentions = append(mentions, fmt.Sprintf("%s:%d: %s", path, i+1, strings.TrimSpace(line)))
+			}
+		}
+	}
+	return mentions, nil
+}
+
+func brandingPathExempt(path string) bool {
+	if brandingExemptFiles[filepath.Base(path)] && (!strings.Contains(path, "/") || strings.HasPrefix(filepath.Base(path), "go.")) {
+		return true
+	}
+	for _, part := range strings.Split(path, "/") {
+		if part == ".git" || part == "node_modules" {
+			return true
+		}
+	}
+	return false
+}
+
+func brandingLineMentions(path, line string) bool {
+	if !brandingMention.MatchString(line) {
+		return false
+	}
+	if path == "README.md" && brandingReadmeFork.MatchString(line) {
+		return false
+	}
+	line = brandingLicenseLine.ReplaceAllString(line, "")
+	var rest strings.Builder
+	last := 0
+	for _, loc := range brandingModulePath.FindAllStringIndex(line, -1) {
+		if strings.HasSuffix(line[:loc[0]], "://") {
+			continue
+		}
+		rest.WriteString(line[last:loc[0]])
+		last = loc[1]
+	}
+	rest.WriteString(line[last:])
+	return brandingMention.MatchString(rest.String())
 }
 
 type Build mg.Namespace
@@ -1256,7 +1378,7 @@ func (Build) Clean(ctx context.Context) error {
 	return nil
 }
 
-// Build builds a vikunja binary, ready to run
+// Build builds a Norna binary, ready to run
 func (Build) Build(ctx context.Context) error {
 	mg.Deps(initVars, ensureFrontendDistExists)
 	return runAndStreamOutput(ctx, "go", "build", goDetectVerboseFlag(), "-tags", Tags, "-ldflags", "-s -w "+Ldflags, "-o", Executable)
@@ -1525,7 +1647,7 @@ func (Generate) FrontendClient(ctx context.Context) error {
 		return err
 	}
 
-	spec, err := os.CreateTemp("", "vikunja-openapi-*.json")
+	spec, err := os.CreateTemp("", "norna-openapi-*.json")
 	if err != nil {
 		return fmt.Errorf("create temporary OpenAPI document: %w", err)
 	}
@@ -1542,7 +1664,7 @@ func (Generate) FrontendClient(ctx context.Context) error {
 
 	cmd := exec.CommandContext(ctx, "pnpm", "run", "generate:api-client")
 	cmd.Dir = "frontend"
-	cmd.Env = append(os.Environ(), "VIKUNJA_OPENAPI_INPUT="+specPath)
+	cmd.Env = append(os.Environ(), "NORNA_OPENAPI_INPUT="+specPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -1569,13 +1691,13 @@ var yaegiSymbolPackages = []struct {
 	importPath string
 	outFile    string
 }{
-	{"code.vikunja.io/api/pkg/config", "vikunja_config.go"},
-	{"code.vikunja.io/api/pkg/db", "vikunja_db.go"},
-	{"code.vikunja.io/api/pkg/events", "vikunja_events.go"},
-	{"code.vikunja.io/api/pkg/log", "vikunja_log.go"},
-	{"code.vikunja.io/api/pkg/models", "vikunja_models.go"},
-	{"code.vikunja.io/api/pkg/plugins", "vikunja_plugins.go"},
-	{"code.vikunja.io/api/pkg/user", "vikunja_user.go"},
+	{"code.vikunja.io/api/pkg/config", "norna_config.go"},
+	{"code.vikunja.io/api/pkg/db", "norna_db.go"},
+	{"code.vikunja.io/api/pkg/events", "norna_events.go"},
+	{"code.vikunja.io/api/pkg/log", "norna_log.go"},
+	{"code.vikunja.io/api/pkg/models", "norna_models.go"},
+	{"code.vikunja.io/api/pkg/plugins", "norna_plugins.go"},
+	{"code.vikunja.io/api/pkg/user", "norna_user.go"},
 	{"github.com/labstack/echo/v5", "echo.go"},
 	{"github.com/ThreeDotsLabs/watermill/message", "watermill.go"},
 	{"github.com/spf13/viper", "viper.go"},
@@ -2017,6 +2139,138 @@ func commitPathIfChanged(ctx context.Context, path, message string) error {
 		return fmt.Errorf("failed to commit %s: %w", path, err)
 	}
 
+	return nil
+}
+
+// forkOwnedPathspecs are the paths where Norna keeps its own side on every upstream
+// sync: the rewritten frontend, what the fork deleted (the desktop app, veans, upstream's
+// CI, docs, packaging and tooling) and the backend translations it doesn't ship. Upstream
+// changes to them are always discarded. examples/plugins is left out: the plugin loader
+// test builds it, so it has to follow upstream's plugin API.
+func forkOwnedPathspecs() []string {
+	return []string{
+		"frontend",
+		"desktop",
+		"veans",
+		".github",
+		"examples",
+		":(exclude)examples/plugins",
+		".agents/skills/sentry-triage",
+		".devcontainer",
+		".zed",
+		"build/after-install.sh",
+		"build/after-install-openrc.sh",
+		"build/reprepro-dist-conf",
+		"contrib",
+		"rest",
+		"README.md",
+		"CHANGELOG.md",
+		"CONTRIBUTING.md",
+		"Dockerfile",
+		"publiccode.yml",
+		"nfpm.yaml",
+		"devenv.nix",
+		"devenv.yaml",
+		"devenv.lock",
+		"crowdin.yml",
+		"renovate.json",
+		"conductor.json",
+		"paseo.json",
+		".opensourcefinder-verify",
+		upstreamName + ".service",
+		upstreamName + ".initd",
+		// Upstream's translations come from Crowdin; Norna keeps its own Spanish.
+		":(glob)pkg/i18n/lang/*.json",
+		":(exclude)pkg/i18n/lang/en.json",
+		// Norna never contacts a license server: the check and its tests are gone.
+		"pkg/license/check.go",
+		"pkg/license/check_test.go",
+	}
+}
+
+// SyncUpstream merges upstream/main into the current branch but keeps the fork's side of
+// every path in forkOwnedPathspecs, deleted paths included. Only the backend follows
+// upstream; the generated API client is the one piece of frontend/ that tracks it, so it is
+// regenerated. The merge is left uncommitted for review, and check:branding runs at the end
+// to show the upstream name wherever the merge brought it back.
+func (Dev) SyncUpstream(ctx context.Context) error {
+	if out, err := runGitCommandWithOutput(ctx, "status", "--porcelain"); err != nil {
+		return fmt.Errorf("failed to read git status: %w", err)
+	} else if len(bytes.TrimSpace(out)) > 0 {
+		return fmt.Errorf("working tree is not clean, commit or stash first")
+	}
+
+	if err := runAndStreamOutput(ctx, "git", "fetch", "upstream"); err != nil {
+		return fmt.Errorf("failed to fetch upstream: %w", err)
+	}
+
+	specs := forkOwnedPathspecs()
+	discarded, err := runGitCommandWithOutput(ctx, append([]string{"diff", "--name-only", "--no-renames", "HEAD...upstream/main", "--"}, specs...)...)
+	if err != nil {
+		return fmt.Errorf("failed to list upstream changes to fork-owned paths: %w", err)
+	}
+
+	// Conflicts are expected (in fork-owned paths at least), so a non-zero exit is not fatal here.
+	_ = runAndStreamOutput(ctx, "git", "merge", "--no-commit", "--no-ff", "upstream/main")
+
+	if err := keepForkSide(ctx, specs); err != nil {
+		return err
+	}
+
+	if conflicts, err := runGitCommandWithOutput(ctx, "diff", "--name-only", "--diff-filter=U"); err != nil {
+		return fmt.Errorf("failed to list conflicts: %w", err)
+	} else if len(bytes.TrimSpace(conflicts)) > 0 {
+		fmt.Printf("Backend conflicts to resolve before regenerating the client:\n%s\n", conflicts)
+		return fmt.Errorf("resolve the conflicts above, then run mage generate:frontend-client and mage check:branding")
+	}
+
+	if err := (Generate{}).FrontendClient(ctx); err != nil {
+		return fmt.Errorf("failed to regenerate the frontend client: %w", err)
+	}
+
+	if len(bytes.TrimSpace(discarded)) > 0 {
+		fmt.Printf("Upstream changes to fork-owned paths that were discarded (check frontend/embed.go and the e2e harness):\n%s\n", discarded)
+	}
+
+	fmt.Println("Checking for the upstream name the merge brought back...")
+	if err := (Check{}).Branding(ctx); err != nil {
+		fmt.Printf("Rename the mentions above before committing (%s).\n", err)
+	}
+	printSuccess("Upstream merged with the fork-owned paths kept. Run the typecheck and unit tests, then commit.")
+	return nil
+}
+
+// keepForkSide resets every path matching specs that the merge touched to HEAD's side:
+// HEAD's file when it has one, otherwise the path is removed. That settles conflicts too,
+// including upstream edits to files the fork deleted.
+func keepForkSide(ctx context.Context, specs []string) error {
+	touched, err := runGitCommandWithOutput(ctx, append([]string{"diff", "--name-only", "--no-renames", "HEAD", "--"}, specs...)...)
+	if err != nil {
+		return fmt.Errorf("failed to list merged changes to fork-owned paths: %w", err)
+	}
+	conflicted, err := runGitCommandWithOutput(ctx, append([]string{"diff", "--name-only", "--diff-filter=U", "--"}, specs...)...)
+	if err != nil {
+		return fmt.Errorf("failed to list conflicts in fork-owned paths: %w", err)
+	}
+	seen := map[string]bool{}
+	for _, path := range strings.Split(string(touched)+"\n"+string(conflicted), "\n") {
+		if path == "" || seen[path] {
+			continue
+		}
+		seen[path] = true
+		if _, err := runGitCommandWithOutput(ctx, "cat-file", "-e", "HEAD:"+path); err == nil {
+			if _, err := runGitCommandWithOutput(ctx, "checkout", "HEAD", "--", path); err != nil {
+				return fmt.Errorf("failed to keep %s from HEAD: %w", path, err)
+			}
+			continue
+		}
+		if _, err := runGitCommandWithOutput(ctx, "rm", "--quiet", "--force", "--ignore-unmatch", "--", path); err != nil {
+			return fmt.Errorf("failed to drop %s: %w", path, err)
+		}
+		if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("failed to remove %s: %w", path, err)
+		}
+	}
 	return nil
 }
 

@@ -22,21 +22,16 @@ import (
 	"strings"
 )
 
-// ValidateRedirectURI checks that the redirect_uri is either a Vikunja native
-// app scheme (e.g. vikunja-flutter://callback) or a loopback http URL as
-// recommended by RFC 8252 for native apps that cannot register a custom
-// scheme. Any address in 127.0.0.0/8, the IPv6 loopback (::1, in any
-// notation), and the literal hostname "localhost" are accepted; dangerous
-// schemes like javascript:, data:, https://, or non-loopback http:// targets
-// are rejected.
+// ValidateRedirectURI checks that the redirect_uri is a loopback http URL as
+// recommended by RFC 8252 for native apps. Any address in 127.0.0.0/8, the
+// IPv6 loopback (::1, in any notation), and the literal hostname "localhost"
+// are accepted; custom app schemes, dangerous schemes like javascript:, data:,
+// https://, and non-loopback http:// targets are rejected. Norna has no native
+// apps, so upstream's app schemes are not on the list.
 func ValidateRedirectURI(redirectURI string) bool {
 	u, err := url.Parse(redirectURI)
 	if err != nil || u.Scheme == "" {
 		return false
-	}
-
-	if strings.HasPrefix(u.Scheme, "vikunja-") {
-		return true
 	}
 
 	if u.Scheme == "http" {

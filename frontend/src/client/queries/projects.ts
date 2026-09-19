@@ -20,7 +20,7 @@ import {queryClient} from '@/client/queryClient'
 import {PERMISSIONS} from '@/constants/permissions'
 import {colorFromHex} from '@/helpers/color/colorFromHex'
 import {removeProjectFromHistory} from '@/modules/projectHistory'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 
 import {contextMutationOptions} from './contextMutation'
 import {fetchAllPages} from './fetchAllPages'
@@ -290,7 +290,7 @@ export function createProjectMutationOptions() {
 			)
 		},
 		onSettled: (_input, client) => client.invalidateQueries({queryKey: projectKeys.list()}),
-		successMessage: () => i18n.global.t('project.create.createdSuccess'),
+		successMessage: () => translate('project.create.createdSuccess'),
 		toastError,
 	})
 }
@@ -399,7 +399,7 @@ export function setProjectSubscriptionMutationOptions() {
 				...ids.map(id => client.invalidateQueries({queryKey: projectKeys.detail(id)})),
 			])
 		},
-		successMessage: (_subscription, {subscribed}) => i18n.global.t(subscribed
+		successMessage: (_subscription, {subscribed}) => translate(subscribed
 			? 'task.subscription.subscribeSuccessProject'
 			: 'task.subscription.unsubscribeSuccessProject'),
 		toastError,
@@ -432,7 +432,7 @@ export function deleteProjectMutationOptions() {
 			removeProjectFromHistory({id})
 		},
 		onSettled: (_input, client) => client.invalidateQueries({queryKey: projectKeys.list()}),
-		successMessage: () => i18n.global.t('project.delete.success'),
+		successMessage: () => translate('project.delete.success'),
 		toastError,
 	})
 }
@@ -459,7 +459,7 @@ export function duplicateProjectMutationOptions() {
 			)
 		},
 		onSettled: (_input, client) => client.invalidateQueries({queryKey: projectKeys.list()}),
-		successMessage: () => i18n.global.t('project.duplicate.success'),
+		successMessage: () => translate('project.duplicate.success'),
 		toastError,
 	})
 }

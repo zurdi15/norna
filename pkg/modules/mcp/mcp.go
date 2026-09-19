@@ -59,7 +59,7 @@ type Module struct {
 }
 
 // Tools come from api's operations, so apiv2.RegisterAll must have run — AutoPatch adds its PATCH ops there.
-// allowOrigin (nil trusts none) admits the wildcard-port origins Vikunja's CORS config allows and the stdlib check does not.
+// allowOrigin (nil trusts none) admits the wildcard-port origins Norna's CORS config allows and the stdlib check does not.
 func New(api huma.API, allowOrigin func(origin string) bool) (*Module, error) {
 	index, order, err := buildTools(api.OpenAPI(), apiv2.GroupPrefix)
 	if err != nil {
@@ -83,7 +83,7 @@ func (m *Module) Register(group *echo.Group) {
 
 func (m *Module) newServerForRequest(req *http.Request) *mcp.Server {
 	srv := mcp.NewServer(&mcp.Implementation{
-		Name:    "vikunja",
+		Name:    "norna",
 		Version: version.Version,
 	}, &mcp.ServerOptions{Instructions: serverInstructions})
 	m.addToolsAuthorizedBy(srv, tokenFrom(humabridge.EchoContextFrom(req.Context())))

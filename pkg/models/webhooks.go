@@ -60,8 +60,8 @@ type Webhook struct {
 	ProjectID int64 `xorm:"bigint null index" json:"project_id" param:"project" readOnly:"true" doc:"The id of the project this webhook target belongs to. Set from the URL, not the body."`
 	// The user ID if this is a user-level webhook (mutually exclusive with ProjectID)
 	UserID int64 `xorm:"bigint null index" json:"user_id" readOnly:"true" doc:"The id of the user if this is a user-level webhook (mutually exclusive with project_id)."`
-	// If provided, webhook requests will be signed using HMAC. Check out the docs about how to use this: https://vikunja.io/docs/webhooks/#signing
-	Secret string `xorm:"null" json:"secret" writeOnly:"true" doc:"If provided, webhook requests will be signed using HMAC. See https://vikunja.io/docs/webhooks/#signing. Write-only: never returned in responses."`
+	// If provided, webhook requests will be signed using HMAC-SHA256 over the request body, sent hex-encoded in the X-Norna-Signature header.
+	Secret string `xorm:"null" json:"secret" writeOnly:"true" doc:"If provided, webhook requests will be signed using HMAC-SHA256 over the request body, sent hex-encoded in the X-Norna-Signature header. Write-only: never returned in responses."`
 	// If provided, webhook requests will be sent with a Basic Auth header.
 	BasicAuthUser     string `xorm:"null" json:"basic_auth_user" writeOnly:"true" doc:"If provided together with basic_auth_password, webhook requests will be sent with a Basic Auth header. Write-only: never returned in responses."`
 	BasicAuthPassword string `xorm:"null" json:"basic_auth_password" writeOnly:"true" doc:"The password for the Basic Auth header. Write-only: never returned in responses."`
@@ -359,14 +359,14 @@ func (w *Webhook) sendWebhookPayload(p *WebhookPayload) (err error) {
 			log.Errorf("Could not generate webhook signature for Webhook %d: %s", w.ID, err)
 		}
 		signature := hex.EncodeToString(sig256.Sum(nil))
-		req.Header.Add("X-Vikunja-Signature", signature)
+		req.Header.Add("X-Norna-Signature", signature)
 	}
 
 	if len(w.BasicAuthUser) > 0 && len(w.BasicAuthPassword) > 0 {
 		req.Header.Add("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(w.BasicAuthUser+":"+w.BasicAuthPassword)))
 	}
 
-	req.Header.Add("User-Agent", "Vikunja/"+version.Version)
+	req.Header.Add("User-Agent", "Norna/"+version.Version)
 	req.Header.Add("Content-Type", "application/json")
 
 	client := getWebhookHTTPClient()

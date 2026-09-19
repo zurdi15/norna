@@ -1,734 +1,238 @@
 {
-	"404": {
-		"title": "No encontrado",
-		"text": "La página solicitada no existe."
-	},
 	"home": {
 		"welcomeNight": "¡Buenas Noches {username}!",
 		"welcomeMorning": "¡Buenos Días {username}!",
 		"welcomeDay": "¡Hola {username}!",
 		"welcomeEvening": "¡Buenas Tardes {username}!",
-		"lastViewed": "Visto por última vez",
-		"addToHomeScreen": "Añade esta aplicación a tu pantalla de inicio para un acceso más rápido y una experiencia mejorada.",
-		"project": {
-			"importText": "Importa tus proyectos y tareas de otros servicios a Vikunja:",
-			"import": "Importa tus datos a Vikunja"
-		}
-	},
-	"ready": {
-		"loading": "Vikunja está cargando…",
-		"errorOccured": "Se ha producido un error:",
-		"checkApiUrl": "Por favor, comprueba que la url de la api es correcta.",
-		"noApiUrlConfigured": "Ninguna URL de la API fue configurada. Por favor, establezca una abajo:"
-	},
-	"offline": {
-		"title": "Estás desconectado.",
-		"text": "Por favor, compruebe su conexión de red e inténtelo de nuevo."
+		"welcomeDayBack": "De vuelta, {username}",
+		"welcomeDayFocus": "A concentrarse, {username}",
+		"welcomeDayGood": "Buenas tardes, {username}",
+		"welcomeDayKeepGoing": "Sigue así, {username}",
+		"welcomeDayWhatsNext": "¿Qué toca ahora, {username}?",
+		"welcomeEveningOneMore": "¿Una cosa más, {username}?",
+		"welcomeEveningReturns": "Vuelve {username}",
+		"welcomeEveningStill": "¿Todavía con ello, {username}?",
+		"welcomeEveningWind": "¿Bajando el ritmo, {username}?",
+		"welcomeEveningWrap": "¿Hora de cerrar, {username}?",
+		"welcomeFridayPush": "¿Último empujón del viernes, {username}?",
+		"welcomeMondayFresh": "Semana nueva, {username}",
+		"welcomeMorningBack": "Hola de nuevo, {username}",
+		"welcomeMorningCoffee": "¿Café y tareas, {username}?",
+		"welcomeMorningFresh": "Empezamos de cero, {username}",
+		"welcomeMorningHey": "Hola, {username}, ¿empezamos?",
+		"welcomeMorningRise": "A planificar el día, {username}",
+		"welcomeNightBurning": "¿Quemando las naves, {username}?",
+		"welcomeNightLate": "Es tarde, {username}",
+		"welcomeNightMoonlit": "¿Planes a la luz de la luna, {username}?",
+		"welcomeNightOwl": "Hola, ave nocturna {username}",
+		"welcomeNightQuiet": "Horas tranquilas, {username}",
+		"welcomeSaturday": "Modo fin de semana, {username}",
+		"welcomeSundaySession": "¿Sesión de domingo, {username}?",
+		"welcomeThursday": "Ya casi, {username}",
+		"welcomeTuesday": "Feliz martes, {username}",
+		"welcomeWednesdayMid": "Mitad de semana, {username}"
 	},
 	"user": {
 		"auth": {
-			"username": "Nombre de usuario",
-			"usernameEmail": "Nombre de usuario o dirección de correo",
-			"usernamePlaceholder": "ej. Federico",
-			"email": "Dirección de correo electrónico",
-			"emailPlaceholder": "ej. federico{'@'}vikunja.io",
-			"password": "Contraseña",
-			"forgotPassword": "¿Olvidaste tu contraseña?",
 			"resetPassword": "Restablecer tu contraseña",
-			"resetPasswordAction": "Envíame un enlace para restablecer la contraseña",
-			"confirmEmailSuccess": "¡Has confirmado correctamente tu correo electrónico! Ya puedes conectarte.",
-			"totpTitle": "Código de autenticación de dos factores",
-			"totpPlaceholder": "ej. 123456",
 			"login": "Iniciar sesión",
-			"createAccount": "Crear cuenta",
-			"loginWith": "Inicie sesión con {provider}",
-			"authenticating": "Autenticando…",
-			"openIdStateError": "El estado no coincide, ¡negándose a continuar!",
-			"logout": "Cerrar sesión",
-			"emailInvalid": "Por favor, introduce una dirección de correo electrónico válida.",
-			"usernameRequired": "Por favor, proporciona un nombre de usuario.",
-			"passwordRequired": "Por favor, proporciona una contraseña.",
-			"showPassword": "Mostrar la contraseña",
-			"hidePassword": "Ocultar la contraseña",
-			"noAccountYet": "¿Aún no tienes una cuenta?",
-			"alreadyHaveAnAccount": "¿Ya tienes una cuenta?",
-			"remember": "Mantener la sesión abierta"
+			"createAccount": "Crear cuenta"
 		},
 		"settings": {
-			"title": "Ajustes",
-			"newPasswordTitle": "Actualiza tu contraseña",
-			"currentPasswordPlaceholder": "Tu contraseña actual",
-			"passwordUpdateSuccess": "La contraseña se actualizó con éxito.",
-			"updateEmailTitle": "Actualiza tu Dirección de Correo Electrónico",
 			"general": {
-				"title": "Ajustes Generales",
-				"savedSuccess": "Ajustes actualizados con éxito.",
-				"overdueReminders": "Enviarme un resumen de mis tareas pendientes todos los días",
-				"discoverableByName": "Permitir que otros usuarios me agreguen como miembro a equipos o proyectos cuando busquen mi nombre",
-				"discoverableByEmail": "Permitir a otros usuarios añadirme como miembro a equipos o proyectos cuando busquen mi email completo",
-				"playSoundWhenDone": "Reproducir un sonido cuando marque tareas como completadas",
-				"weekStart": "La semana empieza en",
-				"weekStartSunday": "Domingo",
-				"weekStartMonday": "Lunes",
-				"language": "Idioma",
-				"overdueTasksRemindersTime": "Hora de envío del correo electrónico de tareas pendientes",
-				"filterUsedOnOverview": "Filtro guardado utilizado en la página de resumen"
+				"savedSuccess": "Ajustes actualizados con éxito."
 			},
-			"totp": {
-				"title": "Autenticación de dos factores",
-				"enroll": "Inscribirse",
-				"finishSetupPart2": "Después, introduce un código de tu aplicación abajo.",
-				"scanQR": "Alternativamente, escanea este código QR:",
-				"passcode": "Código de acceso",
-				"setupSuccess": "¡Has configurado con éxito la autenticación de dos factores!",
-				"enterPassword": "Por favor, introduce tu contraseña",
-				"disable": "Deshabilitar la autenticación de dos factores",
-				"disableSuccess": "La autenticación de dos factores desactivada con éxito."
-			},
-			"caldav": {
-				"title": "CalDAV",
-				"more": "Más información sobre CalDAV en Vikunja",
-				"tokens": "Tokens CalDAV"
-			},
-			"avatar": {
-				"title": "Avatar",
-				"initials": "Iniciales",
-				"gravatar": "Gravatar",
-				"marble": "Marble",
-				"upload": "Subir",
-				"uploadAvatar": "Subir Avatar",
-				"statusUpdateSuccess": "¡El estado del avatar se ha actualizado con éxito!",
-				"setSuccess": "¡El avatar se ha establecido con éxito!"
-			},
-			"quickAddMagic": {
-				"title": "Modo mágico de adición rápida",
-				"disabled": "Desactivado",
-				"todoist": "Todoist",
-				"vikunja": "Vikunja"
-			},
-			"appearance": {
-				"title": "Esquema de colores",
-				"colorScheme": {
-					"light": "Claro",
-					"system": "Sistema",
-					"dark": "Oscuro"
-				}
-			}
-		},
-		"deletion": {
-			"title": "Eliminar tu Cuenta de Vikunja",
-			"text1": "El borrado de tu cuenta es permanente y no puede deshacerse. Borraremos todos tus proyectos, tareas y todo lo que esté asociado con ellos.",
-			"text2": "Para continuar, por favor, introduce tu contraseña. Recibirás un correo electrónico con más instrucciones.",
-			"confirm": "Eliminar mi cuenta",
-			"requestSuccess": "La solicitud ha sido exitosa. Recibirás un correo electrónico con más instrucciones.",
-			"passwordRequired": "Por favor, introduce tu contraseña.",
-			"confirmSuccess": "Has confirmado con éxito la eliminación de tu cuenta. En tres días eliminaremos tu cuenta.",
-			"scheduled": "Eliminaremos tu cuenta de Vikunja en {date} ({dateSince}).",
-			"scheduledCancel": "Para cancelar la eliminación de tu cuenta, haz clic aquí.",
-			"scheduledCancelText": "Para cancelar la eliminación de tu cuenta, por favor, introduce tu contraseña a continuación:",
-			"scheduledCancelConfirm": "Cancelar la eliminación de mi cuenta",
-			"scheduledCancelSuccess": "No eliminaremos tu cuenta."
-		},
-		"export": {
-			"title": "Exportar tus datos de Vikunja",
-			"description": "Puedes solicitar una copia de todos tus datos de Vikunja. Esto incluye Proyectos, Tareas y todo lo relacionado con ellos. Puede importar estos datos en cualquier instancia de Vikunja a través de la función de migración.",
-			"descriptionPasswordRequired": "Por favor, introduce tu contraseña para continuar:",
-			"request": "Solicitar una copia de mis datos de Vikunja",
-			"success": "Tu petición de datos de Vikunja ha sido procesada correctamente. Te enviaremos un correo una vez esté lista para descargar.",
-			"downloadTitle": "Descargar tus datos de Vikunja exportados"
+			"updateEmailConfirmed": "Tu nuevo email está confirmado."
 		}
 	},
 	"project": {
-		"archivedMessage": "Este proyecto está archivado. Ya no es posible crear o editar tareas para él.",
-		"archived": "Archivado",
-		"showArchived": "Mostrar Archivados",
-		"color": "Color",
-		"projects": "Proyectos",
-		"parent": "Proyecto principal",
-		"search": "Escribe para buscar un proyecto…",
-		"searchSelect": "Haz clic o pulsa enter para seleccionar este proyecto",
-		"shared": "Proyectos compartidos",
-		"noDescriptionAvailable": "No hay una descripción del proyecto disponible.",
 		"inboxTitle": "Bandeja de entrada",
 		"create": {
-			"header": "Nuevo proyecto",
-			"titlePlaceholder": "El título del proyecto va aquí…",
-			"addTitleRequired": "Por favor, especifica un título.",
 			"createdSuccess": "El proyecto ha sido creado con éxito.",
 			"addProjectRequired": "Por favor, especifica un proyecto o elige un proyecto por defecto en la configuración."
 		},
-		"archive": {
-			"title": "Archivar \"{project}\"",
-			"archive": "Archiva este proyecto",
-			"unarchive": "Desarchivar este proyecto",
-			"success": "El proyecto ha sido archivado con éxito."
-		},
-		"background": {
-			"title": "Establecer fondo del proyecto",
-			"remove": "Eliminar fondo",
-			"upload": "Elegir un fondo desde tu ordenador",
-			"searchPlaceholder": "Buscar un fondo…",
-			"poweredByUnsplash": "Con la tecnología de Unsplash",
-			"loadMore": "Cargar más fotos",
-			"success": "¡El fondo se ha establecido con éxito!",
-			"removeSuccess": "¡El fondo se ha eliminado con éxito!"
-		},
 		"delete": {
-			"title": "Eliminar \"{project}\"",
-			"header": "Eliminar este proyecto",
-			"text1": "¿Estás seguro de que quieres eliminar este proyecto y todo su contenido?",
-			"text2": "¡Esto incluye todas las tareas y NO SE PUEDE DESHACER!",
-			"success": "El proyecto se eliminó con éxito.",
-			"tasksToDelete": "Esto eliminará de forma definitiva aprox. {count} tareas.",
-			"noTasksToDelete": "Este proyecto no contiene tareas. Debería ser seguro eliminarlo."
+			"success": "El proyecto se eliminó con éxito."
 		},
 		"duplicate": {
-			"title": "Duplicar este proyecto",
-			"label": "Duplicar",
-			"text": "Seleccione el proyecto principal que debería contener el proyecto duplicado:",
 			"success": "El proyecto se ha duplicado correctamente."
-		},
-		"edit": {
-			"header": "Editar este Proyecto",
-			"title": "Editar \"{project}\"",
-			"titlePlaceholder": "El título del proyecto va aquí…",
-			"identifierTooltip": "El identificador de lista se puede usar para identificar una tarea de forma única a través de las listas. Puedes establecerlo en 'empty' para desactivarlo.",
-			"identifier": "Identificador del proyecto",
-			"identifierPlaceholder": "El identificador del proyecto va aquí…",
-			"description": "Descripción",
-			"color": "Color",
-			"success": "El proyecto se ha actualizado con éxito."
-		},
-		"share": {
-			"header": "Compartir este proyecto",
-			"title": "Compartir \"{project}\"",
-			"share": "Compartir",
-			"links": {
-				"title": "Compartir Enlaces",
-				"what": "¿Qué es un enlace compartido?",
-				"explanation": "Los Enlaces Compartidos te permiten compartir fácilmente un proyecto con otros usuarios que no tienen una cuenta en Vikunja.",
-				"name": "Nombre (opcional)",
-				"namePlaceholder": "ej. Lorem Ipsum",
-				"nameExplanation": "Todas las acciones realizadas por este enlace compartido se mostrarán con el nombre.",
-				"password": "Contraseña (opcional)",
-				"passwordExplanation": "Al iniciar sesión, el usuario deberá introducir esta contraseña.",
-				"noName": "No hay nombre establecido",
-				"remove": "Eliminar un enlace compartido",
-				"removeText": "¿Estás seguro de que deseas eliminar este enlace compartido? Ya no será posible acceder a esta lista con este enlace compartido. ¡Esto no se puede deshacer!",
-				"createSuccess": "El enlace compartido se ha creado correctamente.",
-				"deleteSuccess": "El enlace compartido se ha eliminado correctamente",
-				"view": "Vista",
-				"sharedBy": "Compartido por {0}"
-			},
-			"userTeam": {
-				"typeUser": "usuario | usuarios",
-				"typeTeam": "equipo | equipos",
-				"shared": "Compartido con estos {type}",
-				"you": "Tú",
-				"notShared": "No compartido con ningún {type} todavía.",
-				"removeHeader": "Eliminar un {type} de la {sharable}",
-				"removeText": "¿Estás seguro de que quieres eliminar este {sharable} del {type}? ¡Esto no se puede deshacer!",
-				"removeSuccess": "El {sharable} fue eliminado correctamente de {type}.",
-				"addedSuccess": "El {type} se ha añadido correctamente.",
-				"updatedSuccess": "El {type} se ha añadido correctamente."
-			},
-			"attributes": {
-				"link": "Enlace",
-				"delete": "Eliminar"
-			}
-		},
-		"list": {
-			"title": "Lista",
-			"add": "Añadir",
-			"empty": "Este proyecto está actualmente vacío.",
-			"editTask": "Editar Tarea"
-		},
-		"gantt": {
-			"title": "Gantt",
-			"size": "Tamaño",
-			"default": "Predeterminado",
-			"month": "Mes",
-			"day": "Día",
-			"hour": "Hora"
-		},
-		"table": {
-			"title": "Tabla",
-			"columns": "Columnas"
 		},
 		"kanban": {
 			"title": "Kanban",
-			"limit": "Límite: {limit}",
-			"doneBucket": "Contenedor completado",
-			"doneBucketHint": "Todas las tareas movidas a este contenedor se marcarán automáticamente como finalizadas.",
-			"doneBucketHintExtended": "Todas las tareas movidas al contenedor completado se marcarán como finalizadas automáticamente. Todas las tareas marcadas como finalizadas desde otro lugar también se moverán.",
-			"doneBucketSavedSuccess": "El contenedor completado se ha guardado correctamente.",
-			"deleteLast": "No puedes eliminar el último contenedor.",
-			"addTaskPlaceholder": "Introduce el nuevo título de la tarea…",
-			"addTask": "Añadir una tarea",
-			"addAnotherTask": "Añadir otra tarea",
-			"addBucketPlaceholder": "Introduzca el nuevo título del contenedor…",
-			"deleteHeaderBucket": "Eliminar el contenedor",
-			"deleteBucketText1": "¿Estás seguro de que quieres eliminar este contenedor?",
-			"deleteBucketText2": "Esto no eliminará ninguna tarea, sino que las moverá al contenedor por defecto.",
-			"deleteBucketSuccess": "El contenedor se ha eliminado con éxito.",
-			"bucketTitleSavedSuccess": "El título del contenedor se ha guardado con éxito.",
-			"bucketLimitSavedSuccess": "El límite del contenedor se ha guardado con éxito.",
-			"collapse": "Contraer este contenedor"
+			"deleteBucketSuccess": "Columna eliminada",
+			"bucketTitleSavedSuccess": "Columna renombrada",
+			"bucketLimitSavedSuccess": "Límite de la columna guardado"
 		},
 		"pseudo": {
 			"favorites": {
 				"title": "Favoritos"
 			}
+		},
+		"description": "Descripción del proyecto",
+		"myOpenTasksFilterTitle": "Mis tareas abiertas",
+		"title": "Título",
+		"views": {
+			"createSuccess": "Vista creada",
+			"updateSuccess": "Vista guardada"
 		}
 	},
 	"filters": {
 		"title": "Filtros",
-		"clear": "Limpiar Filtros",
-		"attributes": {
-			"title": "Título",
-			"titlePlaceholder": "El título del filtro guardado va aquí…",
-			"description": "Descripción",
-			"includeNulls": "Incluye tareas que no tienen un valor establecido"
-		},
-		"create": {
-			"title": "Nuevo Filtro Guardado",
-			"description": "Un filtro guardado es un proyecto virtual que se calcula a partir de un conjunto de filtros cada vez que se accede.",
-			"titleRequired": "Por favor, introduce un título para el filtro."
-		},
+		"clear": "Limpiar",
 		"delete": {
-			"header": "Eliminar este filtro guardado",
-			"text": "¿Estás seguro de que quieres eliminar este filtro guardado?",
 			"success": "El filtro se eliminó con éxito."
 		},
 		"edit": {
-			"title": "Editar este Filtro Guardado",
 			"success": "El filtro se guardó con éxito."
+		},
+		"showDone": "Mostrar tareas completadas",
+		"includeNulls": "Incluir tareas sin fechas",
+		"includeNullsHint": "Solo afecta al filtrar por una fecha.",
+		"activeCount": "{count} condición activa | {count} condiciones activas",
+		"query": {
+			"label": "Consulta de filtro",
+			"placeholder": "done = false && dueDate < now+7d"
+		},
+		"help": {
+			"toggle": "Sintaxis",
+			"fields": "Campos",
+			"groups": {
+				"dates": "Fechas",
+				"people": "Personas",
+				"organize": "Organización",
+				"status": "Estado"
+			},
+			"operators": "Operadores",
+			"relativeDates": "Fechas relativas",
+			"relativeDatesHint": "Suma o resta d (días), w (semanas), M (meses) o y (años) a now; /d redondea al inicio del día.",
+			"examples": "Ejemplos",
+			"insert": "Insertar {token}",
+			"exampleDueSoon": "Sin completar y con vencimiento en 7 días",
+			"exampleUrgent": "Prioridad 4 o más, o con la etiqueta urgent"
 		}
-	},
-	"migrate": {
-		"title": "Importar desde otros servicios",
-		"titleService": "Importar tus datos desde {name} a Vikunja",
-		"description": "Haz clic en el logo de uno de los servicios de terceros abajo para empezar.",
-		"descriptionDo": "Vikunja importará todas las listas, tareas, notas, recordatorios y archivos a los que tienes acceso.",
-		"authorize": "Para autorizar a Vikunja a acceder a tu cuenta {name} , haz clic en el botón de abajo.",
-		"getStarted": "Empecemos",
-		"inProgress": "Importación en progreso...",
-		"alreadyMigrated1": "Parece que ya has importado tus cosas desde {name} el {date}.",
-		"alreadyMigrated2": "Importar de nuevo es posible, pero puede crear duplicados. ¿Estás seguro?",
-		"confirm": "Estoy seguro, ¡por favor empieza a migrar ahora!",
-		"importUpload": "Para importar datos de {name} a Vikunja, haz clic en el botón de abajo para seleccionar un archivo.",
-		"upload": "Subir archivo"
 	},
 	"label": {
 		"title": "Etiquetas",
-		"manage": "Administrar etiquetas",
 		"description": "Haz clic en una etiqueta para editarla. Puedes editar todas las etiquetas que hayas creado, puedes usar todas las etiquetas que estén asociadas con una tarea a cuyo proyecto tengas acceso.",
-		"newCTA": "Actualmente no tienes ninguna etiqueta.",
-		"create": {
-			"header": "Nueva etiqueta",
-			"titleRequired": "Por favor, especifica un título.",
-			"success": "La etiqueta se ha creado correctamente."
-		},
 		"edit": {
-			"header": "Editar etiqueta",
 			"success": "La etiqueta se ha actualizado correctamente."
 		},
-		"deleteSuccess": "La etiqueta se ha eliminado correctamente.",
-		"attributes": {
-			"title": "Título",
-			"titlePlaceholder": "El título de la etiqueta va aquí…",
-			"description": "Descripción",
-			"color": "Color"
-		}
-	},
-	"sharing": {
-		"authenticating": "Autenticando…",
-		"passwordRequired": "Este proyecto compartido requiere una contraseña. Por favor introdúcelo debajo:",
-		"invalidPassword": "La contraseña es inválida."
-	},
-	"navigation": {
-		"overview": "Resumen",
-		"upcoming": "Próximas",
-		"settings": "Ajustes",
-		"imprint": "Imprimir",
-		"privacy": "Política de privacidad"
+		"deleteSuccess": "La etiqueta se ha eliminado correctamente."
 	},
 	"misc": {
-		"loading": "Cargando…",
 		"save": "Guardar",
 		"delete": "Eliminar",
-		"confirm": "Confirmar",
 		"cancel": "Cancelar",
-		"disable": "Desactivar",
-		"copy": "Copiar al portapapeles",
 		"copyError": "Error al copiar al portapapeles",
-		"searchPlaceholder": "Escribe algo para buscar…",
-		"previous": "Anterior",
-		"next": "Siguiente",
-		"poweredBy": "Con tecnología de Vikunja",
-		"create": "Crear",
-		"doit": "¡Hazlo!",
-		"saving": "Guardando…",
-		"saved": "¡Guardado!",
-		"default": "Predeterminado",
-		"close": "Cerrar",
-		"download": "Descargar",
-		"showMenu": "Ver el menú",
-		"hideMenu": "Oculta el menú",
-		"forExample": "Por ejemplo:",
-		"welcomeBack": "¡Bienvenido de nuevo!",
-		"custom": "Personalizado",
-		"id": "ID",
-		"created": "Creado en",
-		"actions": "Acciones",
-		"cannotBeUndone": "¡No se puede deshacer!"
+		"custom": "Personalizado"
 	},
 	"input": {
-		"resetColor": "Restablecer color",
-		"datepicker": {
-			"today": "Hoy",
-			"tomorrow": "Mañana",
-			"nextMonday": "El próximo lunes",
-			"thisWeekend": "Este fin de semana",
-			"laterThisWeek": "Más tarde esta semana",
-			"nextWeek": "La próxima semana",
-			"chooseDate": "Elige una fecha"
-		},
 		"editor": {
-			"edit": "Editar",
 			"heading1": "Encabezado 1",
 			"heading2": "Encabezado 2",
 			"heading3": "Encabezado 3",
 			"bold": "Negrita",
 			"italic": "Cursiva",
 			"strikethrough": "Tachado",
-			"code": "Código",
 			"quote": "Cita",
 			"link": "Enlace",
 			"image": "Imagen",
-			"horizontalRule": "Regla Horizontal"
-		},
-		"multiselect": {
-			"selectPlaceholder": "Clic o Enter para seleccionar"
-		},
-		"datepickerRange": {
-			"to": "Para",
-			"from": "De",
-			"fromto": "De {from} para {to}",
-			"ranges": {
-				"today": "Hoy",
-				"thisWeek": "Esta Semana",
-				"restOfThisWeek": "El Resto de la Semana",
-				"nextWeek": "La Semana que Viene",
-				"next7Days": "Los Próximos 7 Días",
-				"lastWeek": "La Semana Pasada",
-				"thisMonth": "Este Mes",
-				"restOfThisMonth": "El Resto del Mes",
-				"nextMonth": "El Mes que Viene",
-				"next30Days": "Los Próximos 30 Días",
-				"lastMonth": "El Mes Pasado",
-				"thisYear": "Este Año",
-				"restOfThisYear": "El Resto del Año"
-			}
-		},
-		"datemathHelp": {
-			"canuse": "Puedes usar ecuaciones para filtrar por fechas relacionadas.",
-			"learnhow": "Mira cómo funciona",
-			"title": "Ecuaciones",
-			"intro": "Especifique fechas relativas que se resuelvan sobre la marcha por Vikunja al aplicar el filtro.",
-			"expression": "Cada expresión matemática empieza con una fecha ancla, que puede ser {0}, o una cadena de texto que acabe en {1}. Opcionalmente, esta fecha puede estar seguida de una o más expresiones.",
-			"similar": "Estas expresiones son similares a las definidas en {0} y {1}.",
-			"add1Day": "Añadir un día",
-			"minus1Day": "Resta un día",
-			"roundDay": "Redondear a la baja al día más cercano",
-			"supportedUnits": "Unidades de tiempo admitidas",
-			"someExamples": "Ejemplos de expresiones de tiempo",
-			"units": {
-				"seconds": "Segundos",
-				"minutes": "Minutos",
-				"hours": "Horas",
-				"days": "Días",
-				"weeks": "Semanas",
-				"months": "Meses",
-				"years": "Años"
+			"label": "Editor de texto enriquecido",
+			"heading1Tooltip": "Encabezado de sección grande.",
+			"heading2Tooltip": "Encabezado de sección mediano.",
+			"heading3Tooltip": "Encabezado de sección pequeño.",
+			"underline": "Subrayado",
+			"codeTooltip": "Un fragmento de código.",
+			"quoteTooltip": "Una cita.",
+			"bulletList": "Lista con viñetas",
+			"bulletListTooltip": "Una lista sencilla con viñetas.",
+			"orderedList": "Lista numerada",
+			"orderedListTooltip": "Una lista con números.",
+			"urlPlaceholder": "URL",
+			"altText": "Texto alternativo",
+			"altTextPlaceholder": "Describe esta imagen",
+			"toolbarLabel": "Formato de texto",
+			"horizontalRuleTooltip": "Divide una sección.",
+			"text": "Texto",
+			"textTooltip": "Empieza a escribir texto normal.",
+			"taskList": "Lista de tareas",
+			"taskListTooltip": "Sigue tareas con una lista de pendientes.",
+			"undo": "Deshacer",
+			"redo": "Rehacer",
+			"placeholder": "Escribe algo o usa «/» para ver más opciones…",
+			"table": {
+				"title": "Tabla",
+				"insert": "Insertar tabla",
+				"addColumnBefore": "Añadir columna antes",
+				"addColumnAfter": "Añadir columna después",
+				"deleteColumn": "Eliminar columna",
+				"addRowBefore": "Añadir fila antes",
+				"addRowAfter": "Añadir fila después",
+				"deleteRow": "Eliminar fila",
+				"deleteTable": "Eliminar tabla",
+				"toggleHeaderRow": "Alternar fila de encabezado",
+				"mergeOrSplit": "Combinar o dividir"
 			},
-			"examples": {
-				"now": "Ahora mismo",
-				"in24h": "En 24h",
-				"today": "Hoy a las 00:00",
-				"beginningOfThisWeek": "El inicio de esta semana a las 00:00",
-				"endOfThisWeek": "El final de esta semana",
-				"in30Days": "En 30 días",
-				"datePlusMonth": "{0} más un mes a las 00:00 de ese día"
+			"emoji": {
+				"empty": "No se encontró ningún emoji"
 			}
 		}
 	},
 	"task": {
-		"createSuccess": "La tarea se ha creado con éxito.",
 		"doneSuccess": "La tarea fue marcada con éxito como realizada.",
 		"undoneSuccess": "La tarea fue marcada correctamente como incompleta.",
-		"undo": "Deshacer",
-		"checklistTotal": "{checked} de {total} tareas",
-		"checklistAllDone": "{total} tareas",
-		"show": {
-			"titleCurrent": "Tareas en Curso",
-			"overdue": "Mostrar tareas vencidas",
-			"fromuntil": "Tareas desde {from} hasta {until}",
-			"select": "Seleccionar un rango de fechas",
-			"noTasks": "Nada que hacer — ¡Que tenga un buen día!"
-		},
 		"detail": {
-			"chooseDueDate": "Clic aquí para establecer fecha de vencimiento",
-			"chooseStartDate": "Clic aquí para establecer fecha de inicio",
-			"chooseEndDate": "Clic aquí para establecer fecha de fin",
-			"move": "Mover tarea a un proyecto diferente",
-			"done": "Marcar tarea como ¡completada!",
-			"undone": "Marcar como sin terminar",
-			"created": "Creado {0} por {1}",
-			"updated": "Actualizado {0}",
-			"doneAt": "Hecho {0}",
 			"updateSuccess": "La tarea se ha guardado con éxito.",
 			"deleteSuccess": "La tarea se ha eliminado con éxito.",
-			"belongsToProject": "Esta tarea pertenece al proyecto '{project}'",
-			"due": "Vence {at}",
-			"delete": {
-				"header": "Eliminar esta tarea",
-				"text1": "¿Está seguro que desea eliminar esta tarea?",
-				"text2": "También se eliminará todos los adjuntos, recordatorios y relaciones asociadas a esta tarea y ¡no se puede deshacer!"
-			},
-			"actions": {
-				"assign": "Asignar al Usuario",
-				"label": "Añadir Etiquetas",
-				"priority": "Establecer prioridad",
-				"dueDate": "Establecer Fecha Límite",
-				"startDate": "Establecer Fecha de Inicio",
-				"endDate": "Establecer Fecha de Fin",
-				"reminders": "Definir Recordatorios",
-				"repeatAfter": "Definir Intervalo de Repetición",
-				"percentDone": "Definir Progreso",
-				"attachments": "Añadir Adjuntos",
-				"relatedTasks": "Añadir una Relación",
-				"moveProject": "Mover",
-				"color": "Definir Color",
-				"delete": "Eliminar",
-				"favorite": "Añadir a Favoritos",
-				"unfavorite": "Sacar de Favoritos"
-			}
+			"duplicateSuccess": "Tarea duplicada"
 		},
 		"attributes": {
-			"assignees": "Responsables",
-			"color": "Color",
-			"created": "Creado",
-			"createdBy": "Creado Por",
-			"description": "Descripción",
 			"done": "Hecho",
-			"dueDate": "Fecha Límite",
-			"endDate": "Fecha de Fin",
-			"labels": "Etiquetas",
-			"percentDone": "Progreso",
-			"priority": "Prioridad",
-			"relatedTasks": "Tareas Relacionadas",
-			"reminders": "Recordatorios",
-			"repeat": "Repetir",
-			"startDate": "Fecha de Inicio",
-			"title": "Título",
-			"updated": "Actualizado"
+			"repeat": "Repetir"
 		},
 		"subscription": {
-			"subscribedProject": "Actualmente estás suscrito a este proyecto y recibirás notificaciones de cambios.",
-			"notSubscribedProject": "No estás suscrito a este proyecto y no recibirás notificaciones de cambios.",
-			"subscribedTask": "Actualmente estás suscrito a esta tarea y recibirás notificaciones de cambios.",
-			"notSubscribedTask": "No estás suscrito a esta tarea y no recibirás notificaciones de cambios.",
-			"subscribe": "Suscribirse",
-			"unsubscribe": "Desuscribirse",
 			"subscribeSuccessProject": "Ahora estás suscrito a este proyecto",
 			"unsubscribeSuccessProject": "Ya no estás suscrito a este proyecto",
 			"subscribeSuccessTask": "Ahora estás suscrito a esta tarea",
 			"unsubscribeSuccessTask": "Ya no estás suscrito a esta tarea"
 		},
 		"attachment": {
-			"title": "Adjuntos",
-			"createdBy": "creado {0} por {1}",
-			"downloadTooltip": "Descargar este adjunto",
-			"upload": "Subir adjunto",
-			"drop": "Suelte aquí los archivos para subirlos",
-			"delete": "Eliminar adjunto",
-			"deleteTooltip": "Eliminar este adjunto",
-			"deleteText1": "¿Está seguro que desea eliminar el adjunto {filename}?",
-			"copyUrlTooltip": "Copiar la URL de este adjunto para su uso en el texto",
-			"setAsCover": "Crear portada",
-			"unsetAsCover": "Quitar portada",
-			"successfullyChangedCoverImage": "La imagen de portada fue cambiada con éxito.",
-			"usedAsCover": "Imagen de portada"
+			"successfullyChangedCoverImage": "La imagen de portada fue cambiada con éxito."
 		},
 		"comment": {
-			"title": "Comentarios",
-			"loading": "Cargando comentarios…",
-			"edited": "editado {date}",
-			"creating": "Creando comentario…",
-			"comment": "Comentar",
-			"delete": "Eliminar este comentario",
-			"deleteText1": "¿Está seguro que desea eliminar este comentario?",
-			"deleteSuccess": "El comentario fue eliminado con éxito.",
-			"addedSuccess": "El comentario fue añadido con éxito."
+			"jumpToOriginal": "Ir al comentario original",
+			"deletedComment": "comentario eliminado"
 		},
-		"deferDueDate": {
-			"title": "Aplazar fecha de vencimiento",
-			"1day": "1 día",
-			"3days": "3 días",
-			"1week": "1 semana"
+		"mention": {
+			"noUsersFound": "No se encontraron usuarios"
 		},
-		"assignee": {
-			"placeholder": "Escriba para asignar un usuario…",
-			"selectPlaceholder": "Asignar este usuario",
-			"assignSuccess": "El usuario ha sido asignado con éxito.",
-			"unassignSuccess": "El usuario ha sido desasignado con éxito."
-		},
-		"label": {
-			"createPlaceholder": "Añadir esto como nueva etiqueta",
-			"addSuccess": "La etiqueta ha sido añadida con éxito.",
-			"removeSuccess": "La etiqueta ha sido quitada con éxito.",
-			"addCreateSuccess": "La etiqueta ha sido creada y añadida con éxito.",
-			"delete": {
-				"header": "Eliminar esta etiqueta",
-				"text1": "¿Está seguro que quiere eliminar esta etiqueta?",
-				"text2": "Esto lo eliminará de todas las tareas y no se podrá restaurar."
-			}
-		},
-		"priority": {
-			"unset": "Sin definir",
-			"low": "Baja",
-			"medium": "Media",
-			"high": "Alta",
-			"urgent": "Urgente",
-			"doNow": "HACER AHORA"
-		},
-		"relation": {
-			"add": "Añadir una Nueva Tarea Relacionada",
-			"new": "Nueva Tarea Relacionada",
-			"differentProject": "Esta tarea pertenece a un proyecto diferente.",
-			"noneYet": "Aún no hay tareas relacionadas.",
-			"delete": "Eliminar Relación de Tarea",
-			"deleteText1": "¿Está seguro que desea eliminar esta relación de la tarea?",
-			"select": "Selecciona un tipo de relación",
-			"taskRequired": "Por favor, seleccione una tarea o introduzca una nueva.",
-			"kinds": {
-				"subtask": "Subtarea | Subtareas",
-				"parenttask": "Tarea Padre | Tareas Padre",
-				"related": "Tarea Relacionada | Tareas Relacionadas",
-				"duplicateof": "Duplicado De | Duplicados De",
-				"duplicates": "Duplica | Duplica",
-				"blocking": "Bloquea | Bloquea",
-				"blocked": "Bloqueado Por | Bloqueado Por",
-				"precedes": "Precede | Precede",
-				"follows": "Sigue | Sigue",
-				"copiedfrom": "Copiado Desde | Copiado Desde",
-				"copiedto": "Copiado A | Copiado A"
-			}
-		},
-		"reminder": {
-			"before": "{amount} {unit} antes de {type}",
-			"after": "{amount} {unit} después de {type}",
-			"beforeShort": "antes del",
-			"afterShort": "después del",
-			"onDueDate": "En la fecha de vencimiento",
-			"onStartDate": "En la fecha de inicio",
-			"onEndDate": "En la fecha de fin",
-			"custom": "Personalizado",
-			"dateAndTime": "Fecha y hora"
-		},
-		"repeat": {
-			"everyDay": "Cada Día",
-			"everyWeek": "Cada Semana",
-			"mode": "Modo de repetición",
-			"monthly": "Mensualmente",
-			"each": "Cada",
-			"specifyAmount": "Especifique una cantidad…",
-			"hours": "Horas",
-			"days": "Días",
-			"weeks": "Semanas",
-			"invalidAmount": "Por favor introduzca más de 0."
-		},
-		"quickAddMagic": {
-			"hint": "Usar prefijos mágicos para definir fechas de vencimiento, asignados y otras propiedades de tareas.",
-			"title": "Añadido Rápido Mágico",
-			"intro": "Al crear una tarea, puede utilizar palabras clave especiales para añadir directamente atributos a la tarea recién creada. Esto permite agregar atributos comúnmente usados en tareas mucho más rápido.",
-			"multiple": "Puedes usar esto varias veces.",
-			"label1": "Para añadir una etiqueta, simplemente prefija el nombre de la etiqueta con {prefix}.",
-			"label2": "Vikunja comprobará primero si la etiqueta ya existe y la creará en caso contrario.",
-			"label3": "Para utilizar espacios, simplemente añada un \" o ' alrededor del nombre de la etiqueta.",
-			"label4": "Por ejemplo: {prefix}\"Etiqueta con espacios\".",
-			"priority1": "Para establecer la prioridad de una tarea, agregue un número 1-5, prefijado por {prefix}.",
-			"priority2": "Cuanto mayor sea el número, mayor será la prioridad.",
-			"assignees": "Para asignar directamente la tarea a un usuario, agregue su nombre de usuario con el prefijo {prefix} a la tarea.",
-			"project1": "Para establecer un proyecto para que la tarea aparezca en ella, introduzca su nombre con el prefijo {prefix}.",
-			"project2": "Esto devolverá un error si el proyecto no existe.",
-			"project3": "Para usar espacios, simplemente añada un \" o ' alrededor del nombre del proyecto.",
-			"project4": "Por ejemplo: {prefix}\"Proyecto con espacios\".",
-			"dateAndTime": "Fecha y hora",
-			"date": "Cualquier fecha se utilizará como fecha de vencimiento de la tarea nueva. Puede utilizar fechas en cualquiera de estos formatos:",
-			"dateCurrentYear": "se usará el año actual",
-			"dateNth": "se usará el {day}º del mes actual",
-			"dateTime": "Combina cualquiera de los formatos de fecha con \"{time}\" (o {timePM}) para establecer la hora.",
-			"repeats": "Tareas repetitivas",
-			"repeatsDescription": "Para establecer una tarea repetitiva en un intervalo, simplemente añade '{suffix}' al texto de la tarea. La cantidad debe ser un número y puede ser omitido para utilizar solo el tipo (ver ejemplos)."
-		}
+		"bulkCreateUnexpectedResponse": "El servidor ha devuelto un número inesperado de tareas creadas.",
+		"movedToProject": "Movida a {project}"
 	},
 	"team": {
-		"title": "Equipos",
-		"noTeams": "Actualmente no formas parte de ningún equipo.",
 		"create": {
 			"success": "El equipo fue creado con éxito."
 		},
 		"edit": {
-			"title": "Editar Equipo \"{team}\"",
-			"members": "Miembros del Equipo",
-			"search": "Escriba para buscar a un usuario…",
-			"addUser": "Añadir al equipo",
-			"makeMember": "Convertir en Miembro",
-			"makeAdmin": "Convertir en Administrador",
 			"success": "El equipo fue actualizado con éxito.",
 			"userAddedSuccess": "El miembro del equipo fue añadido con éxito.",
 			"madeMember": "El miembro del equipo se ha hecho miembro con éxito.",
 			"madeAdmin": "El miembro del equipo se ha hecho admin con éxito.",
-			"mustSelectUser": "Por favor seleccione un usuario.",
 			"delete": {
-				"header": "Eliminar el equipo",
-				"text1": "¿Está seguro que desea eliminar este equipo y todos sus miembros?",
-				"text2": "Todos los miembros del equipo perderán el acceso a los proyectos compartidos con este equipo. ¡NO SE PUEDE DESHACER!",
 				"success": "El equipo fue eliminado con éxito."
 			},
 			"deleteUser": {
-				"header": "Quitar a un usuario del equipo",
-				"text1": "¿Estás seguro de que deseas quitar a este usuario del equipo?",
-				"text2": "Perderán el acceso a todos los proyectos a los que este equipo tiene acceso. ¡NO SE PUEDE DESHACER!",
 				"success": "El usuario fue quitado del equipo con éxito."
 			},
 			"leave": {
-				"title": "Abandonar equipo",
-				"text1": "¿Estás seguro de que deseas abandonar este equipo?",
-				"text2": "Perderás el acceso a todos los proyectos a los que este equipo tiene acceso. Si cambias de opinión, necesitarás a un administrador de equipo para añadirte de nuevo.",
 				"success": "Has abandonado el equipo con éxito."
 			}
-		},
-		"attributes": {
-			"name": "Nombre del Equipo",
-			"namePlaceholder": "El nombre del equipo va aquí…",
-			"nameRequired": "Por favor especifica un nombre.",
-			"description": "Descripción",
-			"admin": "Admin",
-			"member": "Miembro"
 		}
 	},
 	"keyboardShortcuts": {
-		"title": "Atajos de Teclado",
 		"general": "General",
-		"allPages": "Estos atajos funcionan en todas las páginas.",
-		"currentPageOnly": "Estos atajos funcionan solo en la página actual.",
-		"somePagesOnly": "Estos atajos funcionan solo en algunas páginas.",
-		"toggleMenu": "Alternar El Menú",
-		"quickSearch": "Abrir la barra de búsqueda/acción rápida",
-		"then": "después",
+		"toggleMenu": "Mostrar u ocultar la barra lateral",
+		"quickSearch": "Abrir la búsqueda y los comandos",
 		"task": {
 			"title": "Página de Tarea",
 			"done": "Marcar tarea como hecha / no hecha",
@@ -743,7 +247,13 @@
 			"description": "Editar la descripción de la tarea",
 			"delete": "Eliminar esta tarea",
 			"priority": "Cambiar la prioridad de esta tarea",
-			"favorite": "Marcar esta tarea como favorita / no favorita"
+			"favorite": "Marcar esta tarea como favorita / no favorita",
+			"copyIdentifier": "Copiar el identificador de la tarea",
+			"copyIdentifierAndTitle": "Copiar el identificador y el título de la tarea",
+			"copyIdentifierTitleAndUrl": "Copiar el identificador, el título y la URL de la tarea",
+			"copyUrl": "Copiar la URL de la tarea",
+			"openProject": "Abrir el proyecto de la tarea",
+			"save": "Guardar la tarea"
 		},
 		"project": {
 			"title": "Vistas de proyecto",
@@ -753,60 +263,28 @@
 			"switchToTableView": "Cambiar a vista de tabla"
 		},
 		"navigation": {
-			"title": "Secciones",
-			"overview": "Ir a resumen",
-			"upcoming": "Ir a tareas próximas",
-			"labels": "Ir a etiquetas",
-			"teams": "Ir a equipos",
-			"projects": "Navegar a proyectos"
-		}
-	},
-	"update": {
-		"available": "¡Hay una actualización disponible!",
-		"do": "Actualizar Ahora"
-	},
-	"menu": {
-		"edit": "Editar",
-		"archive": "Archivar",
-		"duplicate": "Duplicar",
-		"delete": "Eliminar",
-		"unarchive": "Desarchivar",
-		"share": "Compartir",
-		"createProject": "Crear proyecto"
-	},
-	"apiConfig": {
-		"url": "URL de Vikunja",
-		"urlPlaceholder": "ej. https://localhost:3456",
-		"change": "cambiar",
-		"use": "Utilizando la instalación de Vikunja en {0}",
-		"success": "Usando la instalación de Vikunja en \"{domain}\".",
-		"urlRequired": "Se requiere una url."
-	},
-	"loadingError": {
-		"failed": "Error al cargar, por favor {0}. Si el error persiste, por favor {1}.",
-		"tryAgain": "prueba de nuevo",
-		"contact": "contacta con nosotros"
-	},
-	"notification": {
-		"title": "Notificaciones",
-		"none": "No tienes notificaciones. ¡Que tengas un buen día!"
-	},
-	"quickActions": {
-		"commands": "Comandos",
-		"placeholder": "Escriba un comando o búsqueda…",
-		"hint": "Puedes usar {project} para limitar la búsqueda a un proyecto. Combina {project} o {label} (etiquetas) con una consulta de búsqueda para buscar una tarea con estas etiquetas o en ese proyecto. Usa {assignee} para buscar sólo equipos.",
-		"tasks": "Tareas",
-		"projects": "Proyectos",
-		"teams": "Equipos",
-		"newProject": "Introduzca el título del nuevo proyecto…",
-		"newTask": "Introduzca el título de la nueva tarea…",
-		"newTeam": "Introduzca el nombre del nuevo equipo…",
-		"createTask": "Crea una tarea en el proyecto actual ({title})",
-		"createProject": "Crear un proyecto",
-		"cmds": {
-			"newTask": "Nueva tarea",
-			"newProject": "Nuevo proyecto",
-			"newTeam": "Nuevo equipo"
+			"title": "Navegación",
+			"overview": "Ir a Hoy",
+			"upcoming": "Ir a Próximas",
+			"labels": "Ir a Etiquetas",
+			"teams": "Ir a Equipos",
+			"projects": "Ir a Proyectos"
+		},
+		"newTask": "Nueva tarea",
+		"list": {
+			"title": "Listas de tareas",
+			"navigateDown": "Tarea siguiente",
+			"navigateUp": "Tarea anterior",
+			"open": "Abrir la tarea"
+		},
+		"gantt": {
+			"title": "Diagrama de Gantt",
+			"moveTaskLeft": "Mover la tarea a una fecha anterior",
+			"moveTaskRight": "Mover la tarea a una fecha posterior",
+			"expandTaskLeft": "Adelantar la fecha de inicio",
+			"expandTaskRight": "Retrasar la fecha de fin",
+			"shrinkTaskLeft": "Acortar la tarea desde el inicio",
+			"shrinkTaskRight": "Acortar la tarea desde el final"
 		}
 	},
 	"error": {
@@ -872,10 +350,61 @@
 		"13001": "Este enlace compartido requiere una contraseña para la autenticación, pero no se ha proporcionado ninguna.",
 		"error": "Error",
 		"success": "Éxito",
-		"0001": "No tienes permiso para hacer eso."
+		"0001": "No tienes permiso para hacer eso.",
+		"1015": "La verificación en dos pasos ya está activada.",
+		"1016": "La verificación en dos pasos no está activada.",
+		"1017": "El código de verificación no es válido.",
+		"1019": "El proveedor de OpenID no ha enviado ningún email. Asegúrate de que tu cuenta en el proveedor comparte su dirección.",
+		"1020": "Esta cuenta está desactivada. Revisa tu correo o pregunta a quien administra el servidor.",
+		"1021": "Esta cuenta la gestiona un proveedor de identidad externo.",
+		"1022": "El nombre de usuario no puede tener espacios.",
+		"1023": "No puedes hacer eso desde un enlace compartido.",
+		"1024": "El dato {field} de tipo {type} que envió el proveedor no es válido.",
+		"1025": "La zona horaria «{timezone}» no es válida. Elige una de la lista.",
+		"1035": "No hay ningún cambio de email pendiente de confirmar.",
+		"1036": "Espera un minuto antes de pedir otro email de confirmación.",
+		"1038": "El scope personalizado del proveedor OIDC está mal formado. Revisa que el proveedor lo envíe correctamente y, sobre todo, que incluya un oidcID.",
+		"1039": "Ese código de verificación ya se ha usado. Espera al siguiente.",
+		"1040": "La cuenta está bloqueada por demasiados intentos fallidos. Restablece la contraseña para desbloquearla.",
+		"12003": "Hace falta un usuario para consultar las suscripciones.",
+		"13002": "La contraseña del enlace compartido no es correcta.",
+		"13003": "El token del enlace compartido no es válido.",
+		"14001": "El token de API no es válido.",
+		"14002": "El permiso {permission} del grupo {group} no es válido.",
+		"14005": "Ya hay una importación de este servicio en marcha. Espera a que termine.",
+		"14009": "El zip no contiene ningún archivo de datos de Norna. Asegúrate de subir una exportación de Norna.",
+		"14010": "No se ha podido leer el archivo. Asegúrate de que es una exportación válida.",
+		"14011": "El archivo no es un zip válido.",
+		"14012": "El archivo no contiene datos.",
+		"14013": "La exportación se hizo con una versión demasiado antigua para importarla. Haz una exportación nueva con una versión más reciente.",
+		"14016": "No se ha podido leer la configuración de la importación. Asegúrate de que es un objeto JSON válido.",
+		"14201": "Planka ha rechazado las credenciales. Revisa la URL y la clave de API o el usuario y la contraseña.",
+		"14202": "La cuenta de Planka pide un paso extra al entrar (código de verificación o aceptar condiciones). Entra una vez en Planka desde el navegador o usa una clave de API en lugar de usuario y contraseña.",
+		"14203": "Hacen falta la URL de Planka y una clave de API, o un usuario y una contraseña.",
+		"14204": "No se ha podido contactar con la API de Planka en esa URL. Revisa la dirección y que el servidor pueda llegar a ella.",
+		"2003": "La zona horaria «{timezone}» no es válida.",
+		"2005": "Este enlace de invitación no es válido o ha caducado.",
+		"2006": "Este enlace de invitación no existe.",
+		"2007": "Los equipos gestionados externamente no se pueden añadir a un enlace de invitación.",
+		"3016": "El proyecto padre está archivado. Desarchívalo primero.",
+		"4001": "La tarea necesita un título.",
+		"4002": "La tarea no existe.",
+		"4020": "Este adjunto no es de esa tarea.",
+		"4021": "Esta persona ya está asignada a la tarea.",
+		"4022": "Indica respecto a qué fecha va el recordatorio.",
+		"4023": "Esa relación crearía un ciclo entre tareas.",
+		"4034": "El archivo no existe.",
+		"4035": "El archivo supera el tamaño máximo permitido.",
+		"6008": "No se ha encontrado ningún equipo con ese OIDC ID y emisor.",
+		"6009": "No hay equipos con la propiedad oidcId para este usuario."
 	},
 	"about": {
-		"title": "Acerca de"
+		"title": "Acerca de Norna",
+		"tagline": "Tareas y proyectos, bien tejidos.",
+		"app": "App",
+		"server": "Servidor",
+		"source": "Código fuente",
+		"license": "Software libre bajo la licencia AGPL-3.0."
 	},
 	"time": {
 		"units": {
@@ -886,5 +415,1765 @@
 			"weeks": "semana|semanas",
 			"years": "año|años"
 		}
+	},
+	"pending": {
+		"caption": "En construcción",
+		"title": "Esta pantalla se está tejiendo de nuevo",
+		"description": "La nueva interfaz de Norna se construye pantalla a pantalla. La ruta ya existe; su página llega en una fase posterior."
+	},
+	"ui": {
+		"close": "Cerrar",
+		"notifications": "Notificaciones",
+		"chip": {
+			"remove": "Quitar",
+			"removeNamed": "Quitar {label}"
+		},
+		"color": {
+			"none": "Sin color",
+			"custom": "Color personalizado",
+			"swatches": {
+				"fjord": "Fiordo",
+				"glacier": "Glaciar",
+				"sound": "Estrecho",
+				"aurora": "Aurora",
+				"moss": "Musgo",
+				"birch": "Abedul",
+				"ember": "Brasa",
+				"rust": "Óxido",
+				"lingon": "Arándano rojo",
+				"heather": "Brezo",
+				"violet": "Violeta",
+				"slate": "Pizarra"
+			}
+		},
+		"listbox": {
+			"search": "Buscar…",
+			"empty": "Sin resultados",
+			"create": "Crear «{query}»"
+		},
+		"calendar": {
+			"previous": "Mes anterior",
+			"next": "Mes siguiente"
+		},
+		"kbd": {
+			"then": "y luego"
+		},
+		"cancel": "Cancelar"
+	},
+	"notFound": {
+		"title": "Aquí no hay nada tejido",
+		"description": "La página que buscabas no existe o se ha movido.",
+		"home": "Volver a hoy"
+	},
+	"notifications": {
+		"title": "Notificaciones",
+		"titleWithUnread": "Notificaciones, {count} sin leer",
+		"unread": "Sin leer",
+		"markAllRead": "Marcar todo como leído",
+		"emptyTitle": "Estás al día",
+		"emptyDescription": "Aquí aparecerán comentarios, asignaciones y recordatorios.",
+		"taskComment": "comentó en {task}",
+		"taskAssigned": "asignó {task} a {assignee}",
+		"taskAssignedYou": "te asignó {task}",
+		"taskDeleted": "borró {task}",
+		"taskCreated": "creó {task}",
+		"taskMentioned": "te mencionó en {task}",
+		"taskReminder": "Recordatorio: {task}",
+		"taskOverdue": "{task} está vencida",
+		"tasksOverdue": "Tienes tareas vencidas",
+		"projectCreated": "creó el proyecto {project}",
+		"teamMemberAdded": "añadió a {member} a {team}",
+		"teamMemberAddedYou": "te añadió a {team}",
+		"dataExportReady": "Tu exportación de datos está lista para descargar",
+		"unknown": "te envió una notificación"
+	},
+	"shell": {
+		"navigation": "Navegación",
+		"openNavigation": "Abrir la navegación",
+		"back": "Volver",
+		"loading": "Cargando Norna",
+		"skipToContent": "Saltar al contenido",
+		"search": "Buscar",
+		"searchPlaceholder": "Buscar o ejecutar…",
+		"newTask": "Nueva tarea",
+		"collapseSidebar": "Plegar la barra lateral",
+		"expandSidebar": "Desplegar la barra lateral",
+		"expandProject": "Mostrar los proyectos dentro de {project}",
+		"collapseProject": "Ocultar los proyectos dentro de {project}",
+		"offline": "Sin conexión. Los cambios no se guardarán hasta que vuelva.",
+		"offlineTitle": "Sin conexión",
+		"offlineDescription": "Norna necesita conexión para cargar. Seguirá en cuanto vuelvas a estar en línea.",
+		"nav": {
+			"home": "Hoy",
+			"upcoming": "Próximas",
+			"projects": "Proyectos",
+			"favorites": "Favoritos",
+			"filters": "Filtros",
+			"labels": "Etiquetas",
+			"teams": "Equipos",
+			"timeTracking": "Registro de tiempo",
+			"newProject": "Nuevo proyecto"
+		},
+		"user": {
+			"account": "Cuenta",
+			"settings": "Ajustes",
+			"theme": "Tema",
+			"themeSystem": "Como el sistema",
+			"themeLight": "Claro",
+			"themeDark": "Oscuro",
+			"about": "Acerca de Norna",
+			"logout": "Cerrar sesión",
+			"admin": "Administración"
+		},
+		"shortcuts": {
+			"title": "Atajos de teclado"
+		},
+		"palette": {
+			"title": "Buscar y comandos",
+			"placeholder": "Busca proyectos o escribe un comando…",
+			"recent": "Recientes",
+			"actions": "Acciones",
+			"goTo": "Ir a",
+			"newTask": "Nueva tarea",
+			"newProject": "Nuevo proyecto",
+			"newFilter": "Nuevo filtro guardado",
+			"lightTheme": "Cambiar al tema claro",
+			"darkTheme": "Cambiar al tema oscuro",
+			"empty": "Nada coincide con «{query}»"
+		},
+		"update": {
+			"available": "Hay una versión nueva de Norna.",
+			"reload": "Actualizar"
+		},
+		"api": {
+			"title": "Conecta con tu servidor",
+			"description": "Norna no ha podido llegar a su servidor. Escribe la dirección donde se ejecuta.",
+			"url": "Dirección del servidor",
+			"urlHint": "La dirección en la que abres Norna, p. ej. https://norna.example.com",
+			"urlRequired": "Escribe la dirección del servidor.",
+			"connect": "Conectar",
+			"connected": "Conectado a {domain}.",
+			"unreachable": "No se ha podido llegar a un servidor en {domain}. Revisa la dirección y que esté en marcha."
+		}
+	},
+	"auth": {
+		"password": "Contraseña",
+		"showPassword": "Mostrar la contraseña",
+		"hidePassword": "Ocultar la contraseña",
+		"or": "o",
+		"imprint": "Aviso legal",
+		"privacy": "Privacidad",
+		"deletionConfirmed": "Tu cuenta está programada para borrarse.",
+		"passwordRules": {
+			"required": "Escribe una contraseña.",
+			"tooShort": "Usa al menos 8 caracteres.",
+			"tooLong": "Usa como mucho 72 caracteres."
+		},
+		"login": {
+			"title": "Hola de nuevo",
+			"description": "Entra para retomar los hilos.",
+			"username": "Usuario",
+			"usernameOrEmail": "Usuario o email",
+			"usernameRequired": "Escribe tu usuario o email.",
+			"passwordRequired": "Escribe tu contraseña.",
+			"remember": "Mantener la sesión",
+			"forgotPassword": "¿Olvidaste la contraseña?",
+			"submit": "Entrar",
+			"withProvider": "Continuar con {provider}",
+			"noAccount": "¿Primera vez aquí?",
+			"createAccount": "Crea una cuenta",
+			"totpTitle": "Código de verificación",
+			"totpDescription": "Escribe el código de 6 dígitos de tu app de autenticación.",
+			"totpCode": "Código",
+			"verify": "Verificar",
+			"emailConfirmed": "Tu email está confirmado. Ya puedes entrar."
+		},
+		"register": {
+			"title": "Crea tu cuenta",
+			"description": "Una cuenta para todos tus proyectos y tareas.",
+			"inviteDescription": "Te han invitado. Elige un usuario y una contraseña para unirte.",
+			"username": "Usuario",
+			"email": "Email",
+			"passwordHint": "Entre 8 y 72 caracteres.",
+			"usernameRequired": "Elige un nombre de usuario.",
+			"usernameNoSpaces": "El usuario no puede contener espacios.",
+			"usernameNotUrl": "El usuario no puede parecer una dirección web.",
+			"emailInvalid": "Escribe un email válido.",
+			"submit": "Crear cuenta",
+			"haveAccount": "¿Ya tienes cuenta?",
+			"login": "Entrar",
+			"failed": "No se ha podido completar el registro. Revisa los campos y vuelve a intentarlo.",
+			"disabled": "El registro está cerrado en este servidor.",
+			"confirmEmail": "Cuenta creada. Abre el enlace que te hemos enviado por email para confirmar la dirección y luego entra.",
+			"inviteInvalid": "Esta invitación no es válida o ha caducado.",
+			"inviteFailed": "No se ha podido comprobar la invitación. Inténtalo de nuevo en un momento.",
+			"inviteTeams": "Te unirás a: {teams}"
+		},
+		"reset": {
+			"requestTitle": "Recupera tu contraseña",
+			"requestDescription": "Escribe el email de tu cuenta y te enviaremos un enlace para elegir una contraseña nueva.",
+			"send": "Enviar enlace",
+			"sent": "Si esa dirección tiene cuenta, el enlace ya va de camino. Revisa tu bandeja de entrada.",
+			"title": "Elige una contraseña nueva",
+			"description": "Escribe la nueva contraseña de tu cuenta.",
+			"newPassword": "Contraseña nueva",
+			"save": "Guardar contraseña",
+			"done": "Tu contraseña se ha cambiado. Entra con la nueva.",
+			"tokenMissing": "Este enlace de recuperación está incompleto. Pide uno nuevo.",
+			"backToLogin": "Volver a entrar"
+		},
+		"openid": {
+			"title": "Iniciando sesión",
+			"working": "Hablando con tu proveedor de identidad…",
+			"failed": "No se ha podido entrar con el proveedor externo.",
+			"stateMismatch": "La respuesta del inicio de sesión no coincide con esta petición y se ha rechazado. Vuelve a intentarlo.",
+			"totpDescription": "Tu cuenta usa verificación en dos pasos. Escribe el código y terminamos de iniciar la sesión."
+		},
+		"share": {
+			"title": "Proyecto compartido",
+			"working": "Abriendo el proyecto compartido…",
+			"passwordDescription": "Este proyecto está protegido. Escribe su contraseña para abrirlo.",
+			"open": "Abrir proyecto",
+			"wrongPassword": "La contraseña no es correcta.",
+			"denied": "No tienes acceso a este proyecto.",
+			"serverError": "El servidor no ha podido abrir este enlace. Inténtalo más tarde.",
+			"failed": "No se ha podido abrir este enlace compartido."
+		}
+	},
+	"tasks": {
+		"priority": {
+			"label": "Prioridad: {priority}",
+			"unset": "Sin prioridad",
+			"low": "Baja",
+			"medium": "Media",
+			"high": "Alta",
+			"urgent": "Urgente",
+			"doNow": "Hazlo ya"
+		},
+		"row": {
+			"due": "Vence {date}",
+			"markDone": "Completar «{title}»",
+			"markUndone": "Reabrir «{title}»",
+			"unread": "Novedades sin leer",
+			"repeats": "Se repite",
+			"subtasks": "{done} de {total} subtareas hechas",
+			"checklist": "{done} de {total} elementos de la lista hechos",
+			"comments": "{count} comentario | {count} comentarios",
+			"attachments": "{count} adjunto | {count} adjuntos",
+			"actions": "Acciones de la tarea"
+		},
+		"actions": {
+			"open": "Abrir",
+			"markDone": "Completar",
+			"markUndone": "Reabrir",
+			"dueHeading": "Vencimiento",
+			"dueToday": "Hoy",
+			"dueTomorrow": "Mañana",
+			"dueNextWeek": "La semana que viene",
+			"dueRemove": "Quitar la fecha",
+			"favorite": "Añadir a favoritas",
+			"unfavorite": "Quitar de favoritas",
+			"copyLink": "Copiar enlace",
+			"duplicate": "Duplicar",
+			"delete": "Borrar",
+			"deleteTitle": "¿Borrar esta tarea?",
+			"deleteDescription": "«{title}» se borrará junto con sus comentarios y adjuntos. No se puede deshacer.",
+			"doneToast": "Completada: {title}",
+			"undoneToast": "Reabierta: {title}",
+			"undo": "Deshacer",
+			"dueSet": "Fecha de vencimiento cambiada",
+			"dueRemoved": "Fecha de vencimiento quitada",
+			"duplicated": "Tarea duplicada",
+			"linkCopied": "Enlace copiado"
+		},
+		"list": {
+			"loading": "Cargando tareas"
+		},
+		"bulk": {
+			"select": "Seleccionar",
+			"deselect": "Quitar de la selección",
+			"isSelected": ", seleccionada",
+			"selected": "{count} seleccionada | {count} seleccionadas",
+			"toolbar": "Tareas seleccionadas",
+			"complete": "Completar",
+			"move": "Mover a otro proyecto",
+			"clear": "Salir de la selección",
+			"updated": "{count} tarea actualizada | {count} tareas actualizadas",
+			"deleteTitle": "¿Borrar esta tarea? | ¿Borrar {count} tareas?",
+			"deleteDescription": "Se borrarán junto con sus comentarios y adjuntos. No se puede deshacer."
+		}
+	},
+	"agenda": {
+		"title": "Hoy",
+		"week": "semana {week}",
+		"newTask": "Nueva tarea",
+		"norns": {
+			"past": "Urðr · lo que fue",
+			"present": "Verðandi · lo que es",
+			"future": "Skuld · lo que será"
+		},
+		"overdue": "Vencidas",
+		"today": "Hoy",
+		"upcoming": "Próximos 7 días",
+		"todayEmpty": "Nada vence hoy.",
+		"upcomingEmpty": "Nada vence en los próximos siete días.",
+		"allClear": "Todo en orden. Las tareas con fecha aparecerán aquí según se acerque su día.",
+		"loadFailed": "No se han podido cargar tus tareas",
+		"retry": "Reintentar",
+		"recentProjects": "Proyectos recientes"
+	},
+	"pickers": {
+		"unitShort": {
+			"minutes": "{n} min",
+			"hours": "{n} h",
+			"days": "{n} día | {n} días",
+			"weeks": "{n} semana | {n} semanas"
+		},
+		"date": {
+			"inputLabel": "Fecha en palabras",
+			"placeholder": "Mañana 10:00, viernes, en 3 días…",
+			"noMatch": "Aún no se reconoce ninguna fecha",
+			"apply": "Aplicar {date}",
+			"shortcutsLabel": "Fechas rápidas",
+			"shortcuts": {
+				"today": "Hoy",
+				"tomorrow": "Mañana",
+				"nextMonday": "Próximo lunes",
+				"thisWeekend": "Este fin de semana",
+				"laterThisWeek": "Más tarde esta semana",
+				"nextWeek": "Próxima semana",
+				"nextWeekend": "Próximo fin de semana",
+				"endOfMonth": "Fin de mes",
+				"inAMonth": "En un mes"
+			},
+			"time": "Hora",
+			"timePresets": "Horas habituales",
+			"clear": "Quitar fecha",
+			"done": "Listo"
+		},
+		"reminder": {
+			"at": {
+				"due_date": "Al vencimiento",
+				"start_date": "Al inicio",
+				"end_date": "Al final"
+			},
+			"before": {
+				"due_date": "{period} antes del vencimiento",
+				"start_date": "{period} antes del inicio",
+				"end_date": "{period} antes del final"
+			},
+			"after": {
+				"due_date": "{period} después del vencimiento",
+				"start_date": "{period} después del inicio",
+				"end_date": "{period} después del final"
+			},
+			"short": {
+				"at": "A la hora",
+				"before": "{period} antes",
+				"after": "{period} después"
+			},
+			"inactive": "{text} · sin fecha",
+			"relativeTo": {
+				"due_date": "Vencimiento",
+				"start_date": "Inicio",
+				"end_date": "Final"
+			},
+			"empty": "Sin recordatorios",
+			"remove": "Quitar recordatorio",
+			"addAbsolute": "Fecha y hora",
+			"addRelative": "Personalizado",
+			"needsDate": "Pon una fecha de vencimiento, inicio o final para añadir recordatorios relativos a ella.",
+			"newTitle": "Nuevo recordatorio",
+			"editTitle": "Editar recordatorio",
+			"back": "Volver",
+			"add": "Añadir",
+			"amount": "Cantidad",
+			"unit": "Unidad",
+			"direction": "Antes o después",
+			"beforeLabel": "Antes",
+			"afterLabel": "Después",
+			"relativeToLabel": "Respecto a"
+		},
+		"repeat": {
+			"none": "No se repite",
+			"every": {
+				"seconds": "Cada segundo | Cada {n} segundos",
+				"minutes": "Cada minuto | Cada {n} minutos",
+				"hours": "Cada hora | Cada {n} horas",
+				"days": "Cada día | Cada {n} días",
+				"weeks": "Cada semana | Cada {n} semanas",
+				"months": "Cada mes | Cada {n} meses",
+				"years": "Cada año | Cada {n} años"
+			},
+			"fromCompletion": "{interval} · desde que se completa",
+			"everyPrefix": "Cada",
+			"amount": "Intervalo",
+			"unit": "Unidad",
+			"months": "mes | meses",
+			"fromCompletionToggle": "Repetir desde que se completa",
+			"hintFromCompletion": "La siguiente fecha se cuenta desde el día en que completas la tarea.",
+			"hintFromDate": "La siguiente fecha se cuenta desde la actual, aunque la completes tarde.",
+			"monthsHint": "Aquí un mes cuenta como un bloque de 30 días."
+		}
+	},
+	"taskDetail": {
+		"title": "Tarea",
+		"panel": "Detalle de la tarea",
+		"resize": "Cambiar el ancho del panel de la tarea",
+		"breadcrumb": "Dónde está esta tarea",
+		"close": "Cerrar",
+		"subscribe": "Recibir avisos de cambios",
+		"unsubscribe": "Dejar de recibir avisos",
+		"titleLabel": "Título de la tarea",
+		"titleRequired": "Una tarea necesita un título.",
+		"notFound": "Esta tarea no existe",
+		"notFoundDescription": "Puede que se haya borrado o que esté en un proyecto al que no tienes acceso.",
+		"loadFailed": "No se ha podido cargar la tarea",
+		"unknownProject": "Proyecto desconocido",
+		"empty": "Vacío",
+		"addProperty": "Añadir propiedad",
+		"searchProject": "Buscar proyectos…",
+		"searchLabels": "Buscar o crear etiquetas…",
+		"searchPeople": "Buscar personas…",
+		"created": "creada {date}",
+		"createdBy": "creada {date} por {user}",
+		"updated": "actualizada {date}",
+		"properties": {
+			"project": "Proyecto",
+			"priority": "Prioridad",
+			"dueDate": "Vence",
+			"startDate": "Empieza",
+			"endDate": "Termina",
+			"reminders": "Recordatorios",
+			"repeat": "Se repite",
+			"labels": "Etiquetas",
+			"assignees": "Asignada a",
+			"progress": "Progreso",
+			"color": "Color"
+		},
+		"relations": {
+			"subtasks": "Subtareas",
+			"title": "Relaciones",
+			"addSubtask": "Añadir una subtarea",
+			"link": "Relacionar",
+			"kind": "Relación",
+			"searchTask": "Buscar tareas…",
+			"remove": "Quitar la relación con «{title}»",
+			"kinds": {
+				"subtask": "Subtareas",
+				"parenttask": "Forma parte de",
+				"related": "Relacionada con",
+				"blocking": "Bloquea a",
+				"blocked": "Bloqueada por",
+				"precedes": "Va antes de",
+				"follows": "Va después de",
+				"duplicateof": "Duplicado de",
+				"duplicates": "Duplicada en",
+				"copiedfrom": "Copiada de",
+				"copiedto": "Copiada en"
+			}
+		},
+		"attachments": {
+			"title": "Adjuntos",
+			"upload": "Adjuntar",
+			"camera": "Cámara",
+			"empty": "Aún no hay archivos.",
+			"emptyDrop": "Aún no hay archivos. Suéltalos aquí o adjúntalos.",
+			"drop": "Suelta para adjuntar",
+			"open": "Abrir",
+			"openNamed": "Abrir {name}",
+			"download": "Descargar",
+			"downloadNamed": "Descargar {name}",
+			"actions": "Acciones de {name}",
+			"cover": "Portada",
+			"setCover": "Usar como portada",
+			"removeCover": "Quitar la portada",
+			"delete": "Borrar",
+			"deleteTitle": "¿Borrar este adjunto?",
+			"deleteDescription": "«{name}» se borrará de la tarea. No se puede deshacer.",
+			"previous": "Anterior",
+			"next": "Siguiente",
+			"previewFailed": "No se ha podido cargar este archivo."
+		},
+		"description": {
+			"title": "Descripción",
+			"placeholder": "Añade notas, una lista, enlaces… escribe / para más",
+			"saving": "guardando…",
+			"saved": "guardado"
+		},
+		"reactions": {
+			"add": "Añadir una reacción",
+			"search": "Buscar emoji…",
+			"toggle": "{emoji} {count}: {names}"
+		},
+		"comments": {
+			"title": "Comentarios",
+			"placeholder": "Escribe un comentario…",
+			"send": "Comentar",
+			"sendHint": "{mod} ⏎",
+			"loadMore": "Ver más comentarios",
+			"empty": "Aún no hay comentarios.",
+			"edited": "editado",
+			"edit": "Editar",
+			"editHint": "{mod} ⏎ para guardar · esc para cancelar",
+			"copyLink": "Copiar enlace",
+			"actions": "Acciones del comentario",
+			"delete": "Borrar",
+			"deleteTitle": "¿Borrar este comentario?",
+			"deleteDescription": "Desaparecerá para todo el mundo. No se puede deshacer."
+		}
+	},
+	"editor": {
+		"commands": "Comandos",
+		"emoji": "Emoji",
+		"mentions": "Personas",
+		"inlineCode": "Código en línea",
+		"codeBlock": "Bloque de código",
+		"divider": "Separador",
+		"imageTooltip": "Sube una imagen y adjúntala a la tarea.",
+		"tableTooltip": "Inserta una tabla.",
+		"insertBlock": "Insertar bloque",
+		"mention": "Mencionar a alguien",
+		"done": "Listo",
+		"apply": "Aplicar",
+		"uploading": "Subiendo imagen…",
+		"link": {
+			"edit": "Editar enlace",
+			"remove": "Quitar enlace",
+			"open": "Abrir"
+		}
+	},
+	"quickAdd": {
+		"title": "Nueva tarea",
+		"label": "Nueva tarea, con la sintaxis mágica",
+		"placeholder": "¿Qué hay que hacer?",
+		"hint": "{label}etiqueta  {project}proyecto  {priority}prioridad  {assignee}persona",
+		"lines": "{count} tareas, una por línea",
+		"repeats": "Se repite",
+		"project": "Proyecto: {project}",
+		"noProject": "Sin proyecto",
+		"newLineHint": "⇧⏎ otra tarea",
+		"submit": "Crear la tarea",
+		"submitMany": "Crear {count} tareas",
+		"created": "Creada: {title}",
+		"createdMany": "{count} tarea creada | {count} tareas creadas"
+	},
+	"upcoming": {
+		"title": "Próximas",
+		"range": "Rango",
+		"ranges": {
+			"next7Days": "7 días",
+			"next14Days": "14 días",
+			"next30Days": "30 días",
+			"custom": "Personalizado"
+		},
+		"showOverdue": "Vencidas",
+		"showUndated": "Sin fecha",
+		"undated": "Sin fecha",
+		"emptyTitle": "No viene nada",
+		"emptyDescription": "Aquí aparecerán las tareas que venzan en este rango.",
+		"until": "Hasta…",
+		"untilDate": "Hasta {date}"
+	},
+	"projectView": {
+		"title": "Proyecto",
+		"views": "Vistas",
+		"search": "Buscar tareas…",
+		"clearSearch": "Borrar la búsqueda",
+		"filter": "Filtrar",
+		"applyFilter": "Aplicar",
+		"favorite": "Añadir a favoritos",
+		"unfavorite": "Quitar de favoritos",
+		"notFound": "Este proyecto no existe",
+		"notFoundDescription": "Puede que se haya borrado o archivado, o que no tengas acceso.",
+		"list": {
+			"add": "Añadir una tarea…",
+			"count": "{count} tarea | {count} tareas",
+			"empty": "Aún no hay tareas",
+			"emptyDescription": "Añade la primera aquí arriba, o con N desde cualquier sitio.",
+			"noMatches": "Nada coincide",
+			"noMatchesDescription": "Prueba otra búsqueda o afloja el filtro."
+		},
+		"sort": {
+			"title": "Título",
+			"current": "Ordenado por {order}",
+			"position": "Manual",
+			"due_date": "Vencimiento",
+			"priority": "Prioridad",
+			"created": "Más recientes",
+			"updated": "Cambiadas hace poco",
+			"heading": "Ordenar por"
+		},
+		"table": {
+			"columns": "Columnas",
+			"page": "página {page} de {pages}",
+			"pagination": "Páginas",
+			"previous": "Anterior",
+			"next": "Siguiente",
+			"column": {
+				"done": "Hecha",
+				"identifier": "#",
+				"title": "Título",
+				"project": "Proyecto",
+				"priority": "Prioridad",
+				"labels": "Etiquetas",
+				"assignees": "Asignada a",
+				"due_date": "Vence",
+				"start_date": "Empieza",
+				"end_date": "Termina",
+				"percent_done": "Progreso",
+				"done_at": "Completada",
+				"created": "Creada",
+				"updated": "Actualizada",
+				"created_by": "Creada por",
+				"comments": "Comentarios"
+			}
+		},
+		"kinds": {
+			"list": "Lista",
+			"kanban": "Kanban",
+			"table": "Tabla",
+			"gantt": "Gantt"
+		},
+		"menu": {
+			"title": "Acciones del proyecto",
+			"edit": "Editar",
+			"views": "Vistas",
+			"background": "Fondo",
+			"share": "Compartir",
+			"webhooks": "Webhooks",
+			"duplicate": "Duplicar",
+			"archive": "Archivar",
+			"delete": "Borrar",
+			"editFilter": "Editar el filtro",
+			"deleteFilter": "Borrar el filtro",
+			"info": "Descripción"
+		},
+		"gantt": {
+			"chart": "Diagrama de Gantt",
+			"tasksColumn": "Tarea",
+			"range": "Rango de fechas",
+			"presets": {
+				"thisMonth": "Este mes",
+				"next3Months": "Próximos 3 meses",
+				"next6Months": "Próximos 6 meses",
+				"thisYear": "Este año"
+			},
+			"custom": "Rango personalizado",
+			"from": "Desde",
+			"to": "Hasta",
+			"previous": "Periodo anterior",
+			"next": "Periodo siguiente",
+			"today": "Hoy",
+			"scale": "Escala",
+			"scales": {
+				"day": "Días",
+				"week": "Semanas"
+			},
+			"showUndated": "Mostrar tareas sin fechas",
+			"undated": "Sin fechas",
+			"drawHint": "arrastra para planificar",
+			"empty": "No hay tareas con fechas en este rango",
+			"emptyDescription": "Pon fecha de inicio y de fin a las tareas, o amplía el rango.",
+			"bar": "{task}, del {start} al {end}",
+			"barStartOnly": "{task}, empieza el {start}, sin fecha de fin",
+			"barEndOnly": "{task}, termina el {end}, sin fecha de inicio",
+			"barDerived": "{task}, del {start} al {end} según sus subtareas",
+			"editHint": "Las flechas izquierda y derecha la mueven un día; con Mayús se alarga y con Ctrl se acorta.",
+			"expand": "Mostrar las subtareas de {task}",
+			"collapse": "Ocultar las subtareas de {task}",
+			"datesChanged": "Fechas cambiadas: {title}"
+		},
+		"noDescription": "Este proyecto no tiene descripción."
+	},
+	"projects": {
+		"title": "Proyectos",
+		"new": "Nuevo proyecto",
+		"showArchived": "Archivados",
+		"archived": "Archivado",
+		"subprojects": "{count} subproyecto | {count} subproyectos",
+		"emptyTitle": "Aún no hay proyectos",
+		"emptyDescription": "Los proyectos agrupan tus tareas y sus vistas. Crea el primero."
+	},
+	"kanban": {
+		"columns": "Columnas",
+		"loading": "Cargando el tablero",
+		"loadFailed": "No se ha podido cargar el tablero",
+		"loadFailedDescription": "Revisa la conexión e inténtalo de nuevo.",
+		"empty": "Aún no hay columnas",
+		"emptyDescription": "Añade una columna para empezar a ordenar las tareas por etapas.",
+		"emptyReadOnly": "Este tablero aún no tiene columnas.",
+		"columnEmpty": "Sin tareas",
+		"loadMore": "Cargar más",
+		"countOfLimit": "{count} de {limit} tareas",
+		"full": "Llena",
+		"fullHint": "Esta columna ha llegado a su límite. Saca una tarea o sube el límite para añadir más.",
+		"columnOptions": "Opciones de {title}",
+		"columnTitle": "Nombre de la columna",
+		"rename": "Renombrar",
+		"setLimit": "Poner límite…",
+		"doneColumn": "Columna de hechas",
+		"doneColumnHint": "Columna de hechas: las tareas que llegan aquí se completan",
+		"doneColumnSaved": "Columna de hechas guardada",
+		"defaultColumn": "Columna por defecto",
+		"defaultColumnSaved": "Columna por defecto guardada",
+		"collapse": "Plegar",
+		"expand": "Desplegar {title}",
+		"deleteTitle": "¿Eliminar «{title}»?",
+		"deleteDescription": "Sus tareas no se eliminan: pasan a la columna por defecto. No se puede deshacer.",
+		"limitTitle": "Límite de {title}",
+		"limitLabel": "Máximo de tareas",
+		"limitHint": "Déjalo vacío o en 0 para no poner límite.",
+		"limitInvalid": "Escribe un número entero.",
+		"noLimit": "Sin límite",
+		"addColumn": "Añadir columna",
+		"addColumnHint": "Intro la añade · Esc cierra",
+		"moveTo": "Mover a…",
+		"moveToTitle": "Mover a la columna",
+		"moved": "«{title}» se ha movido a {column}"
+	},
+	"projectSettings": {
+		"titleLabel": "Nombre",
+		"titleRequired": "Un proyecto necesita un nombre.",
+		"parent": "Dentro de",
+		"noParent": "En el nivel superior",
+		"identifier": "Identificador",
+		"identifierHint": "Hasta 10 caracteres; se usa en los ids de tarea, como HL-12.",
+		"color": "Color",
+		"description": "Descripción",
+		"descriptionPlaceholder": "De qué va este proyecto…",
+		"create": "Crear proyecto",
+		"save": "Guardar",
+		"saved": "Proyecto guardado",
+		"editTitle": "Editar {project}",
+		"editDialog": "Editar proyecto",
+		"archiveDialog": "Archivar proyecto",
+		"archiveTitle": "Archivar proyecto",
+		"unarchiveTitle": "Recuperar proyecto",
+		"archiveDescription": "«{project}» y sus tareas se conservan, en solo lectura y fuera de la vista. Puedes recuperarlo cuando quieras desde los proyectos archivados.",
+		"unarchiveDescription": "«{project}» vuelve a tus proyectos y se puede editar de nuevo.",
+		"archive": "Archivar",
+		"unarchive": "Recuperar",
+		"deleteTitle": "Borrar proyecto",
+		"deleteDescription": "«{project}» se borrará con todas sus tareas, comentarios, adjuntos y vistas.",
+		"deleteSubprojects": "También se borrará su {count} subproyecto. | También se borrarán sus {count} subproyectos.",
+		"deleteConfirm": "Escribe «{project}» para confirmar",
+		"delete": "Borrar proyecto",
+		"duplicateTitle": "Duplicar proyecto",
+		"duplicateDescription": "Una copia de «{project}» con sus tareas, etiquetas y vistas.",
+		"duplicateParent": "Poner la copia dentro de",
+		"duplicateShares": "Compartirla con las mismas personas y equipos",
+		"duplicate": "Duplicar"
+	},
+	"labels": {
+		"title": "Etiquetas",
+		"new": "Nueva etiqueta",
+		"create": "Crear etiqueta",
+		"editTitle": "Editar etiqueta",
+		"titleLabel": "Nombre",
+		"titleRequired": "Una etiqueta necesita un nombre.",
+		"color": "Color",
+		"description": "Nota",
+		"shared": "compartida",
+		"delete": "Borrar",
+		"deleteTitle": "¿Borrar esta etiqueta?",
+		"deleteDescription": "«{label}» se quitará de todas las tareas que la tengan. No se puede deshacer.",
+		"emptyTitle": "Aún no hay etiquetas",
+		"emptyDescription": "Las etiquetas agrupan tareas de distintos proyectos. Crea una aquí o escribe *nombre en el añadido rápido."
+	},
+	"teams": {
+		"title": "Equipos",
+		"new": "Nuevo equipo",
+		"create": "Crear equipo",
+		"nameLabel": "Nombre",
+		"nameRequired": "Un equipo necesita un nombre.",
+		"description": "Nota",
+		"public": "Público",
+		"publicHint": "Cualquiera en este servidor puede encontrar el equipo y compartir proyectos con él.",
+		"memberCount": "{count} miembro | {count} miembros",
+		"emptyTitle": "Aún no hay equipos",
+		"emptyDescription": "Un equipo comparte proyectos con varias personas a la vez.",
+		"details": "Datos",
+		"members": "Miembros",
+		"addMember": "Añadir miembro",
+		"searchPeople": "Nombre, usuario o email…",
+		"searchHint": "Busca a alguien para añadirlo.",
+		"you": "tú",
+		"admin": "admin",
+		"makeAdmin": "Hacer admin",
+		"makeMember": "Hacer miembro normal",
+		"removeMember": "Quitar del equipo",
+		"removeMemberTitle": "¿Quitar a este miembro?",
+		"removeMemberDescription": "{user} pierde el acceso a los proyectos compartidos con el equipo.",
+		"memberActions": "Acciones de {user}",
+		"external": "Este equipo lo gestiona tu proveedor de inicio de sesión, así que no se puede cambiar aquí.",
+		"leave": "Salir del equipo",
+		"leaveTitle": "¿Salir de este equipo?",
+		"leaveDescription": "Pierdes el acceso a los proyectos compartidos con {team}.",
+		"delete": "Borrar equipo",
+		"deleteTitle": "¿Borrar este equipo?",
+		"deleteDescription": "{team} se borra y sus miembros pierden los proyectos compartidos a través de él. No se puede deshacer."
+	},
+	"savedFilters": {
+		"new": "Nuevo filtro guardado",
+		"create": "Crear filtro",
+		"editTitle": "Editar filtro guardado",
+		"deleteTitle": "Borrar filtro guardado",
+		"deleteDescription": "«{filter}» se borrará. Sus tareas siguen en sus proyectos.",
+		"delete": "Borrar filtro",
+		"explanation": "Un filtro guardado aparece como un proyecto, con las tareas de cualquier proyecto que cumplan su consulta.",
+		"titleLabel": "Nombre",
+		"titleRequired": "Un filtro guardado necesita un nombre.",
+		"query": "Consulta",
+		"description": "Nota"
+	},
+	"projectViews": {
+		"title": "Vistas",
+		"new": "Nueva vista",
+		"create": "Crear vista",
+		"titleLabel": "Nombre",
+		"titleRequired": "Una vista necesita un nombre.",
+		"kind": "Tipo",
+		"filter": "Filtro",
+		"filterHint": "Solo aparecen en esta vista las tareas que lo cumplen.",
+		"buckets": "Columnas",
+		"bucketsManual": "A mano",
+		"bucketsFilter": "Por filtro",
+		"bucketsFilterHint": "Cada columna muestra las tareas que cumplen su filtro; las tarjetas no se pueden mover entre ellas.",
+		"bucketTitle": "Nombre de la columna",
+		"bucketFilter": "Filtro de la columna",
+		"addBucket": "Añadir columna",
+		"removeBucket": "Quitar la columna",
+		"reorder": "Arrastra para reordenar",
+		"edit": "Editar {view}",
+		"delete": "Borrar",
+		"deleteNamed": "Borrar {view}",
+		"deleteTitle": "¿Borrar esta vista?",
+		"deleteDescription": "«{view}» desaparece; las tareas siguen en el proyecto."
+	},
+	"projectShare": {
+		"title": "Compartir proyecto",
+		"titleNamed": "Compartir {project}",
+		"readOnly": "Solo quien administra este proyecto puede cambiar quién tiene acceso.",
+		"owner": "Propietario",
+		"accessFor": "Acceso de {name}: {permission}",
+		"permission": {
+			"read": "Solo lectura",
+			"readWrite": "Lectura y escritura",
+			"admin": "Admin"
+		},
+		"people": {
+			"title": "Personas",
+			"add": "Añadir persona",
+			"remove": "Quitar el acceso",
+			"removeTitle": "¿Quitar a esta persona?",
+			"removeDescription": "{user} dejará de poder abrir {project}.",
+			"empty": "No se comparte con nadie más.",
+			"emptyManage": "Nadie más tiene acceso todavía. Añade personas por nombre, usuario o email."
+		},
+		"teams": {
+			"add": "Añadir equipo",
+			"search": "Buscar en tus equipos…",
+			"noTeams": "Aún no estás en ningún equipo.",
+			"remove": "Quitar el equipo",
+			"removeTitle": "¿Quitar este equipo?",
+			"removeDescription": "Los miembros de {team} dejarán de poder abrir {project} a través de él.",
+			"empty": "No se comparte con ningún equipo."
+		},
+		"links": {
+			"title": "Enlaces públicos",
+			"description": "Cualquiera con un enlace puede abrir el proyecto, sin necesidad de cuenta.",
+			"new": "Nuevo enlace",
+			"permission": "Acceso",
+			"permissionHint": "Lo que puede hacer quien abra el enlace.",
+			"name": "Nombre (opcional)",
+			"nameHint": "Aparece junto a todo lo que se haga desde el enlace.",
+			"namePlaceholder": "p. ej., Clientes",
+			"password": "Contraseña (opcional)",
+			"passwordHint": "Se pide antes de abrir el proyecto.",
+			"create": "Crear enlace",
+			"unnamed": "Enlace sin nombre",
+			"createdBy": "de {name}",
+			"delete": "Borrar enlace",
+			"deleteTitle": "¿Borrar este enlace?",
+			"deleteDescription": "Quien lo use pierde el acceso al proyecto. No se puede deshacer."
+		},
+		"toasts": {
+			"personAdded": "Persona añadida",
+			"teamAdded": "Equipo añadido",
+			"accessChanged": "Acceso cambiado",
+			"personRemoved": "Persona quitada",
+			"teamRemoved": "Equipo quitado",
+			"linkCreated": "Enlace creado",
+			"linkDeleted": "Enlace borrado"
+		}
+	},
+	"projectWebhooks": {
+		"description": "Cada webhook recibe una petición POST cuando ocurre uno de sus eventos en {project}.",
+		"readOnly": "Solo quien puede editar este proyecto puede cambiar sus webhooks.",
+		"disabledTitle": "Los webhooks están desactivados",
+		"disabledDescription": "Quien administra este servidor los ha desactivado.",
+		"listTitle": "Destinos",
+		"new": "Nuevo webhook",
+		"create": "Crear webhook",
+		"created": "Webhook creado",
+		"updated": "Eventos guardados",
+		"deleted": "Webhook borrado",
+		"emptyTitle": "Aún no hay webhooks",
+		"emptyDescription": "Añade uno para avisar a otro servicio cuando cambien las tareas.",
+		"targetUrl": "URL de destino",
+		"targetUrlInvalid": "Escribe una dirección completa que empiece por http:// o https://.",
+		"events": "Eventos",
+		"eventsHint": "La petición sale cuando ocurre cualquiera de ellos.",
+		"eventsRequired": "Elige al menos un evento.",
+		"chooseEvents": "Elegir eventos…",
+		"eventCount": "{count} evento | {count} eventos",
+		"pickedOf": "{count} de {total}",
+		"all": "Todos",
+		"none": "Ninguno",
+		"allEvents": "Todos los eventos",
+		"searchEvents": "Buscar eventos…",
+		"secret": "Secreto de firma (opcional)",
+		"secretHint": "Cada petición se firma con él (HMAC-SHA256) para que el receptor compruebe de dónde viene. No se puede volver a mostrar.",
+		"addBasicAuth": "Añadir Basic Auth",
+		"basicAuthUser": "Usuario de Basic Auth",
+		"basicAuthPassword": "Contraseña de Basic Auth",
+		"basicAuthIncomplete": "Rellena el usuario y la contraseña.",
+		"editEvents": "Editar eventos",
+		"delete": "Borrar webhook",
+		"deleteTitle": "¿Borrar este webhook?",
+		"deleteDescription": "{url} deja de recibir peticiones. No se puede deshacer.",
+		"actionsFor": "Acciones de {url}"
+	},
+	"projectBackground": {
+		"title": "Fondo del proyecto",
+		"current": "Fondo actual",
+		"none": "Sin fondo",
+		"saving": "Guardando el fondo…",
+		"drop": "Suelta la imagen para subirla",
+		"credit": "Foto de {author} en {unsplash}",
+		"upload": "Subir una imagen",
+		"replace": "Subir otra",
+		"uploadHint": "Cualquier imagen de hasta {size}.",
+		"uploadHintDrop": "Cualquier imagen de hasta {size}. También puedes soltarla sobre la vista previa.",
+		"remove": "Quitar el fondo",
+		"removeTitle": "¿Quitar el fondo?",
+		"removeDescription": "El proyecto vuelve a un fondo liso. Si la imagen se subió, se borra.",
+		"readOnly": "Necesitas permiso de escritura para cambiar el fondo.",
+		"disabledTitle": "Los fondos están desactivados",
+		"disabledDescription": "Quien administra este servidor no ha activado ninguna fuente de fondos.",
+		"unsplash": "Unsplash",
+		"poweredBy": "Fotos de Unsplash",
+		"search": "Buscar en Unsplash",
+		"searchPlaceholder": "Buscar fotos…",
+		"searchError": "Unsplash no ha respondido.",
+		"retry": "Reintentar",
+		"noResults": "Ninguna foto coincide.",
+		"use": "Usar como fondo",
+		"useBy": "Usar la foto de {author} como fondo",
+		"toasts": {
+			"set": "Fondo cambiado",
+			"removed": "Fondo quitado"
+		}
+	},
+	"settings": {
+		"title": "Ajustes",
+		"groups": {
+			"account": "Cuenta",
+			"security": "Seguridad",
+			"integrations": "Integraciones",
+			"data": "Datos"
+		},
+		"nav": {
+			"general": "General",
+			"avatar": "Avatar",
+			"email": "Email",
+			"password": "Contraseña",
+			"totp": "Verificación en dos pasos",
+			"sessions": "Sesiones",
+			"apiTokens": "Tokens de API",
+			"caldav": "CalDAV",
+			"mcp": "MCP",
+			"feeds": "Feeds",
+			"webhooks": "Webhooks",
+			"bots": "Bots",
+			"import": "Importar",
+			"export": "Exportar",
+			"deletion": "Borrar la cuenta"
+		},
+		"saved": "Guardado"
+	},
+	"oauth": {
+		"title": "¿Permitir el acceso?",
+		"question": "Una app quiere usar Norna como {user}. Podrá ver y cambiar tus proyectos y tareas.",
+		"app": "App",
+		"destination": "Vuelve a",
+		"grants": "Permite solo apps de confianza que hayas abierto tú. Puedes cerrar su sesión más tarde en Ajustes › Sesiones.",
+		"allow": "Permitir",
+		"decline": "No permitir",
+		"failed": "No se ha podido autorizar la app.",
+		"missingParams": "Este enlace está incompleto (falta: {params}). Vuelve a empezar desde la app.",
+		"redirectedTitle": "De vuelta a la app",
+		"redirectedDescription": "Ya puedes cerrar esta pestaña."
+	},
+	"quickEntry": {
+		"signedOut": "Inicia sesión en Norna en la ventana principal.",
+		"openNorna": "Abrir Norna"
+	},
+	"settingsIntegrations": {
+		"copied": "Copiado",
+		"username": "Nombre de usuario",
+		"loadFailed": "No se ha podido cargar.",
+		"retry": "Reintentar",
+		"secret": {
+			"onlyOnce": "Cópialo ahora y guárdalo en un lugar seguro: no podrás volver a verlo.",
+			"token": "token",
+			"done": "Hecho"
+		},
+		"tokens": {
+			"new": "Nuevo token",
+			"create": "Crear token",
+			"createdTitle": "“{title}” está listo",
+			"name": "Nombre",
+			"nameHint": "Para reconocerlo más adelante, por ejemplo por la app que lo usa.",
+			"namePlaceholder": "p. ej., Home Assistant",
+			"titleRequired": "Ponle un nombre al token.",
+			"expiry": {
+				"label": "Caduca",
+				"days": "{count} días",
+				"year": "1 año",
+				"custom": "Otra fecha",
+				"pick": "Fecha de caducidad",
+				"on": "Deja de funcionar el {date}.",
+				"invalid": "Elige un día posterior a hoy."
+			},
+			"permissions": "Permisos",
+			"permissionsHint": "El token solo puede hacer lo que marques aquí. Limítalo a lo que necesita la app.",
+			"permissionsFixed": "Este token tiene justo estos permisos.",
+			"permissionsRequired": "Marca al menos un permiso.",
+			"presets": "Predefinidos",
+			"presetNames": {
+				"readOnly": "Solo lectura",
+				"tasks": "Tareas",
+				"projects": "Proyectos",
+				"fullAccess": "Acceso total"
+			},
+			"searchPermissions": "Buscar permisos…",
+			"pickedCount": "{count} marcados | {count} marcado | {count} marcados",
+			"allOf": "Todo {group}",
+			"details": "Detalles",
+			"expires": "caduca el {date}",
+			"expired": "caducó {ago}",
+			"createdAgo": "creado {ago}",
+			"deleteNamed": "Borrar “{title}”",
+			"delete": "Borrar token",
+			"deleteTitle": "¿Borrar este token?",
+			"deleteDescription": "Lo que use “{title}” pierde el acceso al momento. No se puede deshacer.",
+			"deleted": "Token borrado"
+		},
+		"apiTokens": {
+			"description": "Deja que scripts y otras apps usen la API de Norna sin tu contraseña.",
+			"listTitle": "Tokens",
+			"emptyTitle": "Aún no hay tokens de API",
+			"emptyDescription": "Crea uno por app, con solo los permisos que necesita.",
+			"docs": "Documentación de la API"
+		},
+		"caldav": {
+			"description": "Sincroniza tus tareas con apps de calendario y de tareas que admitan CalDAV.",
+			"url": "Dirección del servidor",
+			"passwordOrToken": "Inicia sesión con tu nombre de usuario y tu contraseña o un token de CalDAV.",
+			"tokenOnly": "Tu cuenta no tiene contraseña aquí: inicia sesión con tu nombre de usuario y un token de CalDAV como contraseña.",
+			"docs": "Más sobre CalDAV",
+			"tokensTitle": "Tokens de CalDAV",
+			"tokenName": "Token de CalDAV",
+			"createdTitle": "Tu token de CalDAV está listo",
+			"emptyTitle": "Aún no hay tokens de CalDAV",
+			"deleteNamed": "Borrar el token #{id}",
+			"deleteTitle": "¿Borrar este token de CalDAV?",
+			"deleteDescription": "Las apps que lo usan dejan de sincronizar. No se puede deshacer.",
+			"apiTokenHint": "También sirve un token de API con el permiso caldav access.",
+			"apiTokenLink": "Crear uno"
+		},
+		"feeds": {
+			"description": "Sigue tus notificaciones desde cualquier lector de feeds.",
+			"url": "Feed Atom",
+			"howTo": "Los lectores de feeds inician sesión con tu nombre de usuario y, como contraseña, un token que pueda leer el feed.",
+			"tokensTitle": "Tokens del feed",
+			"emptyTitle": "Aún no hay tokens para el feed",
+			"emptyDescription": "Crea uno para tu lector de feeds.",
+			"newToken": "Nuevo token para el feed",
+			"tokenTitle": "Lector de feeds"
+		},
+		"mcp": {
+			"description": "Conecta un asistente de IA a tus tareas, proyectos y etiquetas con el Model Context Protocol.",
+			"endpoint": "Endpoint",
+			"docs": "Más sobre MCP",
+			"tokensTitle": "Tokens de MCP",
+			"emptyTitle": "Aún no hay tokens de MCP",
+			"emptyDescription": "Crea uno y sigue los pasos para tu asistente.",
+			"allTokens": "Todos los tokens de API",
+			"newToken": "Nuevo token de MCP",
+			"createdTitle": "Tu token de MCP está listo",
+			"typedPreset": "Herramientas, lectura y escritura",
+			"client": "Conéctalo a",
+			"chooseClient": "Elige una app",
+			"clientHelp": "Guía de configuración de {client}",
+			"values": {
+				"command": "comando",
+				"environment": "variable",
+				"config": "configuración",
+				"url": "URL",
+				"header": "cabecera",
+				"token": "token"
+			},
+			"clients": {
+				"claudeCode": {
+					"command": "Ejecuta esto en una terminal:",
+					"verify": "Después abre Claude Code y ejecuta /mcp para comprobar la conexión."
+				},
+				"codex": {
+					"environment": "Pon el token en el entorno de tu shell:",
+					"command": "Añade el servidor:",
+					"config": "O, en su lugar, añade esto a ~/.codex/config.toml:",
+					"note": "Abre Codex desde una shell con NORNA_MCP_TOKEN definida. Vuelve a definirla en cada shell nueva o guárdala en el perfil de tu shell."
+				},
+				"claudeDesktop": {
+					"open": "Abre Personalizar → Conectores → Añadir conector personalizado. En los planes Team o Enterprise lo añade un propietario en Ajustes de la organización → Conectores.",
+					"url": "Llámalo Norna y escribe esta URL:",
+					"auth": "Pon Autenticación en Sin inicio de sesión.",
+					"header": "En Cabeceras de la petición, elige authorization y pega este valor entero, con “Bearer ” incluido; después añade el conector:",
+					"beta": "Las cabeceras de la petición son una beta que solo tienen algunas organizaciones. Si no las ves, este conector aún no está disponible para tu cuenta."
+				},
+				"mistral": {
+					"open": "En la barra lateral, abre Context → Connectors → Add Connector → Add Custom Connector.",
+					"url": "Llámalo Norna, escribe esta URL y pulsa Connect:",
+					"token": "Elige la autenticación HTTP Bearer y pega este token:"
+				},
+				"chatgpt": {
+					"unavailable": "ChatGPT solo se conecta a servidores MCP con OAuth, que aún no está disponible, así que este token no funciona ahí."
+				},
+				"other": {
+					"title": "Otra",
+					"url": "Usa el transporte HTTP streamable con este endpoint:",
+					"header": "Envía esta cabecera en cada petición:"
+				}
+			}
+		},
+		"bots": {
+			"description": "Cuentas tuyas para automatizaciones: se unen a proyectos, reciben tareas y solo inician sesión con tokens de API.",
+			"new": "Nuevo bot",
+			"create": "Crear bot",
+			"created": "Bot creado",
+			"deleted": "Bot borrado",
+			"editTitle": "Editar bot",
+			"edit": "Editar",
+			"enable": "Activar",
+			"disabled": "Desactivado",
+			"delete": "Borrar bot",
+			"deleteTitle": "¿Borrar {username}?",
+			"deleteDescription": "Se borran el bot y todo lo que es suyo, y sus tokens dejan de funcionar. No se puede deshacer.",
+			"actionsFor": "Acciones de {username}",
+			"username": "Nombre de usuario",
+			"usernameHint": "Los nombres de usuario de los bots siempre empiezan por bot-.",
+			"usernameRequired": "Escribe un nombre de usuario.",
+			"usernameSpaces": "El nombre de usuario no puede tener espacios.",
+			"name": "Nombre visible (opcional)",
+			"nameHint": "Lo que se ve cuando comenta o recibe una tarea.",
+			"namePlaceholder": "p. ej., Asistente",
+			"tokensTitle": "Tokens de API",
+			"noTokens": "Aún no tiene tokens: no puede iniciar sesión hasta tener uno.",
+			"newToken": "Nuevo token para {username}",
+			"emptyTitle": "Aún no hay bots",
+			"emptyDescription": "Crea uno por automatización, para que su trabajo aparezca con su propio nombre.",
+			"disable": "Desactivar"
+		},
+		"webhooks": {
+			"description": "Cada webhook recibe una petición POST cuando una de tus tareas envía un recordatorio o vence, en cualquier proyecto.",
+			"emptyDescription": "Añade uno para recibir tus recordatorios en otro servicio, como un chat."
+		},
+		"copy": "Copiar"
+	},
+	"migration": {
+		"description": "Trae proyectos y tareas desde otra app. Lo importado se suma a lo que ya tienes; no se reemplaza nada.",
+		"empty": {
+			"title": "Este servidor no tiene importaciones",
+			"description": "La administración no ha activado ninguna."
+		},
+		"services": {
+			"todoist": "Inicia sesión en Todoist y trae tus proyectos, tareas y etiquetas.",
+			"trello": "Inicia sesión en Trello y trae tus tableros, listas y tarjetas.",
+			"microsoftTodo": "Inicia sesión con Microsoft y trae tus listas y tareas.",
+			"nornaFile": "Sube un .zip exportado desde Norna.",
+			"ticktick": "Sube la copia de seguridad que te da TickTick.",
+			"wekan": "Sube un tablero exportado desde WeKan.",
+			"planka": "Conéctate a tu servidor de Planka con una clave de API o tu usuario.",
+			"csv": "Cualquier hoja de cálculo guardada como CSV. Tú eliges qué es cada columna."
+		},
+		"unavailable": {
+			"title": "Esta importación no está disponible",
+			"description": "Este servidor no la ofrece. Elige otra de la lista."
+		},
+		"allImporters": "Todas las importaciones",
+		"start": "Empezar a importar",
+		"service": {
+			"title": "Importar desde {name}",
+			"intro": "Norna copia lo que tienes en {name}: proyectos, tareas y todo lo que contienen. Lo que ya tienes aquí se queda como está.",
+			"lastFailed": "Tu última importación ({date}) no terminó."
+		},
+		"again": {
+			"title": "¿Importar otra vez?",
+			"description": "Ya importaste desde {name} el {date}. Si importas otra vez, puede haber duplicados.",
+			"confirm": "Importar otra vez"
+		},
+		"oauth": {
+			"description": "Inicia sesión en {name} y permite que Norna lea tus datos. Volverás aquí enseguida y la importación empezará.",
+			"connect": "Conectar {name}",
+			"starting": "Empezando la importación desde {name}…"
+		},
+		"file": {
+			"choose": "Elegir archivo",
+			"drop": "o suéltalo aquí",
+			"dropHere": "Suelta el archivo aquí",
+			"change": "Cambiar",
+			"hints": {
+				"nornaFile": "En Norna, abre Ajustes → Exportar, pide una exportación y descarga el .zip.",
+				"ticktick": "En TickTick, ve a Ajustes → Cuenta → Copia de seguridad y descarga el archivo .csv.",
+				"wekan": "En WeKan, abre el menú del tablero, elige Exportar tablero y guarda el archivo .json."
+			}
+		},
+		"credentials": {
+			"description": "Norna inicia sesión en tu servidor de {name} para leer tus proyectos. Lo que escribas solo se usa para esta importación y no se guarda.",
+			"url": "Dirección de {name}",
+			"urlRequired": "Escribe la dirección de tu servidor.",
+			"urlInvalid": "Escribe la dirección completa, empezando por https://",
+			"method": "Iniciar sesión con",
+			"apiKey": "Clave de API",
+			"login": "Usuario y contraseña",
+			"apiKeyRequired": "Escribe una clave de API.",
+			"username": "Usuario o email",
+			"usernameRequired": "Escribe tu usuario o email.",
+			"password": "Contraseña",
+			"passwordRequired": "Escribe tu contraseña.",
+			"planka": {
+				"apiKeyHint": "Tiene que crearla para tu cuenta alguien que administre Planka. El token que usa tu navegador no sirve.",
+				"passwordHint": "Solo para cuentas locales de Planka sin verificación en dos pasos que hayan iniciado sesión al menos una vez. Las cuentas con inicio de sesión único necesitan una clave de API."
+			}
+		},
+		"state": {
+			"running": "Importando desde {name}…",
+			"runningDescription": "Puede tardar un rato. Puedes salir de esta página: la importación sigue y te avisaremos por email cuando termine.",
+			"startedAt": "Empezó",
+			"done": "Importación terminada",
+			"doneDescription": "Lo importado desde {name} ya está en tus proyectos.",
+			"importMore": "Importar más",
+			"toProjects": "Ir a proyectos",
+			"failed": "La importación no terminó",
+			"tryAgain": "Intentar otra vez"
+		},
+		"failure": {
+			"reported": "Algo falló al importar desde {service}. El error ha quedado registrado.",
+			"interrupted": "La importación desde {service} se detuvo antes de terminar. Vuelve a empezarla.",
+			"credentials": "{service} no aceptó el inicio de sesión. Vuelve a conectarlo.",
+			"queue": "No se pudo poner en cola la importación desde {service}. Vuelve a empezarla.",
+			"upload": "No se pudo guardar el archivo. Vuelve a subirlo.",
+			"detail": "La importación desde {service} falló: {reason}"
+		},
+		"csv": {
+			"title": "Importar un archivo CSV",
+			"description": "Convierte las filas de una hoja de cálculo en tareas.",
+			"steps": {
+				"file": "Archivo",
+				"columns": "Columnas",
+				"preview": "Vista previa"
+			},
+			"stepOf": "Paso {current} de {total}",
+			"file": {
+				"description": "Un archivo CSV con una fila de encabezados. Cada fila será una tarea.",
+				"reading": "Leyendo el archivo…"
+			},
+			"next": "Siguiente",
+			"back": "Atrás",
+			"toPreview": "Vista previa",
+			"import": "Importar {count} tarea | Importar {count} tareas",
+			"importPending": "Importar",
+			"columns": {
+				"title": "Columnas",
+				"description": "Elige qué contiene cada columna. Lo hemos deducido de los encabezados.",
+				"example": "p. ej. {value}",
+				"noExample": "Vacía en las primeras filas",
+				"unnamed": "Columna {number}",
+				"titleRequired": "Elige la columna con los títulos de las tareas para seguir."
+			},
+			"format": {
+				"title": "Formato del archivo",
+				"delimiter": "Separador",
+				"dateFormat": "Fechas",
+				"dateFormatDescription": "Cómo están escritas las fechas en el archivo.",
+				"skipRows": "Saltar filas",
+				"skipRowsDescription": "Filas bajo los encabezados que no se importan."
+			},
+			"attributes": {
+				"title": "Título",
+				"description": "Descripción",
+				"dueDate": "Fecha de vencimiento",
+				"startDate": "Fecha de inicio",
+				"endDate": "Fecha de fin",
+				"done": "Hecha",
+				"priority": "Prioridad",
+				"labels": "Etiquetas",
+				"project": "Proyecto",
+				"reminder": "Recordatorio",
+				"ignore": "No importar"
+			},
+			"delimiters": {
+				"comma": "Coma (,)",
+				"semicolon": "Punto y coma (;)",
+				"tab": "Tabulador",
+				"pipe": "Barra vertical (|)"
+			},
+			"preview": {
+				"description": "Las primeras tareas, tal como se crearán. Comprueba que se ven bien antes de importar.",
+				"count": "{count} tarea en el archivo | {count} tareas en el archivo",
+				"none": "Con estos ajustes no hay filas que importar.",
+				"untitled": "Sin título",
+				"done": "Hecha",
+				"more": "y {count} más",
+				"loading": "Actualizando la vista previa…"
+			}
+		}
+	},
+	"settingsData": {
+		"password": {
+			"label": "Tu contraseña",
+			"required": "Escribe tu contraseña para confirmar.",
+			"wrong": "Esa contraseña no es correcta."
+		},
+		"export": {
+			"description": "Una copia de todo lo que hay en tu cuenta: proyectos, tareas, comentarios y archivos. Puedes importarla en Norna.",
+			"currentTitle": "Tu exportación",
+			"preparing": "Preparando tu exportación…",
+			"preparingDescription": "Puede tardar unos minutos. También te avisaremos por email cuando esté lista.",
+			"none": "Aún no hay ninguna exportación.",
+			"until": "disponible hasta el",
+			"newTitle": "Nueva exportación",
+			"newDescription": "La preparamos en segundo plano y te enviamos un enlace por email cuando esté lista.",
+			"replaces": "Una nueva exportación sustituye a la actual.",
+			"request": "Pedir exportación",
+			"requested": "Exportación pedida. Te avisaremos por email cuando esté lista.",
+			"ready": "Tu exportación está lista."
+		},
+		"download": {
+			"title": "Descargar tu exportación",
+			"dialogDescription": "Confirma con tu contraseña para descargarla.",
+			"submit": "Descargar",
+			"description": "Todo lo de tu cuenta en un archivo .zip. Las exportaciones se borran a los 7 días.",
+			"noneTitle": "No hay ninguna exportación que descargar",
+			"noneDescription": "Las exportaciones se borran 7 días después de crearse. Pide una nueva en tus ajustes.",
+			"requestNew": "Pedir una nueva exportación"
+		},
+		"deletion": {
+			"description": "Cierra tu cuenta y borra lo que contiene.",
+			"disabledTitle": "El borrado de cuentas está desactivado",
+			"disabledDescription": "Este servidor no permite que las cuentas se borren a sí mismas. Pregunta a la administración.",
+			"scheduledTitle": "Tu cuenta se va a borrar",
+			"scheduled": "Se borrará el {date} ({relative}), con todo lo que contiene.",
+			"keepTitle": "Conservar tu cuenta",
+			"keepDescription": "Cancela el borrado y todo seguirá como está.",
+			"keep": "Conservar mi cuenta",
+			"emailSent": "Revisa tu email: abre el enlace que te hemos enviado para confirmar. No se borra nada hasta que lo hagas.",
+			"title": "Borrar tu cuenta",
+			"consequences": {
+				"projects": "Los proyectos que solo usas tú se borran, con sus tareas, comentarios y archivos.",
+				"shared": "Los proyectos que compartes se quedan; pasan a alguien con permisos de administración.",
+				"rest": "También se borran tus filtros guardados, tokens de API, bots y tu pertenencia a equipos.",
+				"confirm": "Te enviaremos un enlace por email para confirmar. La cuenta se borra 3 días después de confirmar y, hasta entonces, puedes cancelarlo aquí."
+			},
+			"exportFirst": "¿Quieres una copia antes?",
+			"exportLink": "Exporta tus datos",
+			"submit": "Borrar mi cuenta",
+			"cancelled": "Tu cuenta se queda."
+		}
+	},
+	"settingsAccount": {
+		"currentPassword": "Contraseña actual",
+		"passwordRequired": "Escribe tu contraseña.",
+		"wrongPassword": "Esa contraseña no es correcta.",
+		"managedByProvider": "Tu cuenta inicia sesión con {provider}, así que esto se gestiona allí.",
+		"general": {
+			"description": "Tu perfil, tu idioma y cómo se ve y se comporta Norna. Los cambios se guardan solos.",
+			"sections": {
+				"profile": "Perfil",
+				"region": "Idioma y región",
+				"appearance": "Apariencia",
+				"tasks": "Tareas",
+				"notifications": "Emails",
+				"privacy": "Privacidad",
+				"desktop": "App de escritorio"
+			},
+			"name": "Nombre",
+			"nameDescription": "Se muestra en lugar de tu nombre de usuario.",
+			"nameExternal": "Viene de {provider}.",
+			"defaultProject": "Proyecto por defecto",
+			"defaultProjectDescription": "Donde van las tareas nuevas si no eliges proyecto.",
+			"chooseProject": "Elige un proyecto",
+			"language": "Idioma",
+			"timezone": "Zona horaria",
+			"timezoneDescription": "Los recordatorios y los emails diarios la siguen.",
+			"chooseTimezone": "Elige una zona horaria",
+			"searchTimezone": "Buscar zonas horarias…",
+			"weekStart": "La semana empieza el",
+			"timeFormat": "Reloj",
+			"dateDisplay": "Fecha de los comentarios",
+			"dateDisplayDescription": "Cómo se escribe la fecha de cada comentario.",
+			"dateRelative": "Relativa, como «{example}»",
+			"themeSystem": "Sistema",
+			"defaultView": "Abrir los proyectos en",
+			"defaultViewDescription": "Si el proyecto tiene una vista de ese tipo.",
+			"firstView": "Su primera vista",
+			"minimumPriority": "Mostrar la prioridad desde",
+			"minimumPriorityDescription": "Las prioridades más bajas no se muestran en listas ni tableros.",
+			"commentOrder": "Comentarios",
+			"commentsOldest": "Antiguos primero",
+			"commentsNewest": "Recientes primero",
+			"showLastViewed": "Proyectos recientes en Inicio",
+			"showLastViewedDescription": "Los últimos proyectos que abriste.",
+			"magic": "Magia al añadir rápido",
+			"magicModes": {
+				"norna": "Norna",
+				"todoist": "Todoist",
+				"disabled": "Desactivada"
+			},
+			"magicOff": "Lo que escribes es el título, tal cual.",
+			"defaultReminders": "Recordatorios al añadir rápido",
+			"defaultRemindersDescription": "Se añaden a las tareas nuevas que reciben fecha al escribir.",
+			"defaultDueTime": "Hora de vencimiento por defecto",
+			"defaultDueTimeDescription": "Para las fechas que eliges sin hora. Vacía: la próxima hora en punto.",
+			"relationKind": "Relaciones nuevas",
+			"relationKindDescription": "El tipo que se elige primero al relacionar dos tareas.",
+			"playSound": "Sonido al completar",
+			"playSoundDescription": "Un pequeño pop al completar una tarea.",
+			"emailReminders": "Recordatorios por email",
+			"emailRemindersDescription": "Los recordatorios de tareas también llegan a tu correo.",
+			"overdueReminders": "Resumen de vencidas",
+			"overdueRemindersDescription": "Un email al día con tus tareas vencidas.",
+			"overdueTime": "Enviarlo a las",
+			"discoverableByName": "Encontrarme por nombre",
+			"discoverableByNameDescription": "Otras personas pueden encontrarte por tu nombre al compartir.",
+			"discoverableByEmail": "Encontrarme por email",
+			"discoverableByEmailDescription": "Otras personas pueden encontrarte escribiendo tu email exacto.",
+			"quickEntryShortcut": "Atajo de entrada rápida",
+			"quickEntryShortcutDescription": "Abre la entrada rápida desde cualquier parte del ordenador.",
+			"shortcutRecording": "Pulsa las teclas…",
+			"shortcutEmpty": "Sin atajo",
+			"shortcutClear": "Quitar el atajo"
+		},
+		"avatar": {
+			"description": "La imagen junto a tu nombre.",
+			"source": "Imagen",
+			"providers": {
+				"initials": "Iniciales",
+				"initialsDescription": "Las primeras letras de tu nombre.",
+				"gravatar": "Gravatar",
+				"gravatarDescription": "La imagen asociada a tu email en gravatar.com.",
+				"marble": "Mármol",
+				"marbleDescription": "Un patrón de colores, único para ti.",
+				"upload": "Tu imagen",
+				"uploadDescription": "Sube una imagen y recórtala.",
+				"default": "Por defecto",
+				"defaultDescription": "Una imagen neutra.",
+				"ldap": "Desde LDAP",
+				"ldapDescription": "Se sincroniza desde tu cuenta del directorio.",
+				"openid": "Desde {provider}",
+				"openidDescription": "Se sincroniza cada vez que inicias sesión."
+			},
+			"choose": "Elegir imagen",
+			"replace": "Cambiar imagen",
+			"notImage": "Ese archivo no es una imagen.",
+			"cropTitle": "Recorta tu imagen",
+			"cropDescription": "Arrastra el cuadro para encuadrarla. Usa la rueda o pellizca para acercar.",
+			"cropPreview": "Así se verá junto a tu nombre.",
+			"usePicture": "Usar esta imagen"
+		},
+		"email": {
+			"description": "Donde Norna envía los recordatorios y los emails de la cuenta.",
+			"changeTitle": "Cambiar el email",
+			"current": "Email actual:",
+			"newEmail": "Email nuevo",
+			"passwordHint": "Para confirmar que eres tú.",
+			"submit": "Cambiar el email",
+			"changed": "Email cambiado",
+			"pendingSent": "Revisa {email} para confirmar el cambio",
+			"pending": "Confirma {email} con el enlace que te enviamos allí. Hasta entonces, se mantiene tu email actual.",
+			"resend": "Enviar de nuevo",
+			"resent": "Confirmación enviada de nuevo",
+			"cancel": "Cancelar el cambio",
+			"cancelled": "Cambio de email cancelado"
+		},
+		"password": {
+			"description": "Al cambiarla se cierra la sesión en tus otros dispositivos.",
+			"changeTitle": "Cambiar la contraseña",
+			"new": "Contraseña nueva",
+			"repeat": "Repite la contraseña nueva",
+			"mismatch": "Las contraseñas no coinciden.",
+			"submit": "Cambiar la contraseña",
+			"changed": "Contraseña cambiada. Se cerró la sesión en tus otros dispositivos.",
+			"signInAgain": "Contraseña cambiada. Inicia sesión con la nueva."
+		},
+		"totp": {
+			"description": "Al iniciar sesión también se pide un código de una app de autenticación.",
+			"status": "Estado",
+			"on": "Activada",
+			"off": "Desactivada",
+			"pending": "Configuración sin terminar",
+			"onDescription": "Al iniciar sesión se pide un código de tu app.",
+			"offDescription": "Solo tu contraseña protege tu cuenta.",
+			"setUp": "Configurar",
+			"continueSetup": "Continuar",
+			"setupTitle": "Configuración",
+			"scan": "Escanea este código con tu app de autenticación.",
+			"qrAlt": "Código QR que añade Norna a tu app de autenticación",
+			"manual": "O escribe esta clave a mano:",
+			"copyKey": "Copiar la clave",
+			"keyCopied": "Clave copiada",
+			"enterCode": "Escribe el código de 6 dígitos que muestra la app.",
+			"code": "Código",
+			"codeInvalid": "Escribe los 6 dígitos.",
+			"codeWrong": "Ese código no ha funcionado. Prueba con el que muestra ahora tu app.",
+			"signOutNotice": "Al activarla se cierra la sesión en todas partes. Vuelve a entrar con tu contraseña y un código.",
+			"turnOn": "Activar",
+			"enabled": "La verificación en dos pasos está activada. Vuelve a iniciar sesión con un código de tu app.",
+			"turnOff": "Desactivar",
+			"disableTitle": "¿Desactivar la verificación en dos pasos?",
+			"disableDescription": "Escribe tu contraseña para confirmarlo.",
+			"disabled": "Verificación en dos pasos desactivada"
+		},
+		"sessions": {
+			"description": "Los dispositivos con la sesión iniciada en tu cuenta.",
+			"listTitle": "Dispositivos",
+			"thisDevice": "Este dispositivo",
+			"device": "{browser} en {os}",
+			"unknownDevice": "Dispositivo desconocido",
+			"lastActive": "activa {time}",
+			"noOthers": "No tienes la sesión iniciada en ningún otro sitio.",
+			"revoke": "Cerrar sesión",
+			"revokeNamed": "Cerrar sesión en {device}",
+			"revokeTitle": "¿Cerrar la sesión de este dispositivo?",
+			"revokeDescription": "{device} tendrá que volver a iniciar sesión.",
+			"revoked": "Sesión cerrada",
+			"revokeOthers": "Cerrar las demás",
+			"revokeOthersTitle": "¿Cerrar la sesión en tus otros dispositivos?",
+			"revokeOthersDescription": "{count} dispositivo tendrá que volver a iniciar sesión. | {count} dispositivos tendrán que volver a iniciar sesión.",
+			"revokedMany": "Sesión cerrada en {count} dispositivo | Sesión cerrada en {count} dispositivos"
+		}
+	},
+	"timeTracking": {
+		"title": "Registro de tiempo",
+		"stop": "Parar",
+		"logTime": "Registrar tiempo",
+		"editEntry": "Editar registro",
+		"running": "En marcha",
+		"entries": "Registros",
+		"total": "Total",
+		"delete": "Eliminar",
+		"deleteEntry": "Eliminar registro",
+		"deleteTitle": "¿Eliminar este registro?",
+		"deleteDescription": "El tiempo que contiene se pierde para siempre.",
+		"loadFailed": "No se pudieron cargar tus registros de tiempo. Vuelve a intentarlo en un momento.",
+		"emptyTitle": "Sin tiempo registrado",
+		"emptyDescription": "No hay nada registrado en estos días. Inicia un temporizador o registra tiempo a mano.",
+		"timer": {
+			"label": "Temporizador",
+			"runningSince": "En marcha desde las {time}",
+			"idle": "Ningún temporizador en marcha",
+			"idleHint": "Elige una tarea y el reloj empieza a contar.",
+			"pickTask": "Registrar tiempo en…",
+			"runningSinceDay": "En marcha desde {time}"
+		},
+		"form": {
+			"task": "Tarea",
+			"taskSearch": "Busca una tarea…",
+			"pickTask": "Elige una tarea",
+			"openTask": "Abrir tarea",
+			"onProject": "En {project}",
+			"taskRequired": "Elige la tarea a la que va este tiempo.",
+			"day": "Día",
+			"start": "Inicio",
+			"end": "Fin",
+			"nextDay": "Día siguiente",
+			"duration": "Duración",
+			"durationPlaceholder": "1h 30m",
+			"durationInvalid": "El fin tiene que ir después del inicio.",
+			"stillRunning": "Sigue en marcha: para el temporizador para fijar el fin.",
+			"note": "Nota",
+			"commentPlaceholder": "¿En qué trabajaste?",
+			"save": "Guardar",
+			"update": "Guardar cambios",
+			"startTimer": "Iniciar temporizador"
+		},
+		"ranges": {
+			"label": "Periodo",
+			"thisWeek": "Esta semana",
+			"lastWeek": "Semana pasada",
+			"thisMonth": "Este mes",
+			"custom": "Elegir días",
+			"from": "Desde",
+			"to": "Hasta",
+			"fromDay": "Desde el {day}",
+			"toDay": "Hasta el {day}"
+		},
+		"filters": {
+			"project": "Proyecto",
+			"allProjects": "Todos los proyectos"
+		},
+		"start": "Iniciar"
+	},
+	"admin": {
+		"title": "Administración",
+		"loadFailed": "No se pudo cargar. Vuelve a intentarlo en un momento.",
+		"loadMore": "Mostrar más",
+		"shownOf": "{shown} de {total}",
+		"nav": {
+			"label": "Secciones de administración",
+			"overview": "Resumen",
+			"users": "Usuarios",
+			"projects": "Proyectos",
+			"inviteLinks": "Enlaces de invitación"
+		},
+		"overview": {
+			"counts": "Tamaño de la instancia",
+			"users": "Usuarios",
+			"projects": "Proyectos",
+			"tasks": "Tareas",
+			"teams": "Equipos",
+			"shares": "Compartidos",
+			"sharesDetail": "{links} enlace · {teams} equipo · {users} usuario",
+			"server": "Servidor",
+			"version": "Versión",
+			"license": "Licencia",
+			"licenseStatus": "Estado",
+			"licensed": "Con licencia",
+			"unlicensed": "Sin licencia",
+			"features": "Funciones",
+			"maxUsers": "Límite de usuarios",
+			"unlimited": "Sin límite",
+			"validUntil": "Válida hasta",
+			"lastVerified": "Última verificación",
+			"never": "Nunca",
+			"lastCheckFailed": "La última verificación falló",
+			"instance": "ID de la instancia"
+		},
+		"users": {
+			"search": "Busca usuarios",
+			"new": "Nuevo usuario",
+			"you": "tú",
+			"adminBadge": "Admin",
+			"localAccount": "local",
+			"emptyTitle": "Todavía no hay usuarios",
+			"noMatchTitle": "Ningún usuario coincide",
+			"noMatchDescription": "Ningún nombre de usuario ni email contiene «{query}».",
+			"status": {
+				"unconfirmed": "Sin confirmar",
+				"disabled": "Desactivada",
+				"locked": "Bloqueada"
+			},
+			"actions": {
+				"setPassword": "Cambiar contraseña…",
+				"sendReset": "Enviar email para restablecer la contraseña",
+				"makeAdmin": "Hacer admin",
+				"removeAdmin": "Quitar admin",
+				"disable": "Desactivar cuenta",
+				"enable": "Activar cuenta",
+				"delete": "Eliminar usuario…"
+			},
+			"form": {
+				"username": "Nombre de usuario",
+				"usernameRequired": "Escribe un nombre de usuario.",
+				"email": "Email",
+				"emailInvalid": "Escribe un email válido.",
+				"name": "Nombre",
+				"optional": "Opcional",
+				"password": "Contraseña",
+				"newPassword": "Nueva contraseña",
+				"passwordTooShort": "Usa al menos {count} caracteres.",
+				"skipEmailConfirm": "Activar la cuenta sin confirmar el email",
+				"isAdmin": "Hacerle admin",
+				"create": "Crear usuario"
+			},
+			"created": "{username} ya puede entrar.",
+			"makeAdminTitle": "¿Hacer admin a {username}?",
+			"makeAdminDescription": "Los admins pueden gestionar todos los usuarios y todos los proyectos de esta instancia.",
+			"removeAdminTitle": "¿Quitar a {username} como admin?",
+			"removeAdminDescription": "Conserva su cuenta y sus proyectos, pero pierde el acceso a la administración.",
+			"madeAdmin": "{username} ya es admin.",
+			"removedAdmin": "{username} ya no es admin.",
+			"disableTitle": "¿Desactivar a {username}?",
+			"disableDescription": "No podrá entrar hasta que se vuelva a activar la cuenta. No se borra nada.",
+			"disabled": "La cuenta de {username} está desactivada.",
+			"enabled": "{username} ya puede volver a entrar.",
+			"setPassword": "Cambiar contraseña",
+			"setPasswordTitle": "Nueva contraseña para {username}",
+			"setPasswordDescription": "Se cerrará su sesión en todos sus dispositivos y tendrá que usar esta contraseña a partir de ahora.",
+			"passwordSet": "{username} tiene una contraseña nueva.",
+			"resetSent": "Se envió a {username} un email para restablecer la contraseña.",
+			"deleteTitle": "¿Eliminar a {username}?",
+			"deleteNowHelp": "Eliminar ahora borra la cuenta y todo lo que contiene al momento. No se puede deshacer.",
+			"deleteScheduledHelp": "Pedir por email le envía la misma confirmación que cuando alguien elimina su propia cuenta.",
+			"deleteNow": "Eliminar ahora",
+			"deleteScheduled": "Pedir por email",
+			"deleted": "Se eliminó a {username}.",
+			"deletionScheduled": "{username} recibió un email para confirmar la eliminación."
+		},
+		"projects": {
+			"search": "Busca proyectos",
+			"archived": "Archivado",
+			"emptyTitle": "Todavía no hay proyectos",
+			"noMatchTitle": "Ningún proyecto coincide",
+			"open": "Abrir proyecto",
+			"changeOwner": "Cambiar propietario",
+			"changeOwnerTitle": "Cambiar el propietario de {title}",
+			"currentOwner": "Ahora es de {username}.",
+			"newOwner": "Nuevo propietario",
+			"ownerChanged": "{title} tiene un nuevo propietario."
+		},
+		"invites": {
+			"description": "Quien tenga un enlace de invitación puede crear una cuenta aunque el registro esté cerrado.",
+			"new": "Nuevo enlace de invitación",
+			"newDescription": "Verás el enlace una sola vez, justo después de crearlo.",
+			"created": "Enlace de invitación creado",
+			"url": "Enlace de invitación",
+			"emptyTitle": "No hay enlaces de invitación",
+			"emptyDescription": "Crea uno para dejar entrar a alguien sin abrir el registro a todo el mundo.",
+			"spent": "Ya no es válido",
+			"uses": "{uses}/{max} usos",
+			"expires": "hasta el {date}",
+			"neverExpires": "sin fecha de fin",
+			"createdBy": "de {user}",
+			"delete": "Eliminar",
+			"deleteNamed": "Eliminar {name}",
+			"deleteTitle": "¿Eliminar «{name}»?",
+			"deleteDescription": "Ya nadie podrá registrarse con él. Las cuentas creadas con él se quedan.",
+			"deleted": "Enlace de invitación eliminado.",
+			"form": {
+				"name": "Nombre",
+				"nameHint": "Lo ven las personas invitadas al registrarse.",
+				"nameRequired": "Ponle un nombre al enlace.",
+				"maxUses": "Usos",
+				"maxUsesInvalid": "Escribe un número entero o déjalo vacío.",
+				"unlimited": "Sin límite",
+				"expires": "Caduca",
+				"never": "Nunca",
+				"days": "En {count} día | En {count} días",
+				"pickDay": "Un día concreto…",
+				"expiresOn": "Último día",
+				"teams": "Equipos",
+				"teamsHint": "Las cuentas nuevas se unen a estos equipos.",
+				"noTeams": "Ninguno",
+				"skipEmailConfirm": "Activar las cuentas nuevas sin confirmar el email",
+				"create": "Crear enlace"
+			}
+		}
+	},
+	"apiConfig": {
+		"error": "No se ha encontrado una instalación de Norna en «{domain}», o no responde. Revisa que la dirección sea correcta y que puedas abrirla directamente, y vuelve a intentarlo."
 	}
 }

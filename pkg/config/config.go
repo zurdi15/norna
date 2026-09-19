@@ -188,9 +188,9 @@ const (
 	MigrationMicrosoftTodoRedirectURL  Key = `migration.microsofttodo.redirecturl`
 	MigrationClaimTimeout              Key = `migration.claimtimeout`
 	MigrationMaxCSVRows                Key = `migration.maxcsvrows`
-	MigrationVikunjaFileMaxSize        Key = `migration.vikunjafile.maxsize`
-	MigrationVikunjaFileMaxFiles       Key = `migration.vikunjafile.maxfiles`
-	MigrationVikunjaFileMaxUserStorage Key = `migration.vikunjafile.maxuserstorage`
+	MigrationNornaFileMaxSize          Key = `migration.nornafile.maxsize`
+	MigrationNornaFileMaxFiles         Key = `migration.nornafile.maxfiles`
+	MigrationNornaFileMaxUserStorage   Key = `migration.nornafile.maxuserstorage`
 
 	CorsEnable  Key = `cors.enable`
 	CorsOrigins Key = `cors.origins`
@@ -248,7 +248,7 @@ const (
 	PluginsDir     Key = `plugins.dir`
 	PluginsLoader  Key = `plugins.loader`
 
-	// LicenseKey gates optional paid features and funds Vikunja's development.
+	// LicenseKey gates optional paid features and funds the upstream project's development.
 	// See the package comment in pkg/license/license.go before removing.
 	LicenseKey Key = `license.key`
 )
@@ -292,7 +292,7 @@ func (k Key) Get() interface{} {
 
 var timezone *time.Location
 
-// GetTimeZone returns the time zone configured for vikunja
+// GetTimeZone returns the time zone configured for Norna
 // It is a separate function and not done through viper because that makes handling
 // it way easier, especially when testing.
 func GetTimeZone() *time.Location {
@@ -326,7 +326,7 @@ func applyDefaultLogLevels() {
 	}
 }
 
-// getRootpathLocation determines the default root path for Vikunja data.
+// getRootpathLocation determines the default root path for Norna data.
 // It prefers the current working directory, which respects systemd's
 // WorkingDirectory= setting and is the most intuitive default.
 // Falls back to the binary's directory if Getwd fails.
@@ -347,7 +347,7 @@ func getRootpathLocation() string {
 	if runtime.GOOS == "windows" {
 		exeSuffix = ".exe"
 	}
-	if exeLocation, err := exec.LookPath("vikunja" + exeSuffix); err == nil {
+	if exeLocation, err := exec.LookPath("norna" + exeSuffix); err == nil {
 		return filepath.Dir(exeLocation)
 	}
 
@@ -401,8 +401,9 @@ func initDefaultConfig() {
 	ServiceTrustedProxies.setDefault("")
 
 	// Sentry
-	SentryDsn.setDefault("https://440eedc957d545a795c17bbaf477497c@o1047380.ingest.sentry.io/4504254983634944")
-	SentryFrontendDsn.setDefault("https://85694a2d757547cbbc90cd4b55c5a18d@o1047380.ingest.sentry.io/6024480")
+	// No default project: enabling Sentry needs your own DSN, so errors never go elsewhere.
+	SentryDsn.setDefault("")
+	SentryFrontendDsn.setDefault("")
 
 	// Auth
 	AuthLocalEnabled.setDefault(true)
@@ -424,10 +425,10 @@ func initDefaultConfig() {
 	// Database
 	DatabaseType.setDefault("sqlite")
 	DatabaseHost.setDefault("localhost")
-	DatabaseUser.setDefault("vikunja")
+	DatabaseUser.setDefault("norna")
 	DatabasePassword.setDefault("")
-	DatabaseDatabase.setDefault("vikunja")
-	DatabasePath.setDefault(ResolvePath("vikunja.db"))
+	DatabaseDatabase.setDefault("norna")
+	DatabasePath.setDefault(ResolvePath("norna.db"))
 	DatabaseMaxOpenConnections.setDefault(100)
 	DatabaseMaxIdleConnections.setDefault(50)
 	DatabaseMaxConnectionLifetime.setDefault(1800000)
@@ -445,7 +446,7 @@ func initDefaultConfig() {
 	MailerUsername.setDefault("")
 	MailerPassword.setDefault("")
 	MailerSkipTLSVerify.setDefault(false)
-	MailerFromEmail.setDefault("mail@vikunja")
+	MailerFromEmail.setDefault("mail@norna")
 	MailerQueuelength.setDefault(100)
 	MailerQueueTimeout.setDefault(30)
 	MailerForceSSL.setDefault(false)
@@ -501,9 +502,9 @@ func initDefaultConfig() {
 	MigrationMicrosoftTodoEnable.setDefault(false)
 	MigrationClaimTimeout.setDefault("5m")
 	MigrationMaxCSVRows.setDefault(100000)
-	MigrationVikunjaFileMaxSize.setDefault("256MB")
-	MigrationVikunjaFileMaxFiles.setDefault(10000)
-	MigrationVikunjaFileMaxUserStorage.setDefault("1GB")
+	MigrationNornaFileMaxSize.setDefault("256MB")
+	MigrationNornaFileMaxFiles.setDefault(10000)
+	MigrationNornaFileMaxUserStorage.setDefault("1GB")
 	// Avatar
 	AvatarGravaterExpiration.setDefault(3600)
 	AvatarGravatarBaseURL.setDefault("https://www.gravatar.com")
@@ -629,8 +630,8 @@ func setConfigFromEnv() error {
 		}
 		key, value := keyValue[0], keyValue[1]
 
-		if strings.HasPrefix(key, "VIKUNJA_") {
-			formattedKey := strings.ToLower(strings.TrimPrefix(key, "VIKUNJA_"))
+		if strings.HasPrefix(key, "NORNA_") {
+			formattedKey := strings.ToLower(strings.TrimPrefix(key, "NORNA_"))
 			keys := strings.Split(formattedKey, "_")
 			currentMap := configMap
 
@@ -694,7 +695,7 @@ func anchorRootpathToConfigFile() {
 	// The default baked in initDefaultConfig() points at the caller's cwd, which
 	// would split the database off from the rest of the pinned install.
 	if !viper.InConfig(string(DatabasePath)) {
-		DatabasePath.setDefault(ResolvePath("vikunja.db"))
+		DatabasePath.setDefault(ResolvePath("norna.db"))
 	}
 }
 
@@ -705,7 +706,7 @@ func InitConfig() {
 	initDefaultConfig()
 
 	// Init checking for environment variables
-	viper.SetEnvPrefix("vikunja")
+	viper.SetEnvPrefix("norna")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
@@ -716,13 +717,13 @@ func InitConfig() {
 		viper.SetConfigFile(configFileOverride)
 	} else {
 		viper.AddConfigPath(ServiceRootpath.GetString())
-		viper.AddConfigPath("/etc/vikunja/")
+		viper.AddConfigPath("/etc/norna/")
 
 		homeDir, err := os.UserHomeDir()
 		if err != nil {
-			log.Debugf("No home directory found, not using config from ~/.config/vikunja/. Error was: %s\n", err.Error())
+			log.Debugf("No home directory found, not using config from ~/.config/norna/. Error was: %s\n", err.Error())
 		} else {
-			viper.AddConfigPath(path.Join(homeDir, ".config", "vikunja"))
+			viper.AddConfigPath(path.Join(homeDir, ".config", "norna"))
 		}
 
 		viper.AddConfigPath(".")

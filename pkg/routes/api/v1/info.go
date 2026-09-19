@@ -24,12 +24,12 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
-// Info is the handler to get infos about this vikunja instance
+// Info is the handler to get infos about this Norna instance
 // @Summary Info
-// @Description Returns the version, frontendurl, motd and various settings of Vikunja
+// @Description Returns the version, frontendurl, motd and various settings of Norna
 // @tags service
 // @Produce json
-// @Success 200 {object} shared.VikunjaInfos
+// @Success 200 {object} shared.NornaInfos
 // @Router /info [get]
 func Info(c *echo.Context) error {
 	return c.JSON(http.StatusOK, shared.BuildInfo())

@@ -1,4 +1,4 @@
-import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest'
+import {describe, it, expect, vi, beforeEach, afterEach, type Mock} from 'vitest'
 
 import * as appleDevice from '@/helpers/isAppleDevice'
 import {parseKey, matchesKey, eventToShortcutString, isFormField, install, uninstall, shortcutBindingToDisplay} from './shortcut'
@@ -411,8 +411,8 @@ function fireKeydown(code: string, mods: Partial<Pick<KeyboardEvent, 'ctrlKey' |
 describe('install / uninstall (sequence handling)', () => {
 	let elA: HTMLElement
 	let elB: HTMLElement
-	let clickA: ReturnType<typeof vi.fn>
-	let clickB: ReturnType<typeof vi.fn>
+	let clickA: Mock<(event: Event) => void>
+	let clickB: Mock<(event: Event) => void>
 
 	beforeEach(() => {
 		elA = document.createElement('button')

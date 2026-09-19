@@ -21,7 +21,7 @@ export function parseUserDefaultTime(defaultDueTime?: string): {hours: number, m
 }
 
 export function getDefaultTimeParts(date: Date): {hours: number, minutes: number} {
-	const defaultDueTime = useAuthStore().settings.frontendSettings.defaultDueTime
+	const defaultDueTime = useAuthStore().settings.frontend_settings.default_due_time
 	const parsedTime = parseUserDefaultTime(defaultDueTime)
 
 	if (parsedTime !== null) {

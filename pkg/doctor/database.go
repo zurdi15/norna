@@ -172,8 +172,8 @@ var paradeDBIndexes = []string{
 }
 
 // checkParadeDB reports whether the pg_search extension is installed and, if so,
-// whether the bm25 indexes Vikunja relies on exist. A missing extension is not a
-// failure — Vikunja falls back to substring search.
+// whether the bm25 indexes Norna relies on exist. A missing extension is not a
+// failure — Norna falls back to substring search.
 func checkParadeDB() []CheckResult {
 	s := db.NewSession()
 	defer s.Close()
@@ -232,7 +232,7 @@ func checkParadeDB() []CheckResult {
 		return append(results, CheckResult{
 			Name:   "ParadeDB indexes",
 			Passed: false,
-			Error:  fmt.Sprintf("missing: %s (restart Vikunja to create them)", strings.Join(missing, ", ")),
+			Error:  fmt.Sprintf("missing: %s (restart Norna to create them)", strings.Join(missing, ", ")),
 		})
 	}
 

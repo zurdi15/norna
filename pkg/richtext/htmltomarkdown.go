@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// Package richtext converts Vikunja's canonical rich-text HTML to and from
+// Package richtext converts Norna's canonical rich-text HTML to and from
 // Markdown at the API/CalDAV boundaries. Storage stays HTML; only the wire
 // representation changes.
 package richtext

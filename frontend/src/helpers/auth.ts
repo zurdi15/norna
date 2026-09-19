@@ -1,4 +1,4 @@
-import {apiV2Url, HTTPFactory} from '@/helpers/fetcher'
+import {apiV2Url} from '@/helpers/apiUrl'
 import {isDesktopApp, refreshDesktopToken} from '@/helpers/desktopAuth'
 
 let savedToken: string | null = null
@@ -158,35 +158,30 @@ async function doRefresh(persist: boolean): Promise<void> {
 			return
 		}
 
-		// We hold the lock and no one else refreshed — make the API call.
-		const HTTP = HTTPFactory()
+		// We hold the lock and no one else refreshed — make the API call. Plain fetch, not the
+		// generated client: that client's 401 interceptor calls back into this refresh.
+		let response: Response
 		try {
-			let response
-			try {
-				response = await HTTP.post(apiV2Url('user/token/refresh'))
-			} catch (e) {
-				if ((e as {response?: {status?: number}})?.response?.status === 429) {
-					throw e
-				}
-				if (loggedOutSinceStart()) {
-					return
-				}
-				// Pre-v2 browsers only hold the v1-path cookie, and some deployments
-				// can't reach v2 at all; v1 re-seeds both cookies.
-				// Drop this fallback once pre-v2 clients have cycled out.
-				response = await HTTP.post('user/token/refresh')
-			}
-			if (loggedOutSinceStart()) {
-				return
-			}
-			saveToken(response.data.token, persist)
+			response = await fetch(apiV2Url('user/token/refresh'), {method: 'POST', credentials: 'include'})
 		} catch (e) {
 			throw new Error('Error renewing token: ', {cause: e})
 		}
+		if (!response.ok) {
+			// Shaped like the old axios error so callers can still tell a 429 apart.
+			throw new Error('Error renewing token: ', {cause: {response: {status: response.status}}})
+		}
+		const {token} = await response.json() as {token?: string}
+		if (loggedOutSinceStart()) {
+			return
+		}
+		if (!token) {
+			throw new Error('Error renewing token: the response carried no token')
+		}
+		saveToken(token, persist)
 	}
 
 	if (navigator.locks) {
-		await navigator.locks.request('vikunja-token-refresh', refreshUnderLock)
+		await navigator.locks.request('norna-token-refresh', refreshUnderLock)
 	} else {
 		// Fallback for environments without Web Locks (e.g. insecure HTTP)
 		await refreshUnderLock()

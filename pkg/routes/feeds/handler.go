@@ -87,7 +87,7 @@ func BuildNotificationsAtomFeed(s *xorm.Session, u *user.User) (string, error) {
 		}
 
 		feed.Items = append(feed.Items, &feeds.Item{
-			Id:      "vikunja-notification-" + strconv.FormatInt(row.ID, 10),
+			Id:      "norna-notification-" + strconv.FormatInt(row.ID, 10),
 			Title:   titler.ToTitle(u.Language),
 			Created: row.Created,
 			Link:    &feeds.Link{Href: publicURL},

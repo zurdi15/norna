@@ -5,19 +5,17 @@ import {useAuthStore} from '@/stores/auth'
 
 const DEFAULT_COLOR_SCHEME_SETTING: BasicColorSchema = 'light'
 
-const CLASS_DARK = 'dark'
-const CLASS_LIGHT = 'light'
+// Browser chrome can't read CSS tokens; keep in sync with --color-canvas in styles/tokens.css.
+const THEME_COLOR = {
+	light: '#f9fafc',
+	dark: '#0b0e13',
+} as const
 
-// This is built upon the vueuse useDark
-// Main differences:
-// - usePreferredColorScheme
-// - doesn't allow setting via the `isDark` ref.
-// - instead the store is exposed
-// - value is synced via `createSharedComposable`
-// https://github.com/vueuse/vueuse/blob/main/packages/core/useDark/index.ts 
+// Resolves the user's setting (light/dark/auto) against the OS preference and pins the
+// result on <html data-theme>, which sets color-scheme and so every light-dark() token.
 export const useColorScheme = createSharedComposable(() => {
 	const authStore = useAuthStore()
-	const store = computed(() => authStore.settings.frontendSettings.colorSchema)
+	const store = computed(() => authStore.settings.frontend_settings.color_schema)
 
 	const preferredColorScheme = usePreferredColorScheme()
 
@@ -26,19 +24,21 @@ export const useColorScheme = createSharedComposable(() => {
 			return store.value === 'dark'
 		}
 
-		const autoColorScheme = preferredColorScheme.value === 'no-preference' 
+		const autoColorScheme = preferredColorScheme.value === 'no-preference'
 			? DEFAULT_COLOR_SCHEME_SETTING
 			: preferredColorScheme.value
 		return autoColorScheme === 'dark'
 	})
 
-	function onChanged(v: boolean) {
-		const el = window?.document.querySelector('html')
-		el?.classList.toggle(CLASS_DARK, v)
-		el?.classList.toggle(CLASS_LIGHT, !v)
+	function onChanged(dark: boolean) {
+		const theme = dark ? 'dark' : 'light'
+		document.documentElement.dataset.theme = theme
+		// index.html ships one meta per scheme for the first paint; an explicit choice overrides both.
+		document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')
+			.forEach(meta => meta.content = THEME_COLOR[theme])
 	}
 
-	watch(isDark, onChanged, { flush: 'post' })
+	watch(isDark, onChanged, {flush: 'post'})
 
 	tryOnMounted(() => onChanged(isDark.value))
 

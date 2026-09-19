@@ -38,8 +38,8 @@ import (
 // username, password and email (from APIUserPassword) plus the new user's
 // preferred language.
 type UserRegister struct {
-	// The language of the new user. Must be a valid IETF BCP 47 language code and exist in Vikunja.
-	Language string `json:"language" valid:"language" doc:"The language of the new user as an IETF BCP 47 code (e.g. en, de-DE)."`
+	// The language of the new user. Must be a valid IETF BCP 47 language code and exist in Norna.
+	Language string `json:"language" valid:"language" doc:"The language of the new user as an IETF BCP 47 code (en or es-ES)."`
 	user.APIUserPassword
 }
 

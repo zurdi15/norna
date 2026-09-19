@@ -44,8 +44,8 @@ func TestGetRefreshTokenCookiePaths(t *testing.T) {
 	}{
 		{"empty", "", ""},
 		{"root", "https://h/", ""},
-		{"subpath", "https://h/vikunja", "/vikunja"},
-		{"subpath with trailing slash", "https://h/vikunja/", "/vikunja"},
+		{"subpath", "https://h/norna", "/norna"},
+		{"subpath with trailing slash", "https://h/norna/", "/norna"},
 	}
 
 	for _, tt := range tests {

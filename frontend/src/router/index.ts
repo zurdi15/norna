@@ -9,20 +9,14 @@ import {LINK_SHARE_HASH_PREFIX} from '@/constants/linkShareHash'
 import {REDIRECT_HASH_PREFIX} from '@/constants/redirectHash'
 import {AUTH_ROUTE_NAMES} from '@/constants/authRouteNames'
 import {PRO_FEATURE} from '@/constants/proFeatures'
-import {i18n} from '@/i18n'
+import {translate} from '@/i18n'
 import {error, success} from '@/message'
 
 import {useAuthStore} from '@/stores/auth'
 import {useBaseStore} from '@/stores/base'
 import {useConfigStore} from '@/stores/config'
 
-import Login from '@/views/user/Login.vue'
-import Register from '@/views/user/Register.vue'
-import LinkSharingAuth from '@/views/sharing/LinkSharingAuth.vue'
-import OpenIdAuth from '@/views/user/OpenIdAuth.vue'
-import UpcomingTasks from '@/views/tasks/ShowTasks.vue'
-
-import NotFoundComponent from '@/views/404.vue'
+// Every route renders this until its page is rebuilt; phases swap in the real page one route at a time.
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,32 +32,36 @@ const router = createRouter({
 		}
 
 		// Otherwise just scroll to the top
-		return {
-			'inset-inline-start': 0,
-			'inset-block-start': 0,
-		}
+		return {left: 0, top: 0}
 	},
 	routes: [
+		// Design system catalog, dev builds only. Public so it can be checked without an account.
+		...(import.meta.env.DEV ? [{
+			path: '/_ui',
+			name: 'dev.ui',
+			component: () => import('@/pages/dev/PageUiCatalog.vue'),
+			meta: {public: true},
+		}] : []),
 		{
 			path: '/',
 			name: 'home',
-			component: () => import('@/views/Home.vue'),
+			component: () => import('@/pages/PageHome.vue'),
 		},
 		{
 			path: '/:pathMatch(.*)*',
 			name: 'not-found',
-			component: NotFoundComponent,
+			component: () => import('@/pages/PageNotFound.vue'),
 		},
 		// if you omit the last `*`, the `/` character in params will be encoded when resolving or pushing
 		{
 			path: '/:pathMatch(.*)',
 			name: 'bad-not-found',
-			component: NotFoundComponent,
+			component: () => import('@/pages/PageNotFound.vue'),
 		},
 		{
 			path: '/login',
 			name: 'user.login',
-			component: Login,
+			component: () => import('@/pages/auth/PageLogin.vue'),
 			meta: {
 				title: 'user.auth.login',
 			},
@@ -71,7 +69,7 @@ const router = createRouter({
 		{
 			path: '/get-password-reset',
 			name: 'user.password-reset.request',
-			component: () => import('@/views/user/RequestPasswordReset.vue'),
+			component: () => import('@/pages/auth/PageRequestPasswordReset.vue'),
 			meta: {
 				title: 'user.auth.resetPassword',
 			},
@@ -79,7 +77,7 @@ const router = createRouter({
 		{
 			path: '/password-reset',
 			name: 'user.password-reset.reset',
-			component: () => import('@/views/user/PasswordReset.vue'),
+			component: () => import('@/pages/auth/PagePasswordReset.vue'),
 			meta: {
 				title: 'user.auth.resetPassword',
 			},
@@ -87,31 +85,36 @@ const router = createRouter({
 		{
 			path: '/register',
 			name: 'user.register',
-			// FIXME: use dynamic imports
-			// component: () => import('@/views/user/Register.vue'),
-			component: Register,
+			component: () => import('@/pages/auth/PageRegister.vue'),
 			meta: {
 				title: 'user.auth.createAccount',
 			},
 		},
 		{
 			path: '/user/settings',
-			name: 'user.settings',
-			component: () => import('@/views/user/Settings.vue'),
-			redirect: {name: 'user.settings.general'},
+			component: () => import('@/pages/settings/PageSettings.vue'),
 			children: [
+				{
+					// Phones list the sections here; wide screens show them beside the first one.
+					path: '',
+					name: 'user.settings',
+					component: () => import('@/pages/settings/PageSettingsIndex.vue'),
+					beforeEnter: () => window.matchMedia('(min-width: 48rem)').matches
+						? {name: 'user.settings.general'}
+						: undefined,
+				},
 				{
 					path: '/user/settings/avatar',
 					name: 'user.settings.avatar',
-					component: () => import('@/views/user/settings/Avatar.vue'),
+					component: () => import('@/pages/settings/PageSettingsAvatar.vue'),
 				},
 				{
 					path: '/user/settings/caldav',
 					name: 'user.settings.caldav',
-					component: () => import('@/views/user/settings/Caldav.vue'),
+					component: () => import('@/pages/settings/PageSettingsCaldav.vue'),
 					beforeEnter: async () => {
 						const {useConfigStore} = await import('@/stores/config')
-						if (!useConfigStore().caldavEnabled) {
+						if (!useConfigStore().caldav_enabled) {
 							return {name: 'user.settings.general'}
 						}
 					},
@@ -119,45 +122,53 @@ const router = createRouter({
 				{
 					path: '/user/settings/mcp',
 					name: 'user.settings.mcp',
-					component: () => import('@/views/user/settings/Mcp.vue'),
+					component: () => import('@/pages/settings/PageSettingsMcp.vue'),
 				},
 				{
 					path: '/user/settings/data-export',
 					name: 'user.settings.data-export',
-					component: () => import('@/views/user/settings/DataExport.vue'),
+					component: () => import('@/pages/settings/PageSettingsDataExport.vue'),
 				},
 				{
 					path: '/user/settings/feeds',
 					name: 'user.settings.feeds',
-					component: () => import('@/views/user/settings/AtomFeed.vue'),
+					component: () => import('@/pages/settings/PageSettingsFeeds.vue'),
 				},
 				{
 					path: '/user/settings/deletion',
 					name: 'user.settings.deletion',
-					component: () => import('@/views/user/settings/Deletion.vue'),
+					component: () => import('@/pages/settings/PageSettingsDeletion.vue'),
 				},
 				{
 					path: '/user/settings/email-update',
 					name: 'user.settings.email-update',
-					component: () => import('@/views/user/settings/EmailUpdate.vue'),
+					component: () => import('@/pages/settings/PageSettingsEmail.vue'),
+					// Only local accounts have an email and a password here; LDAP and OpenID keep them elsewhere.
+					beforeEnter: () => useAuthStore().info?.is_local_user === false
+						? {name: 'user.settings.general'}
+						: undefined,
 				},
 				{
 					path: '/user/settings/general',
 					name: 'user.settings.general',
-					component: () => import('@/views/user/settings/General.vue'),
+					component: () => import('@/pages/settings/PageSettingsGeneral.vue'),
 				},
 				{
 					path: '/user/settings/password-update',
 					name: 'user.settings.password-update',
-					component: () => import('@/views/user/settings/PasswordUpdate.vue'),
+					component: () => import('@/pages/settings/PageSettingsPassword.vue'),
+					// Only local accounts have an email and a password here; LDAP and OpenID keep them elsewhere.
+					beforeEnter: () => useAuthStore().info?.is_local_user === false
+						? {name: 'user.settings.general'}
+						: undefined,
 				},
 				{
 					path: '/user/settings/totp',
 					name: 'user.settings.totp',
-					component: () => import('@/views/user/settings/TOTP.vue'),
+					component: () => import('@/pages/settings/PageSettingsTotp.vue'),
 					beforeEnter: async () => {
 						const {useConfigStore} = await import('@/stores/config')
-						if (!useConfigStore().totpEnabled || !useAuthStore().info?.isLocalUser) {
+						if (!useConfigStore().totp_enabled || !useAuthStore().info?.is_local_user) {
 							return {name: 'user.settings.general'}
 						}
 					},
@@ -165,37 +176,37 @@ const router = createRouter({
 				{
 					path: '/user/settings/api-tokens',
 					name: 'user.settings.apiTokens',
-					component: () => import('@/views/user/settings/ApiTokens.vue'),
+					component: () => import('@/pages/settings/PageSettingsApiTokens.vue'),
 				},
 				{
 					path: '/user/settings/sessions',
 					name: 'user.settings.sessions',
-					component: () => import('@/views/user/settings/Sessions.vue'),
+					component: () => import('@/pages/settings/PageSettingsSessions.vue'),
 				},
 				{
 					path: '/user/settings/webhooks',
 					name: 'user.settings.webhooks',
-					component: () => import('@/views/user/settings/Webhooks.vue'),
+					component: () => import('@/pages/settings/PageSettingsWebhooks.vue'),
 				},
 				{
 					path: '/user/settings/bots',
 					name: 'user.settings.bots',
-					component: () => import('@/views/user/settings/BotUsers.vue'),
+					component: () => import('@/pages/settings/PageSettingsBots.vue'),
 				},
 				{
 					path: '/user/settings/migrate',
 					name: 'migrate.start',
-					component: () => import('@/views/migrate/Migration.vue'),
+					component: () => import('@/pages/migrate/PageMigrate.vue'),
 				},
 				{
 					path: '/migrate/csv',
 					name: 'migrate.csv',
-					component: () => import('@/views/migrate/MigrationCSV.vue'),
+					component: () => import('@/pages/migrate/PageMigrateCsv.vue'),
 				},
 				{
 					path: '/migrate/:service',
 					name: 'migrate.service',
-					component: () => import('@/views/migrate/MigrationHandler.vue'),
+					component: () => import('@/pages/migrate/PageMigrateService.vue'),
 					props: route => ({
 						service: route.params.service as string,
 						code: route.query.code as string,
@@ -206,25 +217,23 @@ const router = createRouter({
 		{
 			path: '/user/export/download',
 			name: 'user.export.download',
-			component: () => import('@/views/user/DataExportDownload.vue'),
+			component: () => import('@/pages/PageExportDownload.vue'),
 		},
 		{
 			path: '/share/:share/auth',
 			name: 'link-share.auth',
-			// FIXME: use dynamic imports
-			// component: () => import('@/views/sharing/LinkSharingAuth.vue'),
-			component: LinkSharingAuth,
+			component: () => import('@/pages/auth/PageLinkShareAuth.vue'),
 		},
 		{
 			path: '/tasks/:id',
 			name: 'task.detail',
-			component: () => import('@/views/tasks/TaskDetailView.vue'),
+			component: () => import('@/pages/PageTaskDetail.vue'),
 			props: route => ({ taskId: Number(route.params.id as string) }),
 		},
 		{
 			path: '/tasks/by/upcoming',
 			name: 'tasks.range',
-			component: UpcomingTasks,
+			component: () => import('@/pages/PageUpcoming.vue'),
 			props: route => ({
 				dateFrom: parseDateOrString(route.query.from as string, new Date()),
 				dateTo: parseDateOrString(route.query.to as string, getNextWeekDate()),
@@ -248,118 +257,98 @@ const router = createRouter({
 		{
 			path: '/projects',
 			name: 'projects.index',
-			component: () => import('@/views/project/ListProjects.vue'),
+			component: () => import('@/pages/PageProjects.vue'),
 		},
 		{
 			path: '/projects/new',
 			name: 'project.create',
-			component: () => import('@/views/project/NewProject.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/projects/PageProjectCreate.vue'),
+			meta: {modal: true, title: 'projects.new'},
 		},
 		{
 			path: '/projects/:parentProjectId/new',
 			name: 'project.createFromParent',
-			component: () => import('@/views/project/NewProject.vue'),
+			component: () => import('@/pages/projects/PageProjectCreate.vue'),
 			props: route => ({ parentProjectId: Number(route.params.parentProjectId as string) }),
-			meta: {
-				showAsModal: true,
-			},
+			meta: {modal: true, title: 'projects.new'},
 		},
 		{
 			path: '/projects/:projectId(\\d+)/settings/edit',
 			name: 'project.settings.edit',
-			component: () => import('@/views/project/settings/ProjectSettingsEdit.vue'),
+			component: () => import('@/pages/projects/PageProjectEdit.vue'),
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
-			meta: {
-				showAsModal: true,
-			},
+			meta: {modal: true, title: 'projectSettings.editDialog'},
 		},
 		{
 			path: '/projects/:projectId/settings/background',
 			name: 'project.settings.background',
-			component: () => import('@/views/project/settings/ProjectSettingsBackground.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/projects/PageProjectBackground.vue'),
+			props: route => ({projectId: Number(route.params.projectId as string)}),
+			meta: {modal: true, title: 'projectBackground.title'},
 		},
 		{
 			path: '/projects/:projectId/settings/duplicate',
 			name: 'project.settings.duplicate',
-			component: () => import('@/views/project/settings/ProjectSettingsDuplicate.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/projects/PageProjectDuplicate.vue'),
+			props: route => ({ projectId: Number(route.params.projectId as string) }),
+			meta: {modal: true, title: 'projectSettings.duplicateTitle'},
 		},
 		{
 			path: '/projects/:projectId/settings/share',
 			name: 'project.settings.share',
-			component: () => import('@/views/project/settings/ProjectSettingsShare.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/projects/PageProjectShare.vue'),
+			props: route => ({projectId: Number(route.params.projectId as string)}),
+			meta: {modal: true, title: 'projectShare.title'},
 		},
 		{
 			path: '/projects/:projectId/settings/webhooks',
 			name: 'project.settings.webhooks',
-			component: () => import('@/views/project/settings/ProjectSettingsWebhooks.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/projects/PageProjectWebhooks.vue'),
+			props: route => ({projectId: Number(route.params.projectId as string)}),
+			meta: {modal: true, title: 'projectView.menu.webhooks'},
 		},
 		{
 			path: '/projects/:projectId(\\d+)/settings/delete',
 			name: 'project.settings.delete',
-			component: () => import('@/views/project/settings/ProjectSettingsDelete.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/projects/PageProjectDelete.vue'),
+			props: route => ({ projectId: Number(route.params.projectId as string) }),
+			meta: {modal: true, title: 'projectSettings.deleteTitle'},
 		},
 		{
 			path: '/projects/:projectId/settings/archive',
 			name: 'project.settings.archive',
-			component: () => import('@/views/project/settings/ProjectSettingsArchive.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/projects/PageProjectArchive.vue'),
+			props: route => ({ projectId: Number(route.params.projectId as string) }),
+			meta: {modal: true, title: 'projectSettings.archiveDialog'},
 		},
 		{
 			path: '/projects/:projectId/settings/views',
 			name: 'project.settings.views',
-			component: () =>  import('@/views/project/settings/ProjectSettingsViews.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/projects/PageProjectViews.vue'),
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
+			meta: {modal: true, title: 'projectViews.title'},
 		},
 		{
 			// Saved-filter pseudo-projects use IDs <= -2; -1 is the Favorites pseudo-project.
 			path: '/projects/:projectId(-[2-9]\\d*|-1\\d+)/settings/edit',
 			name: 'filter.settings.edit',
-			component: () => import('@/views/filters/FilterEdit.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/filters/PageSavedFilterEdit.vue'),
+			meta: {modal: true, title: 'savedFilters.editTitle'},
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
 		},
 		{
 			path: '/projects/:projectId(-[2-9]\\d*|-1\\d+)/settings/delete',
 			name: 'filter.settings.delete',
-			component: () => import('@/views/filters/FilterDelete.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/filters/PageSavedFilterDelete.vue'),
+			meta: {modal: true, title: 'savedFilters.deleteTitle'},
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
 		},
 		{
 			path: '/projects/:projectId/info',
 			name: 'project.info',
-			component: () => import('@/views/project/ProjectInfo.vue')			,
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/projects/PageProjectInfo.vue'),
 			props: route => ({ projectId: Number(route.params.projectId as string) }),
+			meta: {modal: true, title: 'projectView.menu.info'},
 		},
 		{
 			path: '/projects/:projectId',
@@ -383,7 +372,7 @@ const router = createRouter({
 		{
 			path: '/projects/:projectId/:viewId',
 			name: 'project.view',
-			component: () => import('@/views/project/ProjectView.vue'),
+			component: () => import('@/pages/PageProject.vue'),
 			props: route => ({ 
 				projectId: parseInt(route.params.projectId as string),
 				viewId: route.params.viewId ? parseInt(route.params.viewId as string): undefined,
@@ -392,61 +381,58 @@ const router = createRouter({
 		{
 			path: '/teams',
 			name: 'teams.index',
-			component: () => import('@/views/teams/ListTeams.vue'),
+			component: () => import('@/pages/teams/PageTeams.vue'),
 		},
 		{
 			path: '/teams/new',
 			name: 'teams.create',
-			component: () =>  import('@/views/teams/NewTeam.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/teams/PageTeamCreate.vue'),
+			meta: {modal: true, title: 'teams.new'},
 		},
 		{
 			path: '/teams/:id/edit',
 			name: 'teams.edit',
-			component: () => import('@/views/teams/EditTeam.vue'),
+			component: () => import('@/pages/teams/PageTeamEdit.vue'),
+			props: route => ({teamId: Number(route.params.id as string)}),
 		},
 		{
 			path: '/labels',
 			name: 'labels.index',
-			component: () => import('@/views/labels/ListLabels.vue'),
+			component: () => import('@/pages/labels/PageLabels.vue'),
 		},
 		{
 			path: '/labels/new',
 			name: 'labels.create',
-			component: () => import('@/views/labels/NewLabel.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/labels/PageLabelCreate.vue'),
+			meta: {modal: true, title: 'labels.new'},
 		},
 		{
 			path: '/filters/new',
 			name: 'filters.create',
-			component: () => import('@/views/filters/FilterNew.vue'),
-			meta: {
-				showAsModal: true,
-			},
+			component: () => import('@/pages/filters/PageSavedFilterCreate.vue'),
+			meta: {modal: true, title: 'savedFilters.new'},
 		},
 		{
 			path: '/auth/openid/:provider',
 			name: 'openid.auth',
-			component: OpenIdAuth,
+			component: () => import('@/pages/auth/PageOpenIdCallback.vue'),
 		},
 		{
 			path: '/oauth/authorize',
 			name: 'oauth.authorize',
-			component: () => import('@/views/user/OAuthAuthorize.vue'),
+			component: () => import('@/pages/auth/PageOAuthAuthorize.vue'),
+			meta: {bare: true},
 		},
 		{
 			path: '/about',
 			name: 'about',
-			component: () => import('@/views/About.vue'),
+			component: () => import('@/pages/PageAbout.vue'),
+			meta: {modal: true, title: 'about.title'},
 		},
 		{
 			path: '/time-tracking',
 			name: 'time-tracking',
-			component: () => import('@/views/time-tracking/TimeTracking.vue'),
+			component: () => import('@/pages/PageTimeTracking.vue'),
 			meta: {
 				requiresTimeTracking: true,
 				title: 'timeTracking.title',
@@ -454,7 +440,7 @@ const router = createRouter({
 		},
 		{
 			path: '/admin',
-			component: () => import('@/views/admin/AdminShell.vue'),
+			component: () => import('@/pages/admin/PageAdmin.vue'),
 			meta: {
 				requiresAdminPanel: true,
 				adminMode: true,
@@ -463,22 +449,22 @@ const router = createRouter({
 				{
 					path: '',
 					name: 'admin.overview',
-					component: () => import('@/views/admin/OverviewView.vue'),
+					component: () => import('@/pages/admin/PageAdminOverview.vue'),
 				},
 				{
 					path: 'users',
 					name: 'admin.users',
-					component: () => import('@/views/admin/UsersView.vue'),
+					component: () => import('@/pages/admin/PageAdminUsers.vue'),
 				},
 				{
 					path: 'projects',
 					name: 'admin.projects',
-					component: () => import('@/views/admin/ProjectsView.vue'),
+					component: () => import('@/pages/admin/PageAdminProjects.vue'),
 				},
 				{
 					path: 'invite-links',
 					name: 'admin.inviteLinks',
-					component: () => import('@/views/admin/InviteLinksView.vue'),
+					component: () => import('@/pages/admin/PageAdminInviteLinks.vue'),
 					meta: {
 						requiresUserInvites: true,
 					},
@@ -488,7 +474,20 @@ const router = createRouter({
 	],
 })
 
-export async function getAuthForRoute(to: RouteLocation, authStore) {
+// The slice of the auth store the guard reads, so tests can pass a plain object.
+interface RouteAuthState {
+	authUser: unknown
+	authLinkShare: unknown
+	info?: {pending_email?: string | null} | null
+	verifyEmail(token: string): Promise<unknown>
+	refreshUserInfo(): Promise<unknown>
+}
+
+export async function getAuthForRoute(to: RouteLocation, authStore: RouteAuthState) {
+	if (to.meta?.public) {
+		return
+	}
+
 	// vue-router already decoded to.hash once, so slicing off the prefix yields the original
 	// fullPath (e.g. /oauth/authorize?...) losslessly — no extra decodeURIComponent needed.
 	const redirectDest = to.name === 'user.login' && to.hash.startsWith(REDIRECT_HASH_PREFIX)
@@ -502,11 +501,11 @@ export async function getAuthForRoute(to: RouteLocation, authStore) {
 		try {
 			// info may predate a change requested in another session; re-read before judging.
 			await authStore.refreshUserInfo()
-			const hadPending = !!authStore.info?.pendingEmail
+			const hadPending = !!authStore.info?.pending_email
 			await authStore.verifyEmail(confirmToken)
 			await authStore.refreshUserInfo()
-			if (hadPending && !authStore.info?.pendingEmail) {
-				success({message: i18n.global.t('user.settings.updateEmailConfirmed')})
+			if (hadPending && !authStore.info?.pending_email) {
+				success({message: translate('user.settings.updateEmailConfirmed')})
 				return {name: 'user.settings.email-update'}
 			}
 		} catch (e) {
@@ -601,10 +600,10 @@ router.beforeEach(async (to, from) => {
 		const configStore = useConfigStore()
 		const featureOn = configStore.isProFeatureEnabled(PRO_FEATURE.ADMIN_PANEL)
 		// isAdmin comes from /user, not the JWT; force-fetch in case checkAuth() was debounced.
-		if (authStore.info?.isAdmin === undefined) {
+		if (authStore.info?.is_admin === undefined) {
 			await authStore.refreshUserInfo()
 		}
-		const isAdmin = authStore.info?.isAdmin === true
+		const isAdmin = authStore.info?.is_admin === true
 		if (!featureOn || !isAdmin) {
 			return {name: 'not-found'}
 		}

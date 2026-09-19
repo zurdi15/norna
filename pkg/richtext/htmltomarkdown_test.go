@@ -41,8 +41,8 @@ func TestHTMLToMarkdown(t *testing.T) {
 		},
 		{
 			name: "link",
-			html: `<p>See <a href="https://vikunja.io">the site</a></p>`,
-			want: "See [the site](https://vikunja.io)",
+			html: `<p>See <a href="https://example.com">the site</a></p>`,
+			want: "See [the site](https://example.com)",
 		},
 		{
 			name: "inline code",

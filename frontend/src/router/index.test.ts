@@ -9,6 +9,7 @@ const {success, error} = vi.hoisted(() => ({
 vi.mock('@/message', () => ({success, error}))
 vi.mock('@/i18n', () => ({
 	i18n: {global: {t: (key: string) => key}},
+	translate: (key: string) => key,
 }))
 
 import router, {getAuthForRoute} from './index'
@@ -53,14 +54,14 @@ function route(query: RouteLocation['query'] = {}) {
 }
 
 function authStoreStub({pendingEmail = 'new@example.com', ...overrides}: {pendingEmail?: string} & Record<string, unknown> = {}) {
-	const server = {pendingEmail}
+	const server = {pending_email: pendingEmail}
 	const store = {
 		authUser: true,
 		authLinkShare: false,
 		// stale on purpose: this session was opened before the change was requested elsewhere
-		info: {pendingEmail: ''},
+		info: {pending_email: ''},
 		verifyEmail: vi.fn(async () => {
-			server.pendingEmail = ''
+			server.pending_email = ''
 			return true
 		}),
 		refreshUserInfo: vi.fn(async () => {
@@ -107,7 +108,7 @@ describe('getAuthForRoute email confirmation', () => {
 	})
 
 	it('does not claim success when nothing was pending', async () => {
-		const authStore = authStoreStub({pendingEmail: '', info: {pendingEmail: 'stale@example.com'}})
+		const authStore = authStoreStub({pendingEmail: '', info: {pending_email: 'stale@example.com'}})
 
 		const result = await getAuthForRoute(route({userEmailConfirm: 'token-123'}), authStore)
 

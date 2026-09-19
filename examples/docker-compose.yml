@@ -1,0 +1,25 @@
+services:
+  norna:
+    container_name: norna
+    image: ghcr.io/zurdi15/norna:latest
+    ports:
+      - 3456:3456
+    volumes:
+      # base de datos (norna.db) y ficheros subidos (files/); el contenedor corre como 1000:1000
+      - ./data:/data
+    environment:
+      # la URL con la que llegas a Norna: enlaces de emails, CalDAV y enlaces públicos salen de aquí
+      - NORNA_SERVICE_PUBLICURL=https://norna.example.com/
+      # firma sesiones y tokens; sin ella se genera una al arrancar y todo el mundo pierde la sesión
+      - NORNA_SERVICE_SECRET=change-me-to-a-long-random-string
+      - NORNA_SERVICE_TIMEZONE=Europe/Madrid
+      # tras crear tu cuenta, apágalo y usa enlaces de invitación
+      # - NORNA_SERVICE_ENABLEREGISTRATION=false
+      # emails (recordatorios, invitaciones, restablecer contraseña)
+      # - NORNA_MAILER_ENABLED=true
+      # - NORNA_MAILER_HOST=smtp.example.com
+      # - NORNA_MAILER_PORT=587
+      # - NORNA_MAILER_USERNAME=norna@example.com
+      # - NORNA_MAILER_PASSWORD=
+      # - NORNA_MAILER_FROMEMAIL=norna@example.com
+    restart: unless-stopped

@@ -142,7 +142,7 @@ export type AdminUser = {
 
 export type AttachmentUploadError = {
     /**
-     * Vikunja numeric error code, when the failure carries one.
+     * Norna numeric error code, when the failure carries one.
      */
     code?: number;
     /**
@@ -468,7 +468,7 @@ export type CreateUserBody = {
      */
     is_admin?: boolean;
     /**
-     * IETF BCP 47 language code; must exist in Vikunja.
+     * IETF BCP 47 language code; must exist in Norna.
      */
     language?: string;
     /**
@@ -1082,6 +1082,142 @@ export type MigrationStartedBodyBody = {
     readonly message?: string;
 };
 
+export type NornaErrorModel = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Numeric domain error code identifying the exact error.
+     */
+    readonly code?: number;
+    /**
+     * A human-readable explanation specific to this occurrence of the problem.
+     */
+    detail?: string;
+    /**
+     * Optional list of individual error details
+     */
+    errors?: Array<ErrorDetail> | null;
+    /**
+     * Dynamic values referenced by the error message, keyed by translation placeholder name, for client-side localisation.
+     */
+    readonly i18n_params?: {
+        [key: string]: string;
+    };
+    /**
+     * A URI reference that identifies the specific occurrence of the problem.
+     */
+    instance?: string;
+    /**
+     * HTTP status code
+     */
+    status?: number;
+    /**
+     * A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
+     */
+    title?: string;
+    /**
+     * A URI reference to human-readable documentation for the error.
+     */
+    type?: string;
+};
+
+export type NornaInfos = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    /**
+     * Whether users may change project icons.
+     */
+    allow_icon_changes?: boolean;
+    /**
+     * The authentication methods enabled on this instance.
+     */
+    auth?: AuthInfo;
+    /**
+     * The migrators enabled on this instance.
+     */
+    available_migrators?: Array<string> | null;
+    /**
+     * Whether the CalDAV interface is enabled.
+     */
+    caldav_enabled?: boolean;
+    /**
+     * Whether the configured database supports concurrent writes. False on SQLite; clients should serialize batched writes when this is false.
+     */
+    concurrent_writes?: boolean;
+    /**
+     * Whether this instance runs in demo mode (data is periodically reset).
+     */
+    demo_mode_enabled?: boolean;
+    /**
+     * Whether email reminders are enabled.
+     */
+    email_reminders_enabled?: boolean;
+    /**
+     * The project-background providers enabled on this instance (e.g. upload, unsplash).
+     */
+    enabled_background_providers?: Array<string> | null;
+    /**
+     * The licensed pro features enabled on this instance.
+     */
+    enabled_pro_features?: Array<number> | null;
+    /**
+     * The publicly configured frontend URL of this instance.
+     */
+    frontend_url?: string;
+    /**
+     * Links to the instance's legal documents.
+     */
+    legal?: LegalInfo;
+    /**
+     * Whether sharing projects via public links is enabled.
+     */
+    link_sharing_enabled?: boolean;
+    /**
+     * The maximum allowed upload size, as a human-readable string (e.g. 20MB).
+     */
+    max_file_size?: string;
+    /**
+     * The maximum number of items a paginated endpoint returns per page.
+     */
+    max_items_per_page?: number;
+    /**
+     * The message of the day, shown to all users.
+     */
+    motd?: string;
+    /**
+     * Whether public teams are enabled.
+     */
+    public_teams_enabled?: boolean;
+    /**
+     * Whether task attachments are enabled.
+     */
+    task_attachments_enabled?: boolean;
+    /**
+     * Whether task comments are enabled.
+     */
+    task_comments_enabled?: boolean;
+    /**
+     * Whether TOTP two-factor authentication is enabled.
+     */
+    totp_enabled?: boolean;
+    /**
+     * Whether users may delete their own account.
+     */
+    user_deletion_enabled?: boolean;
+    /**
+     * The Norna version this instance runs.
+     */
+    version?: string;
+    /**
+     * Whether webhooks are enabled.
+     */
+    webhooks_enabled?: boolean;
+};
+
 export type OpenIdAuthInfo = {
     enabled?: boolean;
     providers?: Array<Provider> | null;
@@ -1660,7 +1796,7 @@ export type ProjectView = {
      */
     done_bucket_id?: number;
     /**
-     * The filter query used to match tasks shown in this view. See https://vikunja.io/docs/filters.
+     * The filter query used to match tasks shown in this view.
      */
     filter?: TaskCollection;
     /**
@@ -1691,7 +1827,7 @@ export type ProjectView = {
 
 export type ProjectViewBucketConfiguration = {
     /**
-     * The filter query that decides which tasks land in this bucket. See https://vikunja.io/docs/filters.
+     * The filter query that decides which tasks land in this bucket.
      */
     filter?: TaskCollection;
     /**
@@ -1726,7 +1862,7 @@ export type ProjectViewReadBody = {
      */
     done_bucket_id?: number;
     /**
-     * The filter query used to match tasks shown in this view. See https://vikunja.io/docs/filters.
+     * The filter query used to match tasks shown in this view.
      */
     filter?: TaskCollection;
     /**
@@ -1773,7 +1909,7 @@ export type Provider = {
 
 export type ProviderStatus = {
     /**
-     * True when the provider is initialized and offered for login. This reflects the last initialization attempt, not the provider's current reachability. A configured but unavailable provider was unreachable or misconfigured when Vikunja last initialized its providers; initialization is retried automatically with exponential backoff, after at most 15 minutes.
+     * True when the provider is initialized and offered for login. This reflects the last initialization attempt, not the provider's current reachability. A configured but unavailable provider was unreachable or misconfigured when Norna last initialized its providers; initialization is retried automatically with exponential backoff, after at most 15 minutes.
      */
     available?: boolean;
     /**
@@ -1831,7 +1967,7 @@ export type RegisterUserRequest = {
      */
     invite_token?: string;
     /**
-     * The language of the new user as an IETF BCP 47 code (e.g. en, de-DE).
+     * The language of the new user as an IETF BCP 47 code (en or es-ES).
      */
     language?: string;
     password?: string;
@@ -2252,7 +2388,7 @@ export type TaskBucket = {
 
 export type TaskCollection = {
     /**
-     * The filter query to match tasks by. See https://vikunja.io/docs/filters.
+     * The filter query to match tasks by.
      */
     filter?: string;
     /**
@@ -3293,142 +3429,6 @@ export type UserWithPermission = {
     username?: string;
 };
 
-export type VikunjaErrorModel = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    /**
-     * Vikunja numeric error code; see https://vikunja.io/docs/errors/
-     */
-    readonly code?: number;
-    /**
-     * A human-readable explanation specific to this occurrence of the problem.
-     */
-    detail?: string;
-    /**
-     * Optional list of individual error details
-     */
-    errors?: Array<ErrorDetail> | null;
-    /**
-     * Dynamic values referenced by the error message, keyed by translation placeholder name, for client-side localisation.
-     */
-    readonly i18n_params?: {
-        [key: string]: string;
-    };
-    /**
-     * A URI reference that identifies the specific occurrence of the problem.
-     */
-    instance?: string;
-    /**
-     * HTTP status code
-     */
-    status?: number;
-    /**
-     * A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
-     */
-    title?: string;
-    /**
-     * A URI reference to human-readable documentation for the error.
-     */
-    type?: string;
-};
-
-export type VikunjaInfos = {
-    /**
-     * A URL to the JSON Schema for this object.
-     */
-    readonly $schema?: string;
-    /**
-     * Whether users may change project icons.
-     */
-    allow_icon_changes?: boolean;
-    /**
-     * The authentication methods enabled on this instance.
-     */
-    auth?: AuthInfo;
-    /**
-     * The migrators enabled on this instance.
-     */
-    available_migrators?: Array<string> | null;
-    /**
-     * Whether the CalDAV interface is enabled.
-     */
-    caldav_enabled?: boolean;
-    /**
-     * Whether the configured database supports concurrent writes. False on SQLite; clients should serialize batched writes when this is false.
-     */
-    concurrent_writes?: boolean;
-    /**
-     * Whether this instance runs in demo mode (data is periodically reset).
-     */
-    demo_mode_enabled?: boolean;
-    /**
-     * Whether email reminders are enabled.
-     */
-    email_reminders_enabled?: boolean;
-    /**
-     * The project-background providers enabled on this instance (e.g. upload, unsplash).
-     */
-    enabled_background_providers?: Array<string> | null;
-    /**
-     * The licensed pro features enabled on this instance.
-     */
-    enabled_pro_features?: Array<number> | null;
-    /**
-     * The publicly configured frontend URL of this instance.
-     */
-    frontend_url?: string;
-    /**
-     * Links to the instance's legal documents.
-     */
-    legal?: LegalInfo;
-    /**
-     * Whether sharing projects via public links is enabled.
-     */
-    link_sharing_enabled?: boolean;
-    /**
-     * The maximum allowed upload size, as a human-readable string (e.g. 20MB).
-     */
-    max_file_size?: string;
-    /**
-     * The maximum number of items a paginated endpoint returns per page.
-     */
-    max_items_per_page?: number;
-    /**
-     * The message of the day, shown to all users.
-     */
-    motd?: string;
-    /**
-     * Whether public teams are enabled.
-     */
-    public_teams_enabled?: boolean;
-    /**
-     * Whether task attachments are enabled.
-     */
-    task_attachments_enabled?: boolean;
-    /**
-     * Whether task comments are enabled.
-     */
-    task_comments_enabled?: boolean;
-    /**
-     * Whether TOTP two-factor authentication is enabled.
-     */
-    totp_enabled?: boolean;
-    /**
-     * Whether users may delete their own account.
-     */
-    user_deletion_enabled?: boolean;
-    /**
-     * The Vikunja version this instance runs.
-     */
-    version?: string;
-    /**
-     * Whether webhooks are enabled.
-     */
-    webhooks_enabled?: boolean;
-};
-
 export type Webhook = {
     /**
      * A URL to the JSON Schema for this object.
@@ -3706,7 +3706,7 @@ export type CreateUserBodyWritable = {
      */
     is_admin?: boolean;
     /**
-     * IETF BCP 47 language code; must exist in Vikunja.
+     * IETF BCP 47 language code; must exist in Norna.
      */
     language?: string;
     /**
@@ -3936,6 +3936,124 @@ export type MigrationMigrateBodyWritable = {
      * The OAuth code obtained after authorizing against the auth url.
      */
     code?: string;
+};
+
+export type NornaErrorModelWritable = {
+    /**
+     * A human-readable explanation specific to this occurrence of the problem.
+     */
+    detail?: string;
+    /**
+     * Optional list of individual error details
+     */
+    errors?: Array<ErrorDetail> | null;
+    /**
+     * A URI reference that identifies the specific occurrence of the problem.
+     */
+    instance?: string;
+    /**
+     * HTTP status code
+     */
+    status?: number;
+    /**
+     * A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
+     */
+    title?: string;
+    /**
+     * A URI reference to human-readable documentation for the error.
+     */
+    type?: string;
+};
+
+export type NornaInfosWritable = {
+    /**
+     * Whether users may change project icons.
+     */
+    allow_icon_changes?: boolean;
+    /**
+     * The authentication methods enabled on this instance.
+     */
+    auth?: AuthInfo;
+    /**
+     * The migrators enabled on this instance.
+     */
+    available_migrators?: Array<string> | null;
+    /**
+     * Whether the CalDAV interface is enabled.
+     */
+    caldav_enabled?: boolean;
+    /**
+     * Whether the configured database supports concurrent writes. False on SQLite; clients should serialize batched writes when this is false.
+     */
+    concurrent_writes?: boolean;
+    /**
+     * Whether this instance runs in demo mode (data is periodically reset).
+     */
+    demo_mode_enabled?: boolean;
+    /**
+     * Whether email reminders are enabled.
+     */
+    email_reminders_enabled?: boolean;
+    /**
+     * The project-background providers enabled on this instance (e.g. upload, unsplash).
+     */
+    enabled_background_providers?: Array<string> | null;
+    /**
+     * The licensed pro features enabled on this instance.
+     */
+    enabled_pro_features?: Array<number> | null;
+    /**
+     * The publicly configured frontend URL of this instance.
+     */
+    frontend_url?: string;
+    /**
+     * Links to the instance's legal documents.
+     */
+    legal?: LegalInfo;
+    /**
+     * Whether sharing projects via public links is enabled.
+     */
+    link_sharing_enabled?: boolean;
+    /**
+     * The maximum allowed upload size, as a human-readable string (e.g. 20MB).
+     */
+    max_file_size?: string;
+    /**
+     * The maximum number of items a paginated endpoint returns per page.
+     */
+    max_items_per_page?: number;
+    /**
+     * The message of the day, shown to all users.
+     */
+    motd?: string;
+    /**
+     * Whether public teams are enabled.
+     */
+    public_teams_enabled?: boolean;
+    /**
+     * Whether task attachments are enabled.
+     */
+    task_attachments_enabled?: boolean;
+    /**
+     * Whether task comments are enabled.
+     */
+    task_comments_enabled?: boolean;
+    /**
+     * Whether TOTP two-factor authentication is enabled.
+     */
+    totp_enabled?: boolean;
+    /**
+     * Whether users may delete their own account.
+     */
+    user_deletion_enabled?: boolean;
+    /**
+     * The Norna version this instance runs.
+     */
+    version?: string;
+    /**
+     * Whether webhooks are enabled.
+     */
+    webhooks_enabled?: boolean;
 };
 
 export type OverviewWritable = {
@@ -4256,7 +4374,7 @@ export type ProjectViewWritable = {
      */
     done_bucket_id?: number;
     /**
-     * The filter query used to match tasks shown in this view. See https://vikunja.io/docs/filters.
+     * The filter query used to match tasks shown in this view.
      */
     filter?: TaskCollection;
     /**
@@ -4291,7 +4409,7 @@ export type ProjectViewReadBodyWritable = {
      */
     done_bucket_id?: number;
     /**
-     * The filter query used to match tasks shown in this view. See https://vikunja.io/docs/filters.
+     * The filter query used to match tasks shown in this view.
      */
     filter?: TaskCollection;
     /**
@@ -4337,7 +4455,7 @@ export type RegisterUserRequestWritable = {
      */
     invite_token?: string;
     /**
-     * The language of the new user as an IETF BCP 47 code (e.g. en, de-DE).
+     * The language of the new user as an IETF BCP 47 code (en or es-ES).
      */
     language?: string;
     password?: string;
@@ -4875,124 +4993,6 @@ export type UserWithPermissionWritable = {
     username?: string;
 };
 
-export type VikunjaErrorModelWritable = {
-    /**
-     * A human-readable explanation specific to this occurrence of the problem.
-     */
-    detail?: string;
-    /**
-     * Optional list of individual error details
-     */
-    errors?: Array<ErrorDetail> | null;
-    /**
-     * A URI reference that identifies the specific occurrence of the problem.
-     */
-    instance?: string;
-    /**
-     * HTTP status code
-     */
-    status?: number;
-    /**
-     * A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
-     */
-    title?: string;
-    /**
-     * A URI reference to human-readable documentation for the error.
-     */
-    type?: string;
-};
-
-export type VikunjaInfosWritable = {
-    /**
-     * Whether users may change project icons.
-     */
-    allow_icon_changes?: boolean;
-    /**
-     * The authentication methods enabled on this instance.
-     */
-    auth?: AuthInfo;
-    /**
-     * The migrators enabled on this instance.
-     */
-    available_migrators?: Array<string> | null;
-    /**
-     * Whether the CalDAV interface is enabled.
-     */
-    caldav_enabled?: boolean;
-    /**
-     * Whether the configured database supports concurrent writes. False on SQLite; clients should serialize batched writes when this is false.
-     */
-    concurrent_writes?: boolean;
-    /**
-     * Whether this instance runs in demo mode (data is periodically reset).
-     */
-    demo_mode_enabled?: boolean;
-    /**
-     * Whether email reminders are enabled.
-     */
-    email_reminders_enabled?: boolean;
-    /**
-     * The project-background providers enabled on this instance (e.g. upload, unsplash).
-     */
-    enabled_background_providers?: Array<string> | null;
-    /**
-     * The licensed pro features enabled on this instance.
-     */
-    enabled_pro_features?: Array<number> | null;
-    /**
-     * The publicly configured frontend URL of this instance.
-     */
-    frontend_url?: string;
-    /**
-     * Links to the instance's legal documents.
-     */
-    legal?: LegalInfo;
-    /**
-     * Whether sharing projects via public links is enabled.
-     */
-    link_sharing_enabled?: boolean;
-    /**
-     * The maximum allowed upload size, as a human-readable string (e.g. 20MB).
-     */
-    max_file_size?: string;
-    /**
-     * The maximum number of items a paginated endpoint returns per page.
-     */
-    max_items_per_page?: number;
-    /**
-     * The message of the day, shown to all users.
-     */
-    motd?: string;
-    /**
-     * Whether public teams are enabled.
-     */
-    public_teams_enabled?: boolean;
-    /**
-     * Whether task attachments are enabled.
-     */
-    task_attachments_enabled?: boolean;
-    /**
-     * Whether task comments are enabled.
-     */
-    task_comments_enabled?: boolean;
-    /**
-     * Whether TOTP two-factor authentication is enabled.
-     */
-    totp_enabled?: boolean;
-    /**
-     * Whether users may delete their own account.
-     */
-    user_deletion_enabled?: boolean;
-    /**
-     * The Vikunja version this instance runs.
-     */
-    version?: string;
-    /**
-     * Whether webhooks are enabled.
-     */
-    webhooks_enabled?: boolean;
-};
-
 export type WebhookWritable = {
     /**
      * The password for the Basic Auth header. Write-only: never returned in responses.
@@ -5007,7 +5007,7 @@ export type WebhookWritable = {
      */
     events?: Array<string> | null;
     /**
-     * If provided, webhook requests will be signed using HMAC. See https://vikunja.io/docs/webhooks/#signing. Write-only: never returned in responses.
+     * If provided, webhook requests will be signed using HMAC-SHA256 over the request body, sent hex-encoded in the X-Norna-Signature header. Write-only: never returned in responses.
      */
     secret?: string;
     /**
@@ -5040,7 +5040,7 @@ export type AdminInviteLinksListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminInviteLinksListError = AdminInviteLinksListErrors[keyof AdminInviteLinksListErrors];
@@ -5065,7 +5065,7 @@ export type AdminInviteLinksCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminInviteLinksCreateError = AdminInviteLinksCreateErrors[keyof AdminInviteLinksCreateErrors];
@@ -5095,7 +5095,7 @@ export type AdminInviteLinksDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminInviteLinksDeleteError = AdminInviteLinksDeleteErrors[keyof AdminInviteLinksDeleteErrors];
@@ -5120,7 +5120,7 @@ export type AdminOverviewErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminOverviewError = AdminOverviewErrors[keyof AdminOverviewErrors];
@@ -5158,7 +5158,7 @@ export type AdminProjectsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminProjectsListError = AdminProjectsListErrors[keyof AdminProjectsListErrors];
@@ -5188,7 +5188,7 @@ export type AdminProjectsPatchOwnerErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminProjectsPatchOwnerError = AdminProjectsPatchOwnerErrors[keyof AdminProjectsPatchOwnerErrors];
@@ -5226,7 +5226,7 @@ export type AdminTeamsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminTeamsListError = AdminTeamsListErrors[keyof AdminTeamsListErrors];
@@ -5264,7 +5264,7 @@ export type AdminUsersListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminUsersListError = AdminUsersListErrors[keyof AdminUsersListErrors];
@@ -5289,7 +5289,7 @@ export type AdminUsersCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminUsersCreateError = AdminUsersCreateErrors[keyof AdminUsersCreateErrors];
@@ -5324,7 +5324,7 @@ export type AdminUsersDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminUsersDeleteError = AdminUsersDeleteErrors[keyof AdminUsersDeleteErrors];
@@ -5354,7 +5354,7 @@ export type AdminUsersPatchAdminErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminUsersPatchAdminError = AdminUsersPatchAdminErrors[keyof AdminUsersPatchAdminErrors];
@@ -5384,7 +5384,7 @@ export type AdminUsersSetPasswordErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminUsersSetPasswordError = AdminUsersSetPasswordErrors[keyof AdminUsersSetPasswordErrors];
@@ -5414,7 +5414,7 @@ export type AdminUsersPasswordResetEmailErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminUsersPasswordResetEmailError = AdminUsersPasswordResetEmailErrors[keyof AdminUsersPasswordResetEmailErrors];
@@ -5444,7 +5444,7 @@ export type AdminUsersPatchStatusErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AdminUsersPatchStatusError = AdminUsersPatchStatusErrors[keyof AdminUsersPatchStatusErrors];
@@ -5477,7 +5477,7 @@ export type AuthOpenidCallbackErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AuthOpenidCallbackError = AuthOpenidCallbackErrors[keyof AuthOpenidCallbackErrors];
@@ -5512,7 +5512,7 @@ export type AvatarGetErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AvatarGetError = AvatarGetErrors[keyof AvatarGetErrors];
@@ -5542,7 +5542,7 @@ export type BackgroundsUnsplashImageErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BackgroundsUnsplashImageError = BackgroundsUnsplashImageErrors[keyof BackgroundsUnsplashImageErrors];
@@ -5572,7 +5572,7 @@ export type BackgroundsUnsplashThumbErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BackgroundsUnsplashThumbError = BackgroundsUnsplashThumbErrors[keyof BackgroundsUnsplashThumbErrors];
@@ -5606,7 +5606,7 @@ export type BackgroundsUnsplashSearchErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BackgroundsUnsplashSearchError = BackgroundsUnsplashSearchErrors[keyof BackgroundsUnsplashSearchErrors];
@@ -5636,7 +5636,7 @@ export type FiltersCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type FiltersCreateError = FiltersCreateErrors[keyof FiltersCreateErrors];
@@ -5663,7 +5663,7 @@ export type FiltersDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type FiltersDeleteError = FiltersDeleteErrors[keyof FiltersDeleteErrors];
@@ -5713,7 +5713,7 @@ export type FiltersReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type FiltersReadError = FiltersReadErrors[keyof FiltersReadErrors];
@@ -5740,7 +5740,7 @@ export type PatchFiltersReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type PatchFiltersReadError = PatchFiltersReadErrors[keyof PatchFiltersReadErrors];
@@ -5772,7 +5772,7 @@ export type FiltersUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type FiltersUpdateError = FiltersUpdateErrors[keyof FiltersUpdateErrors];
@@ -5797,7 +5797,7 @@ export type HealthErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type HealthError = HealthErrors[keyof HealthErrors];
@@ -5822,7 +5822,7 @@ export type InfoErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type InfoError = InfoErrors[keyof InfoErrors];
@@ -5831,7 +5831,7 @@ export type InfoResponses = {
     /**
      * OK
      */
-    200: VikunjaInfos;
+    200: NornaInfos;
 };
 
 export type InfoResponse = InfoResponses[keyof InfoResponses];
@@ -5847,7 +5847,7 @@ export type InviteLinksCheckErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type InviteLinksCheckError = InviteLinksCheckErrors[keyof InviteLinksCheckErrors];
@@ -5889,7 +5889,7 @@ export type LabelsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type LabelsListError = LabelsListErrors[keyof LabelsListErrors];
@@ -5919,7 +5919,7 @@ export type LabelsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type LabelsCreateError = LabelsCreateErrors[keyof LabelsCreateErrors];
@@ -5946,7 +5946,7 @@ export type LabelsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type LabelsDeleteError = LabelsDeleteErrors[keyof LabelsDeleteErrors];
@@ -5996,7 +5996,7 @@ export type LabelsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type LabelsReadError = LabelsReadErrors[keyof LabelsReadErrors];
@@ -6023,7 +6023,7 @@ export type PatchLabelsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type PatchLabelsReadError = PatchLabelsReadErrors[keyof PatchLabelsReadErrors];
@@ -6055,7 +6055,7 @@ export type LabelsUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type LabelsUpdateError = LabelsUpdateErrors[keyof LabelsUpdateErrors];
@@ -6080,7 +6080,7 @@ export type AuthLoginErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AuthLoginError = AuthLoginErrors[keyof AuthLoginErrors];
@@ -6105,7 +6105,7 @@ export type AuthLogoutErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AuthLogoutError = AuthLogoutErrors[keyof AuthLogoutErrors];
@@ -6130,7 +6130,7 @@ export type McpInfoErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type McpInfoError = McpInfoErrors[keyof McpInfoErrors];
@@ -6160,7 +6160,7 @@ export type MigrationCsvDetectErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationCsvDetectError = MigrationCsvDetectErrors[keyof MigrationCsvDetectErrors];
@@ -6194,7 +6194,7 @@ export type MigrationCsvMigrateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationCsvMigrateError = MigrationCsvMigrateErrors[keyof MigrationCsvMigrateErrors];
@@ -6228,7 +6228,7 @@ export type MigrationCsvPreviewErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationCsvPreviewError = MigrationCsvPreviewErrors[keyof MigrationCsvPreviewErrors];
@@ -6253,7 +6253,7 @@ export type MigrationCsvStatusErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationCsvStatusError = MigrationCsvStatusErrors[keyof MigrationCsvStatusErrors];
@@ -6278,7 +6278,7 @@ export type MigrationMicrosoftTodoAuthErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationMicrosoftTodoAuthError = MigrationMicrosoftTodoAuthErrors[keyof MigrationMicrosoftTodoAuthErrors];
@@ -6303,7 +6303,7 @@ export type MigrationMicrosoftTodoMigrateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationMicrosoftTodoMigrateError = MigrationMicrosoftTodoMigrateErrors[keyof MigrationMicrosoftTodoMigrateErrors];
@@ -6328,7 +6328,7 @@ export type MigrationMicrosoftTodoStatusErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationMicrosoftTodoStatusError = MigrationMicrosoftTodoStatusErrors[keyof MigrationMicrosoftTodoStatusErrors];
@@ -6342,6 +6342,61 @@ export type MigrationMicrosoftTodoStatusResponses = {
 
 export type MigrationMicrosoftTodoStatusResponse = MigrationMicrosoftTodoStatusResponses[keyof MigrationMicrosoftTodoStatusResponses];
 
+export type MigrationNornaFileMigrateData = {
+    body: {
+        /**
+         * The export file to import. Its expected format depends on the migrator (e.g. a Norna export zip, a TickTick CSV, a WeKan JSON export).
+         */
+        import: Blob | File;
+    };
+    path?: never;
+    query?: never;
+    url: '/migration/norna-file/migrate';
+};
+
+export type MigrationNornaFileMigrateErrors = {
+    /**
+     * Error
+     */
+    default: NornaErrorModel;
+};
+
+export type MigrationNornaFileMigrateError = MigrationNornaFileMigrateErrors[keyof MigrationNornaFileMigrateErrors];
+
+export type MigrationNornaFileMigrateResponses = {
+    /**
+     * OK
+     */
+    200: MigrationStartedBodyBody;
+};
+
+export type MigrationNornaFileMigrateResponse = MigrationNornaFileMigrateResponses[keyof MigrationNornaFileMigrateResponses];
+
+export type MigrationNornaFileStatusData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/migration/norna-file/status';
+};
+
+export type MigrationNornaFileStatusErrors = {
+    /**
+     * Error
+     */
+    default: NornaErrorModel;
+};
+
+export type MigrationNornaFileStatusError = MigrationNornaFileStatusErrors[keyof MigrationNornaFileStatusErrors];
+
+export type MigrationNornaFileStatusResponses = {
+    /**
+     * OK
+     */
+    200: Status;
+};
+
+export type MigrationNornaFileStatusResponse = MigrationNornaFileStatusResponses[keyof MigrationNornaFileStatusResponses];
+
 export type MigrationPlankaMigrateData = {
     body: MigrationCredentialsBodyWritable;
     path?: never;
@@ -6353,7 +6408,7 @@ export type MigrationPlankaMigrateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationPlankaMigrateError = MigrationPlankaMigrateErrors[keyof MigrationPlankaMigrateErrors];
@@ -6378,7 +6433,7 @@ export type MigrationPlankaStatusErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationPlankaStatusError = MigrationPlankaStatusErrors[keyof MigrationPlankaStatusErrors];
@@ -6395,7 +6450,7 @@ export type MigrationPlankaStatusResponse = MigrationPlankaStatusResponses[keyof
 export type MigrationTicktickMigrateData = {
     body: {
         /**
-         * The export file to import. Its expected format depends on the migrator (e.g. a Vikunja export zip, a TickTick CSV, a WeKan JSON export).
+         * The export file to import. Its expected format depends on the migrator (e.g. a Norna export zip, a TickTick CSV, a WeKan JSON export).
          */
         import: Blob | File;
     };
@@ -6408,7 +6463,7 @@ export type MigrationTicktickMigrateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationTicktickMigrateError = MigrationTicktickMigrateErrors[keyof MigrationTicktickMigrateErrors];
@@ -6433,7 +6488,7 @@ export type MigrationTicktickStatusErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationTicktickStatusError = MigrationTicktickStatusErrors[keyof MigrationTicktickStatusErrors];
@@ -6458,7 +6513,7 @@ export type MigrationTodoistAuthErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationTodoistAuthError = MigrationTodoistAuthErrors[keyof MigrationTodoistAuthErrors];
@@ -6483,7 +6538,7 @@ export type MigrationTodoistMigrateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationTodoistMigrateError = MigrationTodoistMigrateErrors[keyof MigrationTodoistMigrateErrors];
@@ -6508,7 +6563,7 @@ export type MigrationTodoistStatusErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationTodoistStatusError = MigrationTodoistStatusErrors[keyof MigrationTodoistStatusErrors];
@@ -6533,7 +6588,7 @@ export type MigrationTrelloAuthErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationTrelloAuthError = MigrationTrelloAuthErrors[keyof MigrationTrelloAuthErrors];
@@ -6558,7 +6613,7 @@ export type MigrationTrelloMigrateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationTrelloMigrateError = MigrationTrelloMigrateErrors[keyof MigrationTrelloMigrateErrors];
@@ -6583,7 +6638,7 @@ export type MigrationTrelloStatusErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationTrelloStatusError = MigrationTrelloStatusErrors[keyof MigrationTrelloStatusErrors];
@@ -6597,65 +6652,10 @@ export type MigrationTrelloStatusResponses = {
 
 export type MigrationTrelloStatusResponse = MigrationTrelloStatusResponses[keyof MigrationTrelloStatusResponses];
 
-export type MigrationVikunjaFileMigrateData = {
-    body: {
-        /**
-         * The export file to import. Its expected format depends on the migrator (e.g. a Vikunja export zip, a TickTick CSV, a WeKan JSON export).
-         */
-        import: Blob | File;
-    };
-    path?: never;
-    query?: never;
-    url: '/migration/vikunja-file/migrate';
-};
-
-export type MigrationVikunjaFileMigrateErrors = {
-    /**
-     * Error
-     */
-    default: VikunjaErrorModel;
-};
-
-export type MigrationVikunjaFileMigrateError = MigrationVikunjaFileMigrateErrors[keyof MigrationVikunjaFileMigrateErrors];
-
-export type MigrationVikunjaFileMigrateResponses = {
-    /**
-     * OK
-     */
-    200: MigrationStartedBodyBody;
-};
-
-export type MigrationVikunjaFileMigrateResponse = MigrationVikunjaFileMigrateResponses[keyof MigrationVikunjaFileMigrateResponses];
-
-export type MigrationVikunjaFileStatusData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/migration/vikunja-file/status';
-};
-
-export type MigrationVikunjaFileStatusErrors = {
-    /**
-     * Error
-     */
-    default: VikunjaErrorModel;
-};
-
-export type MigrationVikunjaFileStatusError = MigrationVikunjaFileStatusErrors[keyof MigrationVikunjaFileStatusErrors];
-
-export type MigrationVikunjaFileStatusResponses = {
-    /**
-     * OK
-     */
-    200: Status;
-};
-
-export type MigrationVikunjaFileStatusResponse = MigrationVikunjaFileStatusResponses[keyof MigrationVikunjaFileStatusResponses];
-
 export type MigrationWekanMigrateData = {
     body: {
         /**
-         * The export file to import. Its expected format depends on the migrator (e.g. a Vikunja export zip, a TickTick CSV, a WeKan JSON export).
+         * The export file to import. Its expected format depends on the migrator (e.g. a Norna export zip, a TickTick CSV, a WeKan JSON export).
          */
         import: Blob | File;
     };
@@ -6668,7 +6668,7 @@ export type MigrationWekanMigrateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationWekanMigrateError = MigrationWekanMigrateErrors[keyof MigrationWekanMigrateErrors];
@@ -6693,7 +6693,7 @@ export type MigrationWekanStatusErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type MigrationWekanStatusError = MigrationWekanStatusErrors[keyof MigrationWekanStatusErrors];
@@ -6718,7 +6718,7 @@ export type NotificationsDeleteAllErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type NotificationsDeleteAllError = NotificationsDeleteAllErrors[keyof NotificationsDeleteAllErrors];
@@ -6756,7 +6756,7 @@ export type NotificationsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type NotificationsListError = NotificationsListErrors[keyof NotificationsListErrors];
@@ -6781,7 +6781,7 @@ export type NotificationsMarkAllReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type NotificationsMarkAllReadError = NotificationsMarkAllReadErrors[keyof NotificationsMarkAllReadErrors];
@@ -6806,7 +6806,7 @@ export type NotificationsAtomFeedErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type NotificationsAtomFeedError = NotificationsAtomFeedErrors[keyof NotificationsAtomFeedErrors];
@@ -6833,7 +6833,7 @@ export type NotificationsMarkReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type NotificationsMarkReadError = NotificationsMarkReadErrors[keyof NotificationsMarkReadErrors];
@@ -6858,7 +6858,7 @@ export type OauthAuthorizeErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type OauthAuthorizeError = OauthAuthorizeErrors[keyof OauthAuthorizeErrors];
@@ -6883,7 +6883,7 @@ export type OauthTokenErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type OauthTokenError = OauthTokenErrors[keyof OauthTokenErrors];
@@ -6933,7 +6933,7 @@ export type ProjectsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectsListError = ProjectsListErrors[keyof ProjectsListErrors];
@@ -6963,7 +6963,7 @@ export type ProjectsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectsCreateError = ProjectsCreateErrors[keyof ProjectsCreateErrors];
@@ -6990,7 +6990,7 @@ export type ProjectsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectsDeleteError = ProjectsDeleteErrors[keyof ProjectsDeleteErrors];
@@ -7022,7 +7022,7 @@ export type ProjectsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectsReadError = ProjectsReadErrors[keyof ProjectsReadErrors];
@@ -7049,7 +7049,7 @@ export type PatchProjectsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type PatchProjectsReadError = PatchProjectsReadErrors[keyof PatchProjectsReadErrors];
@@ -7081,7 +7081,7 @@ export type ProjectsUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectsUpdateError = ProjectsUpdateErrors[keyof ProjectsUpdateErrors];
@@ -7121,7 +7121,7 @@ export type ProjectTimeEntriesListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectTimeEntriesListError = ProjectTimeEntriesListErrors[keyof ProjectTimeEntriesListErrors];
@@ -7151,7 +7151,7 @@ export type ProjectsDuplicateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectsDuplicateError = ProjectsDuplicateErrors[keyof ProjectsDuplicateErrors];
@@ -7178,7 +7178,7 @@ export type ProjectsBackgroundDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectsBackgroundDeleteError = ProjectsBackgroundDeleteErrors[keyof ProjectsBackgroundDeleteErrors];
@@ -7208,7 +7208,7 @@ export type ProjectsBackgroundGetErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectsBackgroundGetError = ProjectsBackgroundGetErrors[keyof ProjectsBackgroundGetErrors];
@@ -7235,7 +7235,7 @@ export type ProjectsBackgroundUnsplashSetErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectsBackgroundUnsplashSetError = ProjectsBackgroundUnsplashSetErrors[keyof ProjectsBackgroundUnsplashSetErrors];
@@ -7270,7 +7270,7 @@ export type ProjectsBackgroundUploadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectsBackgroundUploadError = ProjectsBackgroundUploadErrors[keyof ProjectsBackgroundUploadErrors];
@@ -7310,7 +7310,7 @@ export type SharesListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type SharesListError = SharesListErrors[keyof SharesListErrors];
@@ -7337,7 +7337,7 @@ export type SharesCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type SharesCreateError = SharesCreateErrors[keyof SharesCreateErrors];
@@ -7365,7 +7365,7 @@ export type SharesDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type SharesDeleteError = SharesDeleteErrors[keyof SharesDeleteErrors];
@@ -7411,7 +7411,7 @@ export type SharesReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type SharesReadError = SharesReadErrors[keyof SharesReadErrors];
@@ -7447,7 +7447,7 @@ export type ProjectTasksListData = {
          */
         q?: string;
         /**
-         * Filter query to match tasks by. See https://vikunja.io/docs/filters.
+         * Filter query to match tasks by.
          */
         filter?: string;
         /**
@@ -7482,7 +7482,7 @@ export type ProjectTasksListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectTasksListError = ProjectTasksListErrors[keyof ProjectTasksListErrors];
@@ -7517,7 +7517,7 @@ export type TasksCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksCreateError = TasksCreateErrors[keyof TasksCreateErrors];
@@ -7552,7 +7552,7 @@ export type TasksBulkCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksBulkCreateError = TasksBulkCreateErrors[keyof TasksBulkCreateErrors];
@@ -7613,7 +7613,7 @@ export type TasksReadByIndexErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksReadByIndexError = TasksReadByIndexErrors[keyof TasksReadByIndexErrors];
@@ -7653,7 +7653,7 @@ export type ProjectTeamsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectTeamsListError = ProjectTeamsListErrors[keyof ProjectTeamsListErrors];
@@ -7680,7 +7680,7 @@ export type ProjectTeamsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectTeamsCreateError = ProjectTeamsCreateErrors[keyof ProjectTeamsCreateErrors];
@@ -7708,7 +7708,7 @@ export type ProjectTeamsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectTeamsDeleteError = ProjectTeamsDeleteErrors[keyof ProjectTeamsDeleteErrors];
@@ -7736,7 +7736,7 @@ export type ProjectTeamsUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectTeamsUpdateError = ProjectTeamsUpdateErrors[keyof ProjectTeamsUpdateErrors];
@@ -7776,7 +7776,7 @@ export type ProjectUsersListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectUsersListError = ProjectUsersListErrors[keyof ProjectUsersListErrors];
@@ -7803,7 +7803,7 @@ export type ProjectUsersCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectUsersCreateError = ProjectUsersCreateErrors[keyof ProjectUsersCreateErrors];
@@ -7835,7 +7835,7 @@ export type ProjectsUsersSearchErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectsUsersSearchError = ProjectsUsersSearchErrors[keyof ProjectsUsersSearchErrors];
@@ -7863,7 +7863,7 @@ export type ProjectUsersDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectUsersDeleteError = ProjectUsersDeleteErrors[keyof ProjectUsersDeleteErrors];
@@ -7891,7 +7891,7 @@ export type ProjectUsersUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectUsersUpdateError = ProjectUsersUpdateErrors[keyof ProjectUsersUpdateErrors];
@@ -7931,7 +7931,7 @@ export type ProjectViewsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectViewsListError = ProjectViewsListErrors[keyof ProjectViewsListErrors];
@@ -7958,7 +7958,7 @@ export type ProjectViewsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectViewsCreateError = ProjectViewsCreateErrors[keyof ProjectViewsCreateErrors];
@@ -7986,7 +7986,7 @@ export type ProjectViewsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectViewsDeleteError = ProjectViewsDeleteErrors[keyof ProjectViewsDeleteErrors];
@@ -8032,7 +8032,7 @@ export type ProjectViewsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectViewsReadError = ProjectViewsReadErrors[keyof ProjectViewsReadErrors];
@@ -8060,7 +8060,7 @@ export type PatchProjectViewsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type PatchProjectViewsReadError = PatchProjectViewsReadErrors[keyof PatchProjectViewsReadErrors];
@@ -8088,7 +8088,7 @@ export type ProjectViewsUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectViewsUpdateError = ProjectViewsUpdateErrors[keyof ProjectViewsUpdateErrors];
@@ -8129,7 +8129,7 @@ export type BucketsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BucketsListError = BucketsListErrors[keyof BucketsListErrors];
@@ -8157,7 +8157,7 @@ export type BucketsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BucketsCreateError = BucketsCreateErrors[keyof BucketsCreateErrors];
@@ -8197,7 +8197,7 @@ export type ProjectViewBucketsTasksListData = {
          */
         q?: string;
         /**
-         * Filter query to match tasks by. See https://vikunja.io/docs/filters.
+         * Filter query to match tasks by.
          */
         filter?: string;
         /**
@@ -8232,7 +8232,7 @@ export type ProjectViewBucketsTasksListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectViewBucketsTasksListError = ProjectViewBucketsTasksListErrors[keyof ProjectViewBucketsTasksListErrors];
@@ -8261,7 +8261,7 @@ export type BucketsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BucketsDeleteError = BucketsDeleteErrors[keyof BucketsDeleteErrors];
@@ -8290,7 +8290,7 @@ export type BucketsUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BucketsUpdateError = BucketsUpdateErrors[keyof BucketsUpdateErrors];
@@ -8319,7 +8319,7 @@ export type TaskBucketUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskBucketUpdateError = TaskBucketUpdateErrors[keyof TaskBucketUpdateErrors];
@@ -8359,7 +8359,7 @@ export type ProjectViewTasksListData = {
          */
         q?: string;
         /**
-         * Filter query to match tasks by. See https://vikunja.io/docs/filters.
+         * Filter query to match tasks by.
          */
         filter?: string;
         /**
@@ -8394,7 +8394,7 @@ export type ProjectViewTasksListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ProjectViewTasksListError = ProjectViewTasksListErrors[keyof ProjectViewTasksListErrors];
@@ -8434,7 +8434,7 @@ export type WebhooksListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type WebhooksListError = WebhooksListErrors[keyof WebhooksListErrors];
@@ -8461,7 +8461,7 @@ export type WebhooksCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type WebhooksCreateError = WebhooksCreateErrors[keyof WebhooksCreateErrors];
@@ -8489,7 +8489,7 @@ export type WebhooksDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type WebhooksDeleteError = WebhooksDeleteErrors[keyof WebhooksDeleteErrors];
@@ -8517,7 +8517,7 @@ export type WebhooksUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type WebhooksUpdateError = WebhooksUpdateErrors[keyof WebhooksUpdateErrors];
@@ -8542,7 +8542,7 @@ export type AuthRegisterErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AuthRegisterError = AuthRegisterErrors[keyof AuthRegisterErrors];
@@ -8567,7 +8567,7 @@ export type TokenRoutesErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TokenRoutesError = TokenRoutesErrors[keyof TokenRoutesErrors];
@@ -8601,7 +8601,7 @@ export type AuthLinkShareErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AuthLinkShareError = AuthLinkShareErrors[keyof AuthLinkShareErrors];
@@ -8635,7 +8635,7 @@ export type SubscriptionsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type SubscriptionsDeleteError = SubscriptionsDeleteErrors[keyof SubscriptionsDeleteErrors];
@@ -8669,7 +8669,7 @@ export type SubscriptionsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type SubscriptionsCreateError = SubscriptionsCreateErrors[keyof SubscriptionsCreateErrors];
@@ -8700,7 +8700,7 @@ export type TasksListData = {
          */
         q?: string;
         /**
-         * Filter query to match tasks by. See https://vikunja.io/docs/filters.
+         * Filter query to match tasks by.
          */
         filter?: string;
         /**
@@ -8735,7 +8735,7 @@ export type TasksListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksListError = TasksListErrors[keyof TasksListErrors];
@@ -8765,7 +8765,7 @@ export type TasksBulkUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksBulkUpdateError = TasksBulkUpdateErrors[keyof TasksBulkUpdateErrors];
@@ -8805,7 +8805,7 @@ export type TaskTimeEntriesListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskTimeEntriesListError = TaskTimeEntriesListErrors[keyof TaskTimeEntriesListErrors];
@@ -8832,7 +8832,7 @@ export type TasksDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksDeleteError = TasksDeleteErrors[keyof TasksDeleteErrors];
@@ -8889,7 +8889,7 @@ export type TasksReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksReadError = TasksReadErrors[keyof TasksReadErrors];
@@ -8916,7 +8916,7 @@ export type PatchTasksReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type PatchTasksReadError = PatchTasksReadErrors[keyof PatchTasksReadErrors];
@@ -8948,7 +8948,7 @@ export type TasksUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksUpdateError = TasksUpdateErrors[keyof TasksUpdateErrors];
@@ -8988,7 +8988,7 @@ export type TaskAssigneesListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskAssigneesListError = TaskAssigneesListErrors[keyof TaskAssigneesListErrors];
@@ -9015,7 +9015,7 @@ export type TaskAssigneesCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskAssigneesCreateError = TaskAssigneesCreateErrors[keyof TaskAssigneesCreateErrors];
@@ -9042,7 +9042,7 @@ export type TaskAssigneesBulkErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskAssigneesBulkError = TaskAssigneesBulkErrors[keyof TaskAssigneesBulkErrors];
@@ -9070,7 +9070,7 @@ export type TaskAssigneesDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskAssigneesDeleteError = TaskAssigneesDeleteErrors[keyof TaskAssigneesDeleteErrors];
@@ -9113,7 +9113,7 @@ export type TaskAttachmentsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskAttachmentsListError = TaskAttachmentsListErrors[keyof TaskAttachmentsListErrors];
@@ -9145,7 +9145,7 @@ export type TaskAttachmentsUploadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskAttachmentsUploadError = TaskAttachmentsUploadErrors[keyof TaskAttachmentsUploadErrors];
@@ -9179,7 +9179,7 @@ export type TaskAttachmentsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskAttachmentsDeleteError = TaskAttachmentsDeleteErrors[keyof TaskAttachmentsDeleteErrors];
@@ -9218,7 +9218,7 @@ export type TaskAttachmentsDownloadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskAttachmentsDownloadError = TaskAttachmentsDownloadErrors[keyof TaskAttachmentsDownloadErrors];
@@ -9266,7 +9266,7 @@ export type TaskCommentsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskCommentsListError = TaskCommentsListErrors[keyof TaskCommentsListErrors];
@@ -9298,7 +9298,7 @@ export type TaskCommentsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskCommentsCreateError = TaskCommentsCreateErrors[keyof TaskCommentsCreateErrors];
@@ -9326,7 +9326,7 @@ export type TaskCommentsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskCommentsDeleteError = TaskCommentsDeleteErrors[keyof TaskCommentsDeleteErrors];
@@ -9377,7 +9377,7 @@ export type TaskCommentsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskCommentsReadError = TaskCommentsReadErrors[keyof TaskCommentsReadErrors];
@@ -9405,7 +9405,7 @@ export type PatchTaskCommentsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type PatchTaskCommentsReadError = PatchTaskCommentsReadErrors[keyof PatchTaskCommentsReadErrors];
@@ -9438,7 +9438,7 @@ export type TaskCommentsUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskCommentsUpdateError = TaskCommentsUpdateErrors[keyof TaskCommentsUpdateErrors];
@@ -9468,7 +9468,7 @@ export type TasksDuplicateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksDuplicateError = TasksDuplicateErrors[keyof TasksDuplicateErrors];
@@ -9508,7 +9508,7 @@ export type TaskLabelsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskLabelsListError = TaskLabelsListErrors[keyof TaskLabelsListErrors];
@@ -9535,7 +9535,7 @@ export type TaskLabelsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskLabelsCreateError = TaskLabelsCreateErrors[keyof TaskLabelsCreateErrors];
@@ -9565,7 +9565,7 @@ export type TaskLabelsBulkReplaceErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskLabelsBulkReplaceError = TaskLabelsBulkReplaceErrors[keyof TaskLabelsBulkReplaceErrors];
@@ -9593,7 +9593,7 @@ export type TaskLabelsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TaskLabelsDeleteError = TaskLabelsDeleteErrors[keyof TaskLabelsDeleteErrors];
@@ -9623,7 +9623,7 @@ export type TasksPositionUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksPositionUpdateError = TasksPositionUpdateErrors[keyof TasksPositionUpdateErrors];
@@ -9653,7 +9653,7 @@ export type TasksMarkReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksMarkReadError = TasksMarkReadErrors[keyof TasksMarkReadErrors];
@@ -9683,7 +9683,7 @@ export type TasksRelationsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksRelationsCreateError = TasksRelationsCreateErrors[keyof TasksRelationsCreateErrors];
@@ -9721,7 +9721,7 @@ export type TasksRelationsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TasksRelationsDeleteError = TasksRelationsDeleteErrors[keyof TasksRelationsDeleteErrors];
@@ -9767,7 +9767,7 @@ export type TeamsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TeamsListError = TeamsListErrors[keyof TeamsListErrors];
@@ -9797,7 +9797,7 @@ export type TeamsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TeamsCreateError = TeamsCreateErrors[keyof TeamsCreateErrors];
@@ -9824,7 +9824,7 @@ export type TeamsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TeamsDeleteError = TeamsDeleteErrors[keyof TeamsDeleteErrors];
@@ -9874,7 +9874,7 @@ export type TeamsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TeamsReadError = TeamsReadErrors[keyof TeamsReadErrors];
@@ -9901,7 +9901,7 @@ export type PatchTeamsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type PatchTeamsReadError = PatchTeamsReadErrors[keyof PatchTeamsReadErrors];
@@ -9933,7 +9933,7 @@ export type TeamsUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TeamsUpdateError = TeamsUpdateErrors[keyof TeamsUpdateErrors];
@@ -9960,7 +9960,7 @@ export type TeamsMembersAddErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TeamsMembersAddError = TeamsMembersAddErrors[keyof TeamsMembersAddErrors];
@@ -9991,7 +9991,7 @@ export type TeamsMembersRemoveErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TeamsMembersRemoveError = TeamsMembersRemoveErrors[keyof TeamsMembersRemoveErrors];
@@ -10022,7 +10022,7 @@ export type TeamsMembersToggleAdminErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TeamsMembersToggleAdminError = TeamsMembersToggleAdminErrors[keyof TeamsMembersToggleAdminErrors];
@@ -10068,7 +10068,7 @@ export type TimeEntriesListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TimeEntriesListError = TimeEntriesListErrors[keyof TimeEntriesListErrors];
@@ -10093,7 +10093,7 @@ export type TimeEntriesCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TimeEntriesCreateError = TimeEntriesCreateErrors[keyof TimeEntriesCreateErrors];
@@ -10118,7 +10118,7 @@ export type TimeEntriesTimerStopErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TimeEntriesTimerStopError = TimeEntriesTimerStopErrors[keyof TimeEntriesTimerStopErrors];
@@ -10145,7 +10145,7 @@ export type TimeEntriesDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TimeEntriesDeleteError = TimeEntriesDeleteErrors[keyof TimeEntriesDeleteErrors];
@@ -10190,7 +10190,7 @@ export type TimeEntriesReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TimeEntriesReadError = TimeEntriesReadErrors[keyof TimeEntriesReadErrors];
@@ -10217,7 +10217,7 @@ export type PatchTimeEntriesReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type PatchTimeEntriesReadError = PatchTimeEntriesReadErrors[keyof PatchTimeEntriesReadErrors];
@@ -10244,7 +10244,7 @@ export type TimeEntriesUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TimeEntriesUpdateError = TimeEntriesUpdateErrors[keyof TimeEntriesUpdateErrors];
@@ -10269,7 +10269,7 @@ export type TokenTestErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TokenTestError = TokenTestErrors[keyof TokenTestErrors];
@@ -10294,7 +10294,7 @@ export type TokenCheckErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TokenCheckError = TokenCheckErrors[keyof TokenCheckErrors];
@@ -10336,7 +10336,7 @@ export type TokensListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TokensListError = TokensListErrors[keyof TokensListErrors];
@@ -10361,7 +10361,7 @@ export type TokensCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TokensCreateError = TokensCreateErrors[keyof TokensCreateErrors];
@@ -10388,7 +10388,7 @@ export type TokensDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TokensDeleteError = TokensDeleteErrors[keyof TokensDeleteErrors];
@@ -10413,7 +10413,7 @@ export type UserShowErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserShowError = UserShowErrors[keyof UserShowErrors];
@@ -10451,7 +10451,7 @@ export type BotsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BotsListError = BotsListErrors[keyof BotsListErrors];
@@ -10476,7 +10476,7 @@ export type BotsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BotsCreateError = BotsCreateErrors[keyof BotsCreateErrors];
@@ -10503,7 +10503,7 @@ export type BotsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BotsDeleteError = BotsDeleteErrors[keyof BotsDeleteErrors];
@@ -10548,7 +10548,7 @@ export type BotsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BotsReadError = BotsReadErrors[keyof BotsReadErrors];
@@ -10575,7 +10575,7 @@ export type PatchBotsReadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type PatchBotsReadError = PatchBotsReadErrors[keyof PatchBotsReadErrors];
@@ -10602,7 +10602,7 @@ export type BotsUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type BotsUpdateError = BotsUpdateErrors[keyof BotsUpdateErrors];
@@ -10627,7 +10627,7 @@ export type AuthConfirmEmailErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AuthConfirmEmailError = AuthConfirmEmailErrors[keyof AuthConfirmEmailErrors];
@@ -10652,7 +10652,7 @@ export type UserDeletionCancelErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserDeletionCancelError = UserDeletionCancelErrors[keyof UserDeletionCancelErrors];
@@ -10677,7 +10677,7 @@ export type UserDeletionConfirmErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserDeletionConfirmError = UserDeletionConfirmErrors[keyof UserDeletionConfirmErrors];
@@ -10702,7 +10702,7 @@ export type UserDeletionRequestErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserDeletionRequestError = UserDeletionRequestErrors[keyof UserDeletionRequestErrors];
@@ -10727,7 +10727,7 @@ export type UserExportStatusErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserExportStatusError = UserExportStatusErrors[keyof UserExportStatusErrors];
@@ -10752,7 +10752,7 @@ export type UserExportDownloadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserExportDownloadError = UserExportDownloadErrors[keyof UserExportDownloadErrors];
@@ -10777,7 +10777,7 @@ export type UserExportRequestErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserExportRequestError = UserExportRequestErrors[keyof UserExportRequestErrors];
@@ -10802,7 +10802,7 @@ export type UserChangePasswordErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserChangePasswordError = UserChangePasswordErrors[keyof UserChangePasswordErrors];
@@ -10827,7 +10827,7 @@ export type AuthPasswordResetErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AuthPasswordResetError = AuthPasswordResetErrors[keyof AuthPasswordResetErrors];
@@ -10852,7 +10852,7 @@ export type AuthPasswordTokenErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AuthPasswordTokenError = AuthPasswordTokenErrors[keyof AuthPasswordTokenErrors];
@@ -10890,7 +10890,7 @@ export type SessionsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type SessionsListError = SessionsListErrors[keyof SessionsListErrors];
@@ -10920,7 +10920,7 @@ export type SessionsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type SessionsDeleteError = SessionsDeleteErrors[keyof SessionsDeleteErrors];
@@ -10950,7 +10950,7 @@ export type UserAvatarUploadErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserAvatarUploadError = UserAvatarUploadErrors[keyof UserAvatarUploadErrors];
@@ -10975,7 +10975,7 @@ export type UserGetAvatarProviderErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserGetAvatarProviderError = UserGetAvatarProviderErrors[keyof UserGetAvatarProviderErrors];
@@ -11000,7 +11000,7 @@ export type PatchUserGetAvatarProviderErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type PatchUserGetAvatarProviderError = PatchUserGetAvatarProviderErrors[keyof PatchUserGetAvatarProviderErrors];
@@ -11025,7 +11025,7 @@ export type UserSetAvatarProviderErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserSetAvatarProviderError = UserSetAvatarProviderErrors[keyof UserSetAvatarProviderErrors];
@@ -11050,7 +11050,7 @@ export type UserCancelEmailUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserCancelEmailUpdateError = UserCancelEmailUpdateErrors[keyof UserCancelEmailUpdateErrors];
@@ -11075,7 +11075,7 @@ export type UserUpdateEmailErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserUpdateEmailError = UserUpdateEmailErrors[keyof UserUpdateEmailErrors];
@@ -11100,7 +11100,7 @@ export type UserResendEmailConfirmationErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserResendEmailConfirmationError = UserResendEmailConfirmationErrors[keyof UserResendEmailConfirmationErrors];
@@ -11125,7 +11125,7 @@ export type UserUpdateSettingsErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserUpdateSettingsError = UserUpdateSettingsErrors[keyof UserUpdateSettingsErrors];
@@ -11163,7 +11163,7 @@ export type CaldavTokensListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type CaldavTokensListError = CaldavTokensListErrors[keyof CaldavTokensListErrors];
@@ -11188,7 +11188,7 @@ export type CaldavTokensCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type CaldavTokensCreateError = CaldavTokensCreateErrors[keyof CaldavTokensCreateErrors];
@@ -11218,7 +11218,7 @@ export type CaldavTokensDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type CaldavTokensDeleteError = CaldavTokensDeleteErrors[keyof CaldavTokensDeleteErrors];
@@ -11243,7 +11243,7 @@ export type TotpGetErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TotpGetError = TotpGetErrors[keyof TotpGetErrors];
@@ -11268,7 +11268,7 @@ export type TotpDisableErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TotpDisableError = TotpDisableErrors[keyof TotpDisableErrors];
@@ -11293,7 +11293,7 @@ export type TotpEnableErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TotpEnableError = TotpEnableErrors[keyof TotpEnableErrors];
@@ -11318,7 +11318,7 @@ export type TotpEnrollErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TotpEnrollError = TotpEnrollErrors[keyof TotpEnrollErrors];
@@ -11343,7 +11343,7 @@ export type TotpQrcodeErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TotpQrcodeError = TotpQrcodeErrors[keyof TotpQrcodeErrors];
@@ -11381,7 +11381,7 @@ export type UserWebhooksListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserWebhooksListError = UserWebhooksListErrors[keyof UserWebhooksListErrors];
@@ -11406,7 +11406,7 @@ export type UserWebhooksCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserWebhooksCreateError = UserWebhooksCreateErrors[keyof UserWebhooksCreateErrors];
@@ -11431,7 +11431,7 @@ export type UserWebhooksEventsErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserWebhooksEventsError = UserWebhooksEventsErrors[keyof UserWebhooksEventsErrors];
@@ -11458,7 +11458,7 @@ export type UserWebhooksDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserWebhooksDeleteError = UserWebhooksDeleteErrors[keyof UserWebhooksDeleteErrors];
@@ -11485,7 +11485,7 @@ export type UserWebhooksUpdateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserWebhooksUpdateError = UserWebhooksUpdateErrors[keyof UserWebhooksUpdateErrors];
@@ -11510,7 +11510,7 @@ export type UserTimezonesErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UserTimezonesError = UserTimezonesErrors[keyof UserTimezonesErrors];
@@ -11535,7 +11535,7 @@ export type TokenRenewErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type TokenRenewError = TokenRenewErrors[keyof TokenRenewErrors];
@@ -11560,7 +11560,7 @@ export type AuthRefreshTokenErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type AuthRefreshTokenError = AuthRefreshTokenErrors[keyof AuthRefreshTokenErrors];
@@ -11590,7 +11590,7 @@ export type UsersSearchErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type UsersSearchError = UsersSearchErrors[keyof UsersSearchErrors];
@@ -11615,7 +11615,7 @@ export type WebhooksEventsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type WebhooksEventsListError = WebhooksEventsListErrors[keyof WebhooksEventsListErrors];
@@ -11649,7 +11649,7 @@ export type ReactionsListErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ReactionsListError = ReactionsListErrors[keyof ReactionsListErrors];
@@ -11685,7 +11685,7 @@ export type ReactionsCreateErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ReactionsCreateError = ReactionsCreateErrors[keyof ReactionsCreateErrors];
@@ -11719,7 +11719,7 @@ export type ReactionsDeleteErrors = {
     /**
      * Error
      */
-    default: VikunjaErrorModel;
+    default: NornaErrorModel;
 };
 
 export type ReactionsDeleteError = ReactionsDeleteErrors[keyof ReactionsDeleteErrors];
