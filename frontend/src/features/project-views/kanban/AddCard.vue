@@ -86,6 +86,12 @@ async function submit() {
 	}
 }
 
+// Not v-model: it waits for a keyboard's composition to end, and phone keyboards compose
+// every word, so the highlighted copy (the only visible text) lagged a word behind.
+function onInput(event: Event) {
+	text.value = (event.target as HTMLTextAreaElement).value
+}
+
 function onKeydown(event: KeyboardEvent) {
 	if (event.key === 'Enter' && !event.isComposing) {
 		event.preventDefault()
@@ -117,7 +123,7 @@ function onBlur() {
 			/>
 			<textarea
 				ref="input"
-				v-model="text"
+				:value="text"
 				rows="1"
 				enterkeyhint="done"
 				autocomplete="off"
@@ -131,6 +137,7 @@ function onBlur() {
 					placeholder:text-ink-faint
 					focus:outline-none
 				"
+				@input="onInput"
 				@keydown="onKeydown"
 				@blur="onBlur"
 			/>

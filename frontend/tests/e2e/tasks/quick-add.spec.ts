@@ -53,4 +53,19 @@ test.describe('Quick add on a phone @mobile', () => {
 
 		await expect(page.getByText('Created: Water the plants')).toBeVisible()
 	})
+
+	test('shows a word while the keyboard is still composing it', async ({authenticatedPage: page, currentUser}) => {
+		await seedProject(currentUser.id)
+		await page.goto('/')
+
+		await page.getByRole('navigation', {name: 'Navigation'}).last().getByRole('button', {name: 'New task'}).click()
+		const dialog = page.getByRole('dialog')
+		await dialog.getByRole('textbox', {name: 'New task, with quick add magic'}).focus()
+		// Phone keyboards type letters into an open composition, which only commits at a space or a symbol.
+		const cdp = await page.context().newCDPSession(page)
+		await cdp.send('Input.imeSetComposition', {text: 'Water', selectionStart: 5, selectionEnd: 5})
+
+		await expect(dialog.getByText('Water')).toBeVisible()
+		await expect(dialog.getByRole('button', {name: 'Create task'})).toBeEnabled()
+	})
 })
