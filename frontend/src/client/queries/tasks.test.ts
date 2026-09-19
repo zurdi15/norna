@@ -526,6 +526,20 @@ describe('quick add', () => {
 		expect(sdk.tasksCreate).not.toHaveBeenCalled()
 	})
 
+	it('adds the picked labels, such as the type, to those of the text once', async () => {
+		const fix: Label = {id: 4, title: 'fix'}
+
+		const result = await run(quickAddTaskMutationOptions(), {
+			title: 'Fix the login *urgent',
+			projectId: 1,
+			magicMode: PrefixMode.Default,
+			labels: [existingLabel, fix],
+		})
+
+		expect(sdk.taskLabelsBulkReplace).toHaveBeenCalledWith({path: {task: 50}, body: {labels: [existingLabel, fix]}})
+		expect(result.task.labels).toEqual([existingLabel, fix])
+	})
+
 	it('keeps the created task when attaching its labels fails', async () => {
 		const failure = {status: 500}
 		sdk.taskLabelsBulkReplace.mockRejectedValue(failure)
@@ -622,6 +636,18 @@ describe('quick add', () => {
 			expect(sdk.labelsCreate).toHaveBeenCalledOnce()
 			expect(sdk.taskLabelsBulkReplace).toHaveBeenCalledTimes(2)
 			expect(result.tasks.map(created => created?.labels)).toEqual([[{id: 9, title: 'errand'}], [{id: 9, title: 'errand'}]])
+		})
+
+		it('adds the picked labels to every task', async () => {
+			const fix: Label = {id: 4, title: 'fix'}
+
+			const result = await run(quickAddTasksMutationOptions(), {
+				entries: [{title: 'a *urgent', projectId: 1}, {title: 'b', projectId: 1}],
+				magicMode: PrefixMode.Default,
+				labels: [fix],
+			})
+
+			expect(result.tasks.map(created => created?.labels)).toEqual([[existingLabel, fix], [fix]])
 		})
 	})
 })

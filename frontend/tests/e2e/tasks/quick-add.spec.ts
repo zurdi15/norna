@@ -1,4 +1,6 @@
+import {LabelFactory} from '../../factories/labels'
 import {test, expect} from '../../support/fixtures'
+import {seedProject as seedProjectWithViews} from '../projects/seed'
 import {seedProject} from './seed'
 
 test.describe('Quick add', () => {
@@ -67,5 +69,40 @@ test.describe('Quick add on a phone @mobile', () => {
 
 		await expect(dialog.getByText('Water')).toBeVisible()
 		await expect(dialog.getByRole('button', {name: 'Create task'})).toBeEnabled()
+	})
+})
+
+test.describe('Task types @mobile', () => {
+	test('marks a label as a type, picks it for a new task and shows it before the title', async ({authenticatedPage: page, currentUser}) => {
+		await seedProjectWithViews(currentUser.id, 1, 'Homelab')
+		await LabelFactory.create(1, {id: 1, title: 'fix', created_by_id: currentUser.id})
+		await LabelFactory.create(1, {id: 2, title: 'home', created_by_id: currentUser.id}, false)
+
+		await page.goto('/user/settings/general')
+		const types = page.getByRole('group', {name: 'Task types'})
+		const saved = page.waitForResponse(response => response.url().includes('/user/settings/general') && response.request().method() === 'PUT')
+		await types.getByRole('button', {name: 'fix'}).click()
+		expect((await saved).ok()).toBe(true)
+
+		await page.goto('/projects/1/10')
+		await page.getByRole('navigation', {name: 'Navigation'}).last().getByRole('button', {name: 'New task'}).click()
+		const dialog = page.getByRole('dialog')
+		const picker = dialog.getByRole('group', {name: 'Type'})
+		await expect(picker.getByRole('button')).toHaveText(['fix'])
+		await picker.getByRole('button', {name: 'fix'}).click()
+		await expect(picker.getByRole('button', {name: 'fix'})).toHaveAttribute('aria-pressed', 'true')
+		await dialog.getByRole('textbox', {name: 'New task, with quick add magic'}).fill('Login fails *home')
+		await dialog.getByRole('button', {name: 'Create task'}).click()
+		await expect(page.getByText('Created: Login fails')).toBeVisible()
+
+		await page.reload()
+		const main = page.getByRole('main')
+		const title = main.getByRole('link', {name: 'Login fails'})
+		const type = main.getByText('fix', {exact: true})
+		await expect(title).toBeVisible()
+		await expect(type).toBeVisible()
+		// The type sits before the title; the other labels stay with the rest of the details.
+		expect((await type.boundingBox())!.x).toBeLessThan((await title.boundingBox())!.x)
+		await expect(main.getByText('home', {exact: true})).toBeVisible()
 	})
 })

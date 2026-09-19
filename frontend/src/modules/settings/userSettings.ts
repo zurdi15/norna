@@ -39,6 +39,8 @@ export interface FrontendSettings {
 	comment_sort_order: 'asc' | 'desc'
 	desktop_quick_entry_shortcut: string
 	quick_add_default_reminders: QuickAddDefaultReminder[]
+	// Labels that act as a task's type: picked when adding a task, shown as a chip before its title.
+	task_type_label_ids: number[]
 	time_tracking_default_start?: string
 	default_due_time?: string
 }
@@ -61,6 +63,7 @@ export const DEFAULT_FRONTEND_SETTINGS: Readonly<FrontendSettings> = Object.free
 	comment_sort_order: 'asc',
 	desktop_quick_entry_shortcut: 'CmdOrCtrl+Shift+A',
 	quick_add_default_reminders: [],
+	task_type_label_ids: [],
 })
 
 export interface UserSettings extends Omit<Required<UserGeneralSettings>, '$schema' | 'frontend_settings' | 'language' | 'week_start'> {
