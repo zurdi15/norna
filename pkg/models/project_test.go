@@ -695,16 +695,25 @@ func TestProject_Delete(t *testing.T) {
 			"id": 1,
 		})
 	})
-	t.Run("default project of the same user", func(t *testing.T) {
+	t.Run("default project of its owner", func(t *testing.T) {
 		db.LoadAndAssertFixtures(t)
 		s := db.NewSession()
 		defer s.Close()
+		// Only the id, as the api handlers pass it: the owner comes from the database.
 		project := Project{
 			ID: 4,
 		}
 		err := project.Delete(s, &user.User{ID: 3})
-		require.Error(t, err)
-		assert.True(t, IsErrCannotDeleteDefaultProject(err))
+		require.NoError(t, err)
+		err = s.Commit()
+		require.NoError(t, err)
+		db.AssertMissing(t, "projects", map[string]interface{}{
+			"id": 4,
+		})
+		// It was the default of users 2 and 3; neither keeps a dangling default.
+		db.AssertMissing(t, "users", map[string]interface{}{
+			"default_project_id": 4,
+		})
 	})
 	t.Run("default project of a different user", func(t *testing.T) {
 		db.LoadAndAssertFixtures(t)

@@ -309,6 +309,8 @@
 		"3006": "La compartición del proyecto no existe.",
 		"3007": "Ya existe un proyecto con este identificador.",
 		"3008": "El proyecto está archivado y por lo tanto sólo se puede acceder a él en modo lectura. Esto también se aplica a las tareas asociadas con este proyecto.",
+		"3012": "Este proyecto es el proyecto por defecto de alguien, así que solo su dueño puede borrarlo.",
+		"3013": "Es tu proyecto por defecto, así que no se puede archivar. Elige otro proyecto por defecto en Ajustes antes.",
 		"4003": "Todas las tareas de edición en masa deben pertenecer al mismo proyecto.",
 		"4004": "Se necesita al menos una tarea cuando se editan tareas masivamente.",
 		"4005": "No tiene permiso para ver la tarea.",
