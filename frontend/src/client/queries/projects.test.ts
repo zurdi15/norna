@@ -24,7 +24,7 @@ const requestContext = vi.hoisted(() => ({
 	apiV2BaseUrl: 'https://identity-a.example/api/v2/',
 }))
 
-vi.mock('@/message', () => ({success: vi.fn()}))
+vi.mock('@/message', () => ({success: vi.fn(), error: vi.fn()}))
 vi.mock('@/client/generated', () => sdk)
 vi.mock('@/helpers/auth', () => ({
 	getAuthSessionEpoch: () => requestContext.sessionEpoch,

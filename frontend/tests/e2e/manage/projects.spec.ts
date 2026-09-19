@@ -1,4 +1,5 @@
 import {test, expect} from '../../support/fixtures'
+import {updateUserSettings} from '../../support/updateUserSettings'
 import {seedProject} from '../projects/seed'
 
 test.describe('Project settings', () => {
@@ -43,6 +44,39 @@ test.describe('Project settings', () => {
 
 		await expect(page).toHaveURL('/projects')
 		await expect(page.getByRole('main').getByRole('link', {name: 'Homelab'})).toHaveCount(0)
+	})
+
+	test('deletes the default project', async ({authenticatedPage: page, apiContext, currentUser, userToken}) => {
+		await seedProject(currentUser.id, 1, 'Inbox')
+		await updateUserSettings(apiContext, userToken, {default_project_id: 1})
+		await page.goto('/projects/1/10')
+
+		await page.getByRole('button', {name: 'Project actions'}).click()
+		await page.getByRole('menuitem', {name: 'Delete'}).click()
+		const dialog = page.getByRole('dialog', {name: 'Delete project'})
+		await dialog.getByLabel('Type “Inbox” to confirm').fill('Inbox')
+		await dialog.getByRole('button', {name: 'Delete project'}).click()
+
+		await expect(page).toHaveURL('/projects')
+		await page.reload()
+		await expect(page.getByRole('main').getByRole('link', {name: 'Inbox'})).toHaveCount(0)
+		const stored = await apiContext.get('projects/1', {headers: {Authorization: `Bearer ${userToken}`}})
+		expect(stored.status()).toBe(404)
+	})
+
+	test('says why the default project cannot be archived', async ({authenticatedPage: page, apiContext, currentUser, userToken}) => {
+		await seedProject(currentUser.id, 1, 'Inbox')
+		await updateUserSettings(apiContext, userToken, {default_project_id: 1})
+		await page.goto('/projects/1/10')
+
+		await page.getByRole('button', {name: 'Project actions'}).click()
+		await page.getByRole('menuitem', {name: 'Archive'}).click()
+		const dialog = page.getByRole('dialog', {name: 'Archive project'})
+		await dialog.getByRole('button', {name: 'Archive'}).click()
+
+		await expect(page.getByText('This is your default project, so it can’t be archived.', {exact: false})).toBeVisible()
+		const stored = await apiContext.get('projects/1', {headers: {Authorization: `Bearer ${userToken}`}})
+		expect((await stored.json()).is_archived).toBe(false)
 	})
 
 	test('adds a view', async ({authenticatedPage: page, currentUser}) => {

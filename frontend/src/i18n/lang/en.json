@@ -334,6 +334,8 @@
     "3006": "The project share does not exist.",
     "3007": "A project with this identifier already exists.",
     "3008": "The project is archived and can therefore only be accessed read only. This is also true for all tasks associated with this project.",
+    "3012": "This project is someone’s default project, so only its owner can delete it.",
+    "3013": "This is your default project, so it can’t be archived. Choose another default project in Settings first.",
     "3016": "The parent project is archived. Un-archive the parent project first.",
     "4001": "The task title cannot be empty.",
     "4002": "The task does not exist.",

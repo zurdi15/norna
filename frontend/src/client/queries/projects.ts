@@ -275,9 +275,6 @@ function mergeProjectMetadata(previous: ProjectResponse, updated: ProjectRespons
 	}
 }
 
-// Project callers let failures reach the global Vue error handler, which toasts them.
-const toastError = () => false
-
 export function createProjectMutationOptions() {
 	return contextMutationOptions({
 		mutationFn: async (project: ProjectWritable) => {
@@ -291,7 +288,6 @@ export function createProjectMutationOptions() {
 		},
 		onSettled: (_input, client) => client.invalidateQueries({queryKey: projectKeys.list()}),
 		successMessage: () => translate('project.create.createdSuccess'),
-		toastError,
 	})
 }
 
@@ -330,7 +326,6 @@ export function updateProjectMutationOptions(successMessage?: string) {
 			client.invalidateQueries({queryKey: projectKeys.detail(id)}),
 		]),
 		successMessage: () => successMessage,
-		toastError,
 	})
 }
 
@@ -366,7 +361,6 @@ export function patchProjectFavoriteMutationOptions() {
 			client.invalidateQueries({queryKey: projectKeys.list()}),
 			client.invalidateQueries({queryKey: projectKeys.detail(id)}),
 		]),
-		toastError,
 	})
 }
 
@@ -402,7 +396,6 @@ export function setProjectSubscriptionMutationOptions() {
 		successMessage: (_subscription, {subscribed}) => translate(subscribed
 			? 'task.subscription.subscribeSuccessProject'
 			: 'task.subscription.unsubscribeSuccessProject'),
-		toastError,
 	})
 }
 
@@ -433,7 +426,6 @@ export function deleteProjectMutationOptions() {
 		},
 		onSettled: (_input, client) => client.invalidateQueries({queryKey: projectKeys.list()}),
 		successMessage: () => translate('project.delete.success'),
-		toastError,
 	})
 }
 
@@ -460,7 +452,6 @@ export function duplicateProjectMutationOptions() {
 		},
 		onSettled: (_input, client) => client.invalidateQueries({queryKey: projectKeys.list()}),
 		successMessage: () => translate('project.duplicate.success'),
-		toastError,
 	})
 }
 
