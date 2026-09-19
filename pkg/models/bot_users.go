@@ -83,7 +83,7 @@ func (b *BotUser) ReadAll(s *xorm.Session, a web.Auth, search string, page int, 
 // ReadOne returns a single bot user.
 // Ownership is verified in CanRead.
 func (b *BotUser) ReadOne(s *xorm.Session, _ web.Auth) error {
-	u, err := user.GetUserByID(s, b.ID)
+	u, err := loadAdminTargetUser(s, b.ID)
 	if err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func (b *BotUser) ReadOne(s *xorm.Session, _ web.Auth) error {
 // Update allows a narrow set of fields to be changed on an owned bot.
 // Ownership is verified in CanUpdate.
 func (b *BotUser) Update(s *xorm.Session, _ web.Auth) error {
-	existing, err := user.GetUserByID(s, b.ID)
+	existing, err := loadAdminTargetUser(s, b.ID)
 	if err != nil {
 		return err
 	}
@@ -129,7 +129,7 @@ func (b *BotUser) Update(s *xorm.Session, _ web.Auth) error {
 // Delete completely removes the bot user and all associated data.
 // Ownership is verified in CanDelete.
 func (b *BotUser) Delete(s *xorm.Session, _ web.Auth) error {
-	existing, err := user.GetUserByID(s, b.ID)
+	existing, err := loadAdminTargetUser(s, b.ID)
 	if err != nil {
 		return err
 	}

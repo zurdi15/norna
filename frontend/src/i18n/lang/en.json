@@ -1793,7 +1793,8 @@
       "noTokens": "No tokens yet: it can't sign in until it has one.",
       "newToken": "New token for {username}",
       "emptyTitle": "No bots yet",
-      "emptyDescription": "Create one for each automation, so its work shows under its own name."
+      "emptyDescription": "Create one for each automation, so its work shows under its own name.",
+      "disable": "Disable"
     },
     "webhooks": {
       "description": "Each webhook gets a POST request when one of your tasks sends a reminder or becomes overdue, in any project.",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
-import {Ellipsis, Pencil, Plus, Power, Trash2} from '@lucide/vue'
+import {Ellipsis, Pencil, Plus, Power, PowerOff, Trash2} from '@lucide/vue'
 
 import type {ApiToken} from '@/client/generated'
 import {BOT_STATUS, useDeleteBotMutation, useUpdateBotMutation} from '@/client/queries/bots'
@@ -56,14 +56,11 @@ async function removeBot() {
 	}
 }
 
-// No "Disable" for now: the api can't load a disabled bot again (BotUser.isOwner, Update
-// and Delete use a user lookup that rejects disabled accounts), so it could never be
-// enabled, edited or deleted afterwards. A bot disabled elsewhere still offers Enable.
 const menu = computed<UiMenuEntry[]>(() => [
 	{label: t('settingsIntegrations.bots.edit'), icon: Pencil, onSelect: () => emit('edit')},
-	...(disabled.value
-		? [{label: t('settingsIntegrations.bots.enable'), icon: Power, onSelect: () => setStatus(BOT_STATUS.active)}]
-		: []),
+	disabled.value
+		? {label: t('settingsIntegrations.bots.enable'), icon: Power, onSelect: () => setStatus(BOT_STATUS.active)}
+		: {label: t('settingsIntegrations.bots.disable'), icon: PowerOff, onSelect: () => setStatus(BOT_STATUS.disabled)},
 	{type: 'separator'},
 	{label: t('settingsIntegrations.bots.delete'), icon: Trash2, tone: 'danger', onSelect: removeBot},
 ])

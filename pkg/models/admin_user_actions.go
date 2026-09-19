@@ -25,8 +25,9 @@ import (
 	"xorm.io/xorm"
 )
 
-// loadAdminTargetUser fetches a user by ID for the admin actions, returning
-// ErrUserDoesNotExist for an invalid ID or a missing row.
+// loadAdminTargetUser fetches a user by ID whatever its status, returning
+// ErrUserDoesNotExist for an invalid ID or a missing row. The admin actions and
+// bot management use it because they must reach disabled accounts.
 func loadAdminTargetUser(s *xorm.Session, id int64) (*user.User, error) {
 	if id < 1 {
 		return nil, user.ErrUserDoesNotExist{UserID: id}

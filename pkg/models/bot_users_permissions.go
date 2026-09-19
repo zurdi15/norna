@@ -55,7 +55,9 @@ func (b *BotUser) isOwner(s *xorm.Session, a web.Auth) (bool, error) {
 		return false, err
 	}
 
-	u, err := user.GetUserByID(s, b.ID)
+	// Not GetUserByID: it refuses disabled accounts, and an owner must still be
+	// able to re-enable, edit or delete a bot they disabled.
+	u, err := loadAdminTargetUser(s, b.ID)
 	if err != nil {
 		if user.IsErrUserDoesNotExist(err) {
 			return false, nil

@@ -1583,7 +1583,8 @@
 			"noTokens": "Aún no tiene tokens: no puede iniciar sesión hasta tener uno.",
 			"newToken": "Nuevo token para {username}",
 			"emptyTitle": "Aún no hay bots",
-			"emptyDescription": "Crea uno por automatización, para que su trabajo aparezca con su propio nombre."
+			"emptyDescription": "Crea uno por automatización, para que su trabajo aparezca con su propio nombre.",
+			"disable": "Desactivar"
 		},
 		"webhooks": {
 			"description": "Cada webhook recibe una petición POST cuando una de tus tareas envía un recordatorio o vence, en cualquier proyecto.",
