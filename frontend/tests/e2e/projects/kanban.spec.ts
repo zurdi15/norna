@@ -73,6 +73,18 @@ test.describe('Kanban view', () => {
 		await expect(column(page, 'Doing').getByRole('link', {name: 'Replace the UPS battery'})).toBeVisible()
 	})
 
+	test('shows a new card\'s title while the keyboard is still composing it', async ({authenticatedPage: page}) => {
+		await page.goto('/projects/1/13')
+
+		const doing = page.getByRole('region', {name: 'Doing'})
+		await doing.getByRole('button', {name: 'Add a task…'}).click()
+		await doing.getByRole('textbox', {name: 'Add a task…'}).focus()
+		const cdp = await page.context().newCDPSession(page)
+		await cdp.send('Input.imeSetComposition', {text: 'Replace', selectionStart: 7, selectionEnd: 7})
+
+		await expect(doing.locator('form').getByText('Replace')).toBeVisible()
+	})
+
 	test('adds a column', async ({authenticatedPage: page}) => {
 		await page.goto('/projects/1/13')
 
