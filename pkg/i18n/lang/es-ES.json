@@ -1,1 +1,193 @@
-{}
+{
+    "notifications": {
+        "greeting": "Hola, %[1]s:",
+        "email_confirm": {
+            "subject": "%[1]s, confirma tu email en Norna",
+            "subject_new": "%[1]s + Norna = <3",
+            "welcome": "¡Te damos la bienvenida a Norna!",
+            "confirm": "Para confirmar tu email, pulsa el enlace de abajo:"
+        },
+        "email_change": {
+            "subject": "Se ha pedido cambiar el email de tu cuenta de Norna",
+            "requested": "Alguien ha pedido cambiar el email de tu cuenta a %[1]s. Tu dirección actual sigue activa hasta que se confirme la nueva.",
+            "warning": "Si no has sido tú, cambia la contraseña ahora mismo y cancela el cambio pendiente en los ajustes de tu cuenta."
+        },
+        "password": {
+            "changed": {
+                "subject": "Se ha cambiado tu contraseña de Norna",
+                "success": "La contraseña de tu cuenta se ha cambiado.",
+                "warning": "Si no has sido tú, puede que alguien haya entrado en tu cuenta. En ese caso, habla con quien administra el servidor."
+            },
+            "reset": {
+                "subject": "Restablece tu contraseña de Norna",
+                "instructions": "Para restablecer la contraseña, pulsa el enlace de abajo:",
+                "valid_duration": "El enlace vale durante 24 horas."
+            }
+        },
+        "totp": {
+            "invalid": {
+                "subject": "Alguien ha intentado entrar en tu cuenta de Norna sin conseguirlo",
+                "message": "Alguien ha intentado entrar en tu cuenta con el usuario y la contraseña correctos, pero con un código de verificación incorrecto.",
+                "warning": "**Si no has sido tú, alguien conoce tu contraseña. ¡Cámbiala ahora mismo!**"
+            },
+            "account_locked": {
+                "subject": "Hemos desactivado tu cuenta de Norna",
+                "message": "Alguien ha intentado entrar con tus credenciales, pero sin un código de verificación válido.",
+                "disabled": "Tras 10 intentos fallidos hemos desactivado tu cuenta y restablecido la contraseña. Para poner una nueva, sigue las instrucciones del email de restablecimiento que te acabamos de enviar.",
+                "reset_instructions": "Si no te ha llegado el email con las instrucciones, siempre puedes pedir otro en [%[1]s](%[2]s)."
+            }
+        },
+        "login": {
+            "failed": {
+                "subject": "Alguien ha intentado entrar en tu cuenta de Norna con una contraseña incorrecta",
+                "message": "Alguien ha intentado entrar en tu cuenta con una contraseña incorrecta tres veces seguidas.",
+                "warning": "Si no has sido tú, puede que alguien esté intentando entrar en tu cuenta.",
+                "enhance_security": "Para proteger mejor tu cuenta, puedes poner una contraseña más fuerte o activar la verificación en dos pasos en los ajustes:"
+            }
+        },
+        "account": {
+            "deletion": {
+                "confirm": {
+                    "subject": "Confirma que quieres borrar tu cuenta de Norna",
+                    "request": "Has pedido borrar tu cuenta. Para confirmarlo, pulsa el enlace de abajo:",
+                    "valid_duration": "El enlace vale durante 24 horas.",
+                    "schedule_info": "Cuando confirmes, programaremos el borrado de tu cuenta para dentro de tres días y te enviaremos otro email antes.",
+                    "consequences": "Si sigues adelante, borraremos todos los proyectos y tareas que hayas creado. Lo que hayas compartido con otras personas o equipos pasará a ser suyo.",
+                    "changed_mind": "Si no lo has pedido tú o has cambiado de idea, ignora este email."
+                },
+                "scheduled": {
+                    "subject_days": "Tu cuenta de Norna se borrará dentro de %[1]s días",
+                    "subject_tomorrow": "Tu cuenta de Norna se borrará mañana",
+                    "request_reminder": "Hace poco pediste borrar tu cuenta de Norna.",
+                    "deletion_time_days": "Borraremos tu cuenta dentro de %[1]s días.",
+                    "deletion_time_tomorrow": "Borraremos tu cuenta mañana.",
+                    "changed_mind": "Si has cambiado de idea, pulsa el enlace de abajo para cancelar el borrado y sigue las instrucciones:"
+                },
+                "completed": {
+                    "subject": "Tu cuenta de Norna se ha borrado",
+                    "confirmation": "Como pediste, hemos borrado tu cuenta de Norna.",
+                    "permanent": "El borrado es definitivo. Si no hiciste una copia y necesitas tus datos, habla con quien administra el servidor."
+                }
+            }
+        },
+        "task": {
+            "reminder": {
+                "subject": "Recordatorio: «%[1]s» (%[2]s)",
+                "message": "Te recordamos la tarea «%[1]s» (%[2]s)."
+            },
+            "comment": {
+                "subject": "Re: %[1]s (%[2]s)",
+                "mentioned_subject": "%[1]s te ha mencionado en un comentario de «%[2]s» (%[3]s)"
+            },
+            "assigned": {
+                "subject_to_assignee": "Te han asignado «%[1]s» (%[2]s)",
+                "message_to_assignee": "%[1]s te ha asignado «%[2]s».",
+                "subject_to_others": "«%[1]s» (%[2]s) se ha asignado a %[3]s",
+                "message_to_others": "%[1]s ha asignado esta tarea a %[2]s.",
+                "subject_to_others_self": "%[3]s se ha asignado «%[1]s» (%[2]s)",
+                "message_to_others_self": "%[1]s se ha asignado esta tarea."
+            },
+            "deleted": {
+                "subject": "Se ha borrado «%[1]s» (%[2]s)",
+                "message": "%[1]s ha borrado la tarea «%[2]s» (%[3]s)"
+            },
+            "created": {
+                "subject": "Se ha creado «%[1]s» (%[2]s)",
+                "message": "%[1]s ha creado la tarea «%[2]s» (%[3]s)"
+            },
+            "mentioned": {
+                "subject_new": "%[1]s te ha mencionado en una tarea nueva: «%[2]s» (%[3]s)",
+                "subject": "%[1]s te ha mencionado en una tarea: «%[2]s» (%[3]s)"
+            },
+            "overdue": {
+                "subject": "La tarea «%[1]s» (%[2]s) está vencida",
+                "message": "Te recordamos la tarea «%[1]s» (%[2]s), que venció %[3]s y sigue sin hacer.",
+                "multiple_subject": "Tus tareas vencidas",
+                "multiple_message": "Tienes tareas vencidas:",
+                "assigned_heading": "Asignadas a ti",
+                "followed_heading": "Tareas que sigues",
+                "overdue_since": "hace %[1]s",
+                "overdue_now": "ahora",
+                "overdue": "vencida %[1]s"
+            }
+        },
+        "project": {
+            "created": "%[1]s ha creado el proyecto «%[2]s»"
+        },
+        "team": {
+            "member_added": {
+                "subject": "%[1]s te ha añadido al equipo «%[2]s» en Norna",
+                "message": "%[1]s te acaba de añadir al equipo %[2]s en Norna."
+            }
+        },
+        "data_export": {
+            "ready": {
+                "subject": "Tu exportación de datos de Norna está lista",
+                "message": "Tu exportación de datos de Norna está lista para descargar. Pulsa el botón de abajo:",
+                "availability": "La descarga estará disponible durante los próximos 7 días."
+            }
+        },
+        "migration": {
+            "done": {
+                "subject": "La importación de %[1]s a Norna ha terminado",
+                "imported": "Norna ha importado todas las listas o proyectos, tareas, notas, recordatorios y archivos de %[1]s a los que tienes acceso.",
+                "have_fun": "¡A disfrutar de tus proyectos nuevos (de siempre)!"
+            },
+            "failed": {
+                "subject": "La importación de %[1]s a Norna ha fallado",
+                "message": "Parece que esta vez la importación desde %[1]s no ha salido bien.",
+                "retry": "Nada grave: vuelve a intentarlo empezando igual que antes. A veces estos fallos vienen de %[1]s y un segundo intento suele funcionar.",
+                "error": "Por el camino nos hemos encontrado este error: `%[2]s`.",
+                "report": "Si sigue fallando, avisa a quien administra este Norna para que lo revise.",
+                "working_on_it": "Tenemos el error localizado y estamos en ello."
+            }
+        },
+        "api_token": {
+            "expiring": {
+                "week": {
+                    "subject": "Tu token de API «%[1]s» caduca pronto",
+                    "message": "Tu token de API «%[1]s» caducará el %[2]s (dentro de %[3]s). Si todavía lo necesitas, crea uno nuevo antes de que caduque."
+                },
+                "day": {
+                    "subject": "Tu token de API «%[1]s» caduca mañana",
+                    "message": "Tu token de API «%[1]s» caducará el %[2]s (dentro de %[3]s). Si todavía lo necesitas, crea uno nuevo antes de que caduque."
+                },
+                "action": "Gestionar los tokens de API"
+            }
+        },
+        "common": {
+            "have_nice_day": "¡Que tengas un buen día!",
+            "copy_url": "Si el botón no funciona, copia esta dirección y pégala en la barra del navegador:",
+            "actions": {
+                "open_task": "Abrir la tarea en Norna",
+                "open_norna": "Abrir Norna",
+                "open_project": "Abrir el proyecto",
+                "open_team": "Abrir el equipo",
+                "download": "Descargar",
+                "reset_password": "Restablecer la contraseña",
+                "go_to_settings": "Ir a los ajustes",
+                "confirm_email": "Confirmar mi email",
+                "abort_deletion": "Cancelar el borrado",
+                "confirm_account_deletion": "Confirmar el borrado de mi cuenta",
+                "change_notification_settings_link": "Puedes cambiar tus avisos [aquí](%[1]s).",
+                "left_comment": "%[1]s ha dejado un comentario",
+                "mentioned_you_comment": "%[1]s te ha mencionado en un comentario",
+                "mentioned_you": "%[1]s te ha mencionado",
+                "mentioned_you_new_task": "%[1]s te ha mencionado en una tarea nueva"
+            }
+        }
+    },
+    "time": {
+        "since_years": "un año|%[1]d años",
+        "since_weeks": "una semana|%[1]d semanas",
+        "since_days": "un día|%[1]d días",
+        "since_hours": "una hora|%[1]d horas",
+        "since_minutes": "un minuto|%[1]d minutos",
+        "list_last_separator": "y"
+    },
+    "feeds": {
+        "notifications": {
+            "title": "Avisos de Norna para %[1]s"
+        }
+    }
+}
