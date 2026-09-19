@@ -214,7 +214,7 @@ func ValidateFileStorage(ctx context.Context) error {
 
 	diag := storageDiagSuffix(config.FilesBasePath.GetString())
 
-	filename := fmt.Sprintf(".vikunja-check-%d", time.Now().UnixNano())
+	filename := fmt.Sprintf(".norna-check-%d", time.Now().UnixNano())
 
 	write, remove := storage.Write, storage.Remove
 	if cs, ok := storage.(contextStorage); ok {

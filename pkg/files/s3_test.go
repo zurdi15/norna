@@ -40,12 +40,12 @@ import (
 func TestFileStorageIntegration(t *testing.T) {
 	// Ensure S3 is configured for this test
 	if config.FilesType.GetString() != "s3" {
-		t.Skip("Skipping S3 integration tests - VIKUNJA_FILES_TYPE must be set to 's3'")
+		t.Skip("Skipping S3 integration tests - NORNA_FILES_TYPE must be set to 's3'")
 	}
 
 	// Validate S3 configuration is present
 	if config.FilesS3Endpoint.GetString() == "" {
-		t.Fatal("S3 integration test requires VIKUNJA_FILES_S3_ENDPOINT to be set")
+		t.Fatal("S3 integration test requires NORNA_FILES_S3_ENDPOINT to be set")
 	}
 
 	t.Run("Initialize file handler with s3", func(t *testing.T) {

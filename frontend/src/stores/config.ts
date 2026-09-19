@@ -2,7 +2,7 @@ import {computed, reactive, toRefs} from 'vue'
 import {acceptHMRUpdate, defineStore} from 'pinia'
 import {parseURL} from 'ufo'
 
-import {info, type VikunjaInfos} from '@/client/generated'
+import {info, type NornaInfos} from '@/client/generated'
 import {getApiV2BaseUrl} from '@/helpers/apiUrl'
 import {InvalidApiUrlProvidedError} from '@/helpers/checkAndSetApiUrl'
 import type {ProFeature} from '@/constants/proFeatures'
@@ -15,7 +15,7 @@ type DeepRequired<T> = {
 
 // The server info from /info with every field present. enabled_pro_features is typed as
 // numbers in the spec, but license.Feature marshals to its string key (pkg/license).
-export type ServerInfo = Omit<DeepRequired<VikunjaInfos>, '$schema' | 'enabled_pro_features'> & {
+export type ServerInfo = Omit<DeepRequired<NornaInfos>, '$schema' | 'enabled_pro_features'> & {
 	enabled_pro_features: string[]
 }
 
@@ -60,7 +60,7 @@ const DEFAULT_INFO: ServerInfo = {
 	concurrent_writes: false,
 }
 
-function withDefaults(data: VikunjaInfos): ServerInfo {
+function withDefaults(data: NornaInfos): ServerInfo {
 	return {
 		...DEFAULT_INFO,
 		...Object.fromEntries(Object.entries(data).filter(([, value]) => value !== null && value !== undefined)),
@@ -93,7 +93,7 @@ export const useConfigStore = defineStore('config', () => {
 		return `${protocol}//${host}${basePath}`
 	})
 
-	function setConfig(config: VikunjaInfos) {
+	function setConfig(config: NornaInfos) {
 		Object.assign(state, withDefaults(config))
 	}
 

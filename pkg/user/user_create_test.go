@@ -38,6 +38,7 @@ func TestCreateUserConfirmationDeferred(t *testing.T) {
 	}{
 		{name: "skip", skip: true},
 		{name: "confirm", language: "en", welcome: "Welcome to Norna!"},
+		{name: "localized", language: "es-ES", welcome: "¡Te damos la bienvenida a Norna!"},
 		{name: "rollback", rollback: true},
 	} {
 		t.Run(tc.name, func(t *testing.T) {

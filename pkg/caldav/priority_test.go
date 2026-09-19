@@ -77,8 +77,8 @@ func Test_parseVTODOPriority(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if gotVikunjaPriority := parseVTODOPriority(tt.priority); gotVikunjaPriority != tt.want {
-				t.Errorf("parseVTODOPriority() = %v, want %v", gotVikunjaPriority, tt.want)
+			if gotNornaPriority := parseVTODOPriority(tt.priority); gotNornaPriority != tt.want {
+				t.Errorf("parseVTODOPriority() = %v, want %v", gotNornaPriority, tt.want)
 			}
 		})
 	}

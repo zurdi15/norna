@@ -1,6 +1,6 @@
 {
     "go.testEnvVars": {
-        "VIKUNJA_SERVICE_ROOTPATH": "${workspaceRoot}"
+        "NORNA_SERVICE_ROOTPATH": "${workspaceRoot}"
     },
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {

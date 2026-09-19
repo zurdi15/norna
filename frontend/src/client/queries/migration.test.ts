@@ -19,8 +19,8 @@ const sdk = vi.hoisted(() => ({
 	migrationTrelloAuth: vi.fn(),
 	migrationTrelloMigrate: vi.fn(),
 	migrationTrelloStatus: vi.fn(),
-	migrationVikunjaFileMigrate: vi.fn(),
-	migrationVikunjaFileStatus: vi.fn(),
+	migrationNornaFileMigrate: vi.fn(),
+	migrationNornaFileStatus: vi.fn(),
 	migrationWekanMigrate: vi.fn(),
 	migrationWekanStatus: vi.fn(),
 }))

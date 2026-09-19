@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package vikunjafile
+package nornafile
 
 import (
 	"archive/zip"
@@ -45,7 +45,7 @@ import (
 	"xorm.io/builder"
 )
 
-const logPrefix = "[Vikunja File Import] "
+const logPrefix = "[Norna File Import] "
 
 // minZipEntryCap ensures data.json / filters.json / VERSION entries can
 // still be read when files.maxsize is tiny.
@@ -102,40 +102,40 @@ type storageBudget struct {
 	remaining int64
 }
 
-// ErrVikunjaFileImportTooLarge is returned when the export exceeds the
+// ErrNornaFileImportTooLarge is returned when the export exceeds the
 // configured size, file-count or storage-quota limits.
-type ErrVikunjaFileImportTooLarge struct {
+type ErrNornaFileImportTooLarge struct {
 	Reason string
 }
 
-func (err *ErrVikunjaFileImportTooLarge) Error() string {
-	return "The Vikunja export is too large: " + err.Reason
+func (err *ErrNornaFileImportTooLarge) Error() string {
+	return "The Norna export is too large: " + err.Reason
 }
 
-// ErrCodeVikunjaFileImportTooLarge holds the unique world-error code of this error
-const ErrCodeVikunjaFileImportTooLarge = 14007
+// ErrCodeNornaFileImportTooLarge holds the unique world-error code of this error
+const ErrCodeNornaFileImportTooLarge = 14007
 
 // HTTPError holds the http error description
-func (err *ErrVikunjaFileImportTooLarge) HTTPError() web.HTTPError {
+func (err *ErrNornaFileImportTooLarge) HTTPError() web.HTTPError {
 	return web.HTTPError{
 		HTTPCode: http.StatusBadRequest,
-		Code:     ErrCodeVikunjaFileImportTooLarge,
-		Message:  "The Vikunja export is too large: " + err.Reason,
+		Code:     ErrCodeNornaFileImportTooLarge,
+		Message:  "The Norna export is too large: " + err.Reason,
 	}
 }
 
-func vikunjaFileMaxSize() (int64, error) {
+func nornaFileMaxSize() (int64, error) {
 	var size datasize.ByteSize
-	if err := size.UnmarshalText([]byte(config.MigrationVikunjaFileMaxSize.GetString())); err != nil {
-		return 0, fmt.Errorf("could not parse migration.vikunjafile.maxsize: %w", err)
+	if err := size.UnmarshalText([]byte(config.MigrationNornaFileMaxSize.GetString())); err != nil {
+		return 0, fmt.Errorf("could not parse migration.nornafile.maxsize: %w", err)
 	}
 	return int64(size.Bytes()), nil //nolint:gosec // config value is bounded in practice
 }
 
-func vikunjaFileMaxUserStorage() (int64, error) {
+func nornaFileMaxUserStorage() (int64, error) {
 	var size datasize.ByteSize
-	if err := size.UnmarshalText([]byte(config.MigrationVikunjaFileMaxUserStorage.GetString())); err != nil {
-		return 0, fmt.Errorf("could not parse migration.vikunjafile.maxuserstorage: %w", err)
+	if err := size.UnmarshalText([]byte(config.MigrationNornaFileMaxUserStorage.GetString())); err != nil {
+		return 0, fmt.Errorf("could not parse migration.nornafile.maxuserstorage: %w", err)
 	}
 	return int64(size.Bytes()), nil //nolint:gosec // config value is bounded in practice
 }
@@ -143,14 +143,14 @@ func vikunjaFileMaxUserStorage() (int64, error) {
 func (b *importBudget) count(n int64) error {
 	b.remaining -= n
 	if b.remaining < 0 {
-		return &ErrVikunjaFileImportTooLarge{Reason: "it contains more decompressed data than migration.vikunjafile.maxsize allows"}
+		return &ErrNornaFileImportTooLarge{Reason: "it contains more decompressed data than migration.nornafile.maxsize allows"}
 	}
 	return nil
 }
 
 func (b *storageBudget) count(n int64) error {
 	if n > b.remaining {
-		return &ErrVikunjaFileImportTooLarge{Reason: "it would exceed the import storage quota of migration.vikunjafile.maxuserstorage"}
+		return &ErrNornaFileImportTooLarge{Reason: "it would exceed the import storage quota of migration.nornafile.maxuserstorage"}
 	}
 	b.remaining -= n
 	return nil
@@ -192,7 +192,7 @@ func (p *lazyFileProvider) openZipFile(f *zip.File, countStorage bool) (io.ReadS
 	}
 	defer func() { _ = rc.Close() }()
 
-	tmp, err := os.CreateTemp("", "vikunja-import-*")
+	tmp, err := os.CreateTemp("", "norna-import-*")
 	if err != nil {
 		return nil, 0, err
 	}
@@ -264,7 +264,7 @@ func (t *tempFileReadSeekCloser) Close() error {
 type FileMigrator struct {
 }
 
-// Name is used to get the name of the vikunja-file migration - we're using the docs here to annotate the status route.
+// Name is used to get the name of the norna-file migration - we're using the docs here to annotate the status route.
 // @Summary Get migration status
 // @Description Returns if the current user already did the migation or not. This is useful to show a confirmation message in the frontend if the user is trying to do the same migration again.
 // @tags migration
@@ -272,9 +272,9 @@ type FileMigrator struct {
 // @Security JWTKeyAuth
 // @Success 200 {object} migration.Status "The migration status"
 // @Failure 500 {object} models.Message "Internal server error"
-// @Router /migration/vikunja-file/status [get]
+// @Router /migration/norna-file/status [get]
 func (v *FileMigrator) Name() string {
-	return "vikunja-file"
+	return "norna-file"
 }
 
 // archive is the index of an export zip, built once its structural checks pass.
@@ -311,8 +311,8 @@ func scanArchive(r *zip.Reader) (*archive, error) {
 
 		if strings.HasPrefix(f.Name, "files/") {
 			storedFileCount++
-			if storedFileCount > config.MigrationVikunjaFileMaxFiles.GetInt64() {
-				return nil, &ErrVikunjaFileImportTooLarge{Reason: "it contains more files than migration.vikunjafile.maxfiles allows"}
+			if storedFileCount > config.MigrationNornaFileMaxFiles.GetInt64() {
+				return nil, &ErrNornaFileImportTooLarge{Reason: "it contains more files than migration.nornafile.maxfiles allows"}
 			}
 			fname := strings.TrimPrefix(f.Name, "files/")
 			id, err := strconv.ParseInt(fname, 10, 64)
@@ -349,7 +349,7 @@ func scanArchive(r *zip.Reader) (*archive, error) {
 	}
 
 	// Preflight: bound the import before anything is read (GHSA-w7jp-mf2v-8342).
-	maxSize, err := vikunjaFileMaxSize()
+	maxSize, err := nornaFileMaxSize()
 	if err != nil {
 		return nil, err
 	}
@@ -358,11 +358,11 @@ func scanArchive(r *zip.Reader) (*archive, error) {
 	for _, f := range r.File {
 		totalUncompressed += f.UncompressedSize64
 		if totalUncompressed < f.UncompressedSize64 {
-			return nil, &ErrVikunjaFileImportTooLarge{Reason: "the sum of file sizes overflows"}
+			return nil, &ErrNornaFileImportTooLarge{Reason: "the sum of file sizes overflows"}
 		}
 	}
 	if totalUncompressed > uint64(maxSize) { //nolint:gosec // maxSize fits uint64 by construction
-		return nil, &ErrVikunjaFileImportTooLarge{Reason: "it decompresses to more than migration.vikunjafile.maxsize allows"}
+		return nil, &ErrNornaFileImportTooLarge{Reason: "it decompresses to more than migration.nornafile.maxsize allows"}
 	}
 
 	return a, nil
@@ -379,17 +379,17 @@ func (v *FileMigrator) ValidateFile(file io.ReaderAt, size int64) error {
 	return err
 }
 
-// Migrate takes a vikunja file export, parses it and imports everything in it into Vikunja.
-// @Summary Import all projects, tasks etc. from a Vikunja data export
-// @Description Imports all projects, tasks, notes, reminders, subtasks and files from a Vikunjda data export into Vikunja.
+// Migrate takes a Norna file export, parses it and imports everything in it into Norna.
+// @Summary Import all projects, tasks etc. from a Norna data export
+// @Description Imports all projects, tasks, notes, reminders, subtasks and files from a Norna data export into Norna.
 // @tags migration
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Security JWTKeyAuth
-// @Param import formData string true "The Vikunja export zip file."
+// @Param import formData string true "The Norna export zip file."
 // @Success 200 {object} models.Message "A message telling you the migration was started."
 // @Failure 500 {object} models.Message "Internal server error"
-// @Router /migration/vikunja-file/migrate [post]
+// @Router /migration/norna-file/migrate [post]
 func (v *FileMigrator) Migrate(user *user.User, file io.ReaderAt, size int64) error {
 	r, err := openArchive(file, size)
 	if err != nil {
@@ -402,7 +402,7 @@ func (v *FileMigrator) Migrate(user *user.User, file io.ReaderAt, size int64) er
 	}
 	dataFile, filterFile, versionFile, storedFiles, maxSize := a.data, a.filters, a.version, a.storedFiles, a.maxSize
 
-	maxUserStorage, err := vikunjaFileMaxUserStorage()
+	maxUserStorage, err := nornaFileMaxUserStorage()
 	if err != nil {
 		return err
 	}
@@ -420,7 +420,7 @@ func (v *FileMigrator) Migrate(user *user.User, file io.ReaderAt, size int64) er
 		return fmt.Errorf("could not check the storage quota: %w", err)
 	}
 	if existingStorage > maxUserStorage {
-		return &ErrVikunjaFileImportTooLarge{Reason: "it would exceed the import storage quota of migration.vikunjafile.maxuserstorage"}
+		return &ErrNornaFileImportTooLarge{Reason: "it would exceed the import storage quota of migration.nornafile.maxuserstorage"}
 	}
 
 	budget := &importBudget{remaining: maxSize}
@@ -457,7 +457,7 @@ func (v *FileMigrator) Migrate(user *user.User, file io.ReaderAt, size int64) er
 	}
 
 	//////
-	// Import the bulk of Vikunja data
+	// Import the bulk of Norna data
 	df, err := dataFile.Open()
 	if err != nil {
 		return fmt.Errorf("could not open data file: %w", err)

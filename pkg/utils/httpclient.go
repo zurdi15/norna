@@ -57,8 +57,8 @@ func NewSSRFSafeHTTPClient() *http.Client {
 		parsedURL, _ := url.Parse(proxyURL)
 		transport.Proxy = http.ProxyURL(parsedURL)
 		transport.ProxyConnectHeader = http.Header{
-			"Proxy-Authorization": []string{"Basic " + base64.StdEncoding.EncodeToString([]byte("vikunja:"+proxyPassword))},
-			"User-Agent":          []string{"Vikunja/" + version.Version},
+			"Proxy-Authorization": []string{"Basic " + base64.StdEncoding.EncodeToString([]byte("norna:"+proxyPassword))},
+			"User-Agent":          []string{"Norna/" + version.Version},
 		}
 	}
 

@@ -22,14 +22,14 @@ export default [
 	},
 	{
 		plugins: {
-			vikunja: {
+			norna: {
 				rules: {
 					'icon-button-accessible-name': iconButtonAccessibleName,
 				},
 			},
 		},
 		rules: {
-			'vikunja/icon-button-accessible-name': 'error',
+			'norna/icon-button-accessible-name': 'error',
 
 			'quotes': ['error', 'single'],
 			'comma-dangle': ['error', 'always-multiline'],
@@ -73,7 +73,7 @@ export default [
 
 			'no-restricted-syntax': ['error', {
 				selector: 'ForInStatement',
-				message: 'Use for...of with Object.keys/entries, or .forEach, instead of for...in. See https://github.com/go-vikunja/vikunja/issues/513',
+				message: 'Use for...of with Object.keys/entries, or .forEach, instead of for...in.',
 			}],
 
 			'@typescript-eslint/no-unused-vars': [

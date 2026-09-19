@@ -181,7 +181,7 @@ async function doRefresh(persist: boolean): Promise<void> {
 	}
 
 	if (navigator.locks) {
-		await navigator.locks.request('vikunja-token-refresh', refreshUnderLock)
+		await navigator.locks.request('norna-token-refresh', refreshUnderLock)
 	} else {
 		// Fallback for environments without Web Locks (e.g. insecure HTTP)
 		await refreshUnderLock()

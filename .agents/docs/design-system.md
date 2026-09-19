@@ -70,7 +70,7 @@ runic radii (3/5/8/14px), and the Norns' captions (Urðr / Verðandi / Skuld) ov
   `/share/:share/auth`, `/auth/openid/:provider`, `/oauth/authorize`. Route names stay stable too.
 - `index.html`: `<div id="app"></div>` (pkg/routes/static.go injects config after it), the
   `window.API_URL = '/api/v1'` line with single quotes, and a bare `<head>` (CI injects `window.TESTING`).
-- Electron: `?mode=quick-add` and the `window.quickEntry` / `window.vikunjaDesktop` bridges.
+- Desktop: `?mode=quick-add` and the `window.quickEntry` / `window.nornaDesktop` bridges (no desktop app ships now; they stay for one).
 - The service worker's `notificationclick` handler and the `package.json` scripts `build`,
   `build:dev` and `preview:dev` (used by magefile.go and release.yml).
 

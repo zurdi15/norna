@@ -84,7 +84,7 @@ func TestEscapeMarkdown_RoundTripThroughGoldmark(t *testing.T) {
 	for _, p := range payloads {
 		t.Run(p, func(t *testing.T) {
 			// Embed in a markdown link and a free paragraph.
-			md := "* [" + EscapeMarkdown(p) + "](https://vikunja.io/safe)\n\n" + EscapeMarkdown(p)
+			md := "* [" + EscapeMarkdown(p) + "](https://example.com/safe)\n\n" + EscapeMarkdown(p)
 			var buf bytes.Buffer
 			require.NoError(t, renderMarkdown([]byte(md), &buf))
 			html := buf.String()
@@ -94,7 +94,7 @@ func TestEscapeMarkdown_RoundTripThroughGoldmark(t *testing.T) {
 			// There must be zero <img tags — payloads that try to inject images must be escaped.
 			assert.NotContains(t, html, "<img ", "goldmark output for %q must not contain an <img> tag: %s", p, html)
 			// The safe URL must still be present.
-			assert.Contains(t, html, `href="https://vikunja.io/safe"`)
+			assert.Contains(t, html, `href="https://example.com/safe"`)
 		})
 	}
 }

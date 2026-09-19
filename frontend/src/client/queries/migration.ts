@@ -20,8 +20,8 @@ import {
 	migrationTrelloAuth,
 	migrationTrelloMigrate,
 	migrationTrelloStatus,
-	migrationVikunjaFileMigrate,
-	migrationVikunjaFileStatus,
+	migrationNornaFileMigrate,
+	migrationNornaFileStatus,
 	migrationWekanMigrate,
 	migrationWekanStatus,
 } from '@/client/generated'
@@ -32,7 +32,7 @@ import {parseDateOrNull} from '@/helpers/parseDateOrNull'
 import {contextMutationOptions} from './contextMutation'
 
 export type OAuthMigratorId = 'todoist' | 'trello' | 'microsoft-todo'
-export type FileMigratorId = 'vikunja-file' | 'ticktick' | 'wekan'
+export type FileMigratorId = 'norna-file' | 'ticktick' | 'wekan'
 export type CredentialsMigratorId = 'planka'
 export type MigratorId = OAuthMigratorId | FileMigratorId | CredentialsMigratorId | 'csv'
 
@@ -51,7 +51,7 @@ const STATUS: Record<MigratorId, (options: Request) => Promise<{data: Status}>> 
 	'todoist': options => migrationTodoistStatus(options),
 	'trello': options => migrationTrelloStatus(options),
 	'microsoft-todo': options => migrationMicrosoftTodoStatus(options),
-	'vikunja-file': options => migrationVikunjaFileStatus(options),
+	'norna-file': options => migrationNornaFileStatus(options),
 	'ticktick': options => migrationTicktickStatus(options),
 	'wekan': options => migrationWekanStatus(options),
 	'planka': options => migrationPlankaStatus(options),
@@ -213,8 +213,8 @@ function startMigration(input: StartMigrationInput) {
 			return migrationTrelloMigrate({body: {code: input.code}})
 		case 'microsoft-todo':
 			return migrationMicrosoftTodoMigrate({body: {code: input.code}})
-		case 'vikunja-file':
-			return migrationVikunjaFileMigrate({body: {import: input.file}})
+		case 'norna-file':
+			return migrationNornaFileMigrate({body: {import: input.file}})
 		case 'ticktick':
 			return migrationTicktickMigrate({body: {import: input.file}})
 		case 'wekan':

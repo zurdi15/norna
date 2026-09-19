@@ -92,7 +92,7 @@ type converter struct {
 	attachmentID int64
 }
 
-func convertPlankaToVikunja(data *plankaData, download attachmentDownloader) ([]*models.ProjectWithTasksAndBuckets, error) {
+func convertPlankaToNorna(data *plankaData, download attachmentDownloader) ([]*models.ProjectWithTasksAndBuckets, error) {
 	c := &converter{data: data, download: download}
 	root := c.newProject("Migrated from Planka", "", nil)
 	result := []*models.ProjectWithTasksAndBuckets{root}

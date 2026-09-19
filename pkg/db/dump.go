@@ -58,7 +58,7 @@ func validateTableName(table string) error {
 	return nil
 }
 
-// Dump dumps all Vikunja database tables
+// Dump dumps all Norna database tables
 func Dump() (data map[string][]byte, err error) {
 	tableNames := RegisteredTableNames()
 
@@ -184,7 +184,7 @@ func RestoreAndTruncate(table string, contents []map[string]interface{}) (err er
 	return Restore(table, contents)
 }
 
-// TruncateAllTables deletes all data from every registered Vikunja table.
+// TruncateAllTables deletes all data from every registered Norna table.
 // Used by e2e tests to ensure a clean database state before each test.
 func TruncateAllTables() error {
 	for _, name := range RegisteredTableNames() {

@@ -160,7 +160,7 @@ func (err *ErrFileIsEmpty) HTTPError() web.HTTPError {
 type ErrNoDataFileInZip struct{}
 
 func (err *ErrNoDataFileInZip) Error() string {
-	return "The provided zip file does not contain a Vikunja data file"
+	return "The provided zip file does not contain a Norna data file"
 }
 
 // ErrCodeNoDataFileInZip holds the unique world-error code of this error
@@ -171,7 +171,7 @@ func (err *ErrNoDataFileInZip) HTTPError() web.HTTPError {
 	return web.HTTPError{
 		HTTPCode: http.StatusBadRequest,
 		Code:     ErrCodeNoDataFileInZip,
-		Message:  "The provided zip file does not contain a Vikunja data file.",
+		Message:  "The provided zip file does not contain a Norna data file.",
 	}
 }
 
@@ -266,7 +266,7 @@ func (err *ErrInvalidImportFile) HTTPError() web.HTTPError {
 	}
 }
 
-// ErrImportFromUnsupportedVersion represents an export created by a Vikunja version we can no longer read.
+// ErrImportFromUnsupportedVersion represents an export created by a Norna version we can no longer read.
 type ErrImportFromUnsupportedVersion struct {
 	DumpVersion string
 	MinVersion  string
@@ -284,6 +284,6 @@ func (err *ErrImportFromUnsupportedVersion) HTTPError() web.HTTPError {
 	return web.HTTPError{
 		HTTPCode: http.StatusBadRequest,
 		Code:     ErrCodeImportFromUnsupportedVersion,
-		Message:  "The export was created with a Vikunja version that is too old to import. Please create a new export with a more recent version.",
+		Message:  "The export was created with a Norna version that is too old to import. Please create a new export with a more recent version.",
 	}
 }

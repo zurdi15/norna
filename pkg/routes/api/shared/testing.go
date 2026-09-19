@@ -91,7 +91,7 @@ func rebuildProjectAncestors() error {
 	return s.Commit()
 }
 
-// TruncateAllTestingTables empties every Vikunja table for the e2e testing
+// TruncateAllTestingTables empties every Norna table for the e2e testing
 // endpoint. Callers must already have verified the testing token.
 func TruncateAllTestingTables() error {
 	events.WaitForPendingHandlers()

@@ -130,7 +130,7 @@ func (p *Project) parentID() int64 {
 // noParentProjectID is the parent of a top-level project. nil is a request-only
 // state (field omitted, as opposed to an explicit 0 which detaches and needs
 // Admin — GHSA-44v6-7fxq-vgf4); clients parse the field as a plain int, so a
-// response must always carry a number (go-vikunja/app#295).
+// response must always carry a number (upstream app issue #295).
 func noParentProjectID() *int64 {
 	return Ptr(int64(0))
 }
@@ -206,7 +206,7 @@ var FavoritesPseudoProject = Project{
 // @Param per_page query int false "The maximum number of items per page. Note this parameter is limited by the configured maximum of items per page."
 // @Param s query string false "Search projects by title."
 // @Param is_archived query bool false "If true, also returns all archived projects."
-// @Param expand query string false "If set to `permissions`, Vikunja will return the max permission the current user has on this project. You can currently only set this to `permissions`."
+// @Param expand query string false "If set to `permissions`, Norna will return the max permission the current user has on this project. You can currently only set this to `permissions`."
 // @Security JWTKeyAuth
 // @Success 200 {array} models.Project "The projects"
 // @Failure 403 {object} web.HTTPError "The user does not have access to the project"

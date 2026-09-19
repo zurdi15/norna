@@ -97,7 +97,7 @@ func FullInitWithoutAsync() {
 	// Set Engine
 	InitEngines()
 
-	// Initialize license validation — funds ongoing development of Vikunja.
+	// Initialize license validation — funds ongoing development of the upstream project.
 	// See the package comment in pkg/license/license.go before removing.
 	license.Init()
 

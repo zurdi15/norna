@@ -73,7 +73,7 @@ func ProjectHandler(c *echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Internal server error").Wrap(err)
 	}
 
-	storage := &VikunjaCaldavProjectStorage{
+	storage := &NornaCaldavProjectStorage{
 		project: project,
 		user:    u,
 	}
@@ -195,7 +195,7 @@ func TaskHandler(c *echo.Context) error {
 		return c.String(http.StatusNotFound, "Task not found")
 	}
 
-	storage := &VikunjaCaldavProjectStorage{
+	storage := &NornaCaldavProjectStorage{
 		project: project,
 		task:    &models.Task{UID: taskUID},
 		user:    u,
@@ -229,7 +229,7 @@ func PrincipalHandler(c *echo.Context) error {
 		return c.String(http.StatusNotFound, "Not found")
 	}
 
-	storage := &VikunjaCaldavProjectStorage{
+	storage := &NornaCaldavProjectStorage{
 		user:        u,
 		isPrincipal: true,
 	}
@@ -254,7 +254,7 @@ func EntryHandler(c *echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Internal server error").Wrap(err)
 	}
 
-	storage := &VikunjaCaldavProjectStorage{
+	storage := &NornaCaldavProjectStorage{
 		user:    u,
 		isEntry: true,
 	}

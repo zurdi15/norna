@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package vikunjafile
+package nornafile
 
 import (
 	"archive/zip"
@@ -88,8 +88,8 @@ const testLimitsDataJSON = `[{
 	"views": []
 }]`
 
-func TestErrVikunjaFileImportTooLargeHTTPErrorCode(t *testing.T) {
-	httpErr := (&ErrVikunjaFileImportTooLarge{Reason: "test"}).HTTPError()
+func TestErrNornaFileImportTooLargeHTTPErrorCode(t *testing.T) {
+	httpErr := (&ErrNornaFileImportTooLarge{Reason: "test"}).HTTPError()
 	assert.Equal(t, 14007, httpErr.Code)
 }
 
@@ -138,13 +138,13 @@ func buildLyingZipEntryZip(t *testing.T, declaredUncompressed uint64, actualUnco
 
 func setLimits(t *testing.T, maxSize, maxUserStorage string, maxFiles int64) {
 	t.Helper()
-	config.MigrationVikunjaFileMaxSize.Set(maxSize)
-	config.MigrationVikunjaFileMaxUserStorage.Set(maxUserStorage)
-	config.MigrationVikunjaFileMaxFiles.Set(maxFiles)
+	config.MigrationNornaFileMaxSize.Set(maxSize)
+	config.MigrationNornaFileMaxUserStorage.Set(maxUserStorage)
+	config.MigrationNornaFileMaxFiles.Set(maxFiles)
 	t.Cleanup(func() {
-		config.MigrationVikunjaFileMaxSize.Set("256MB")
-		config.MigrationVikunjaFileMaxUserStorage.Set("1GB")
-		config.MigrationVikunjaFileMaxFiles.Set(10000)
+		config.MigrationNornaFileMaxSize.Set("256MB")
+		config.MigrationNornaFileMaxUserStorage.Set("1GB")
+		config.MigrationNornaFileMaxFiles.Set(10000)
 	})
 }
 
@@ -160,12 +160,12 @@ func runMigrate(t *testing.T, export []byte) error {
 func assertTooLarge(t *testing.T, err error) {
 	t.Helper()
 	require.Error(t, err)
-	var tooLarge *ErrVikunjaFileImportTooLarge
-	require.ErrorAs(t, err, &tooLarge, "expected ErrVikunjaFileImportTooLarge, got %v", err)
+	var tooLarge *ErrNornaFileImportTooLarge
+	require.ErrorAs(t, err, &tooLarge, "expected ErrNornaFileImportTooLarge, got %v", err)
 }
 
-// TestVikunjaFileLimits covers the import budgets from GHSA-w7jp-mf2v-8342.
-func TestVikunjaFileLimits(t *testing.T) {
+// TestNornaFileLimits covers the import budgets from GHSA-w7jp-mf2v-8342.
+func TestNornaFileLimits(t *testing.T) {
 	t.Run("compressed expansion is rejected by the preflight", func(t *testing.T) {
 		setLimits(t, "1MB", "1GB", 10000)
 
@@ -324,11 +324,11 @@ func TestVikunjaFileLimits(t *testing.T) {
 
 	t.Run("a failed import cleans up blobs it already created", func(t *testing.T) {
 		db.LoadAndAssertFixtures(t)
-		config.MigrationVikunjaFileMaxSize.Set("256KB")
-		config.MigrationVikunjaFileMaxFiles.Set(10000)
-		config.MigrationVikunjaFileMaxUserStorage.Set("1GB")
+		config.MigrationNornaFileMaxSize.Set("256KB")
+		config.MigrationNornaFileMaxFiles.Set(10000)
+		config.MigrationNornaFileMaxUserStorage.Set("1GB")
 		t.Cleanup(func() {
-			config.MigrationVikunjaFileMaxSize.Set("256MB")
+			config.MigrationNornaFileMaxSize.Set("256MB")
 		})
 
 		dataJSON := `[{

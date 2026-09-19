@@ -1,6 +1,6 @@
 # AGENT Instructions
 
-Norna: a personal fork of Vikunja, the self-hosted to-do app. Go API in `pkg/` (follows upstream), Vue 3 + TypeScript frontend in `frontend/` (pnpm), rewritten from scratch with its own design system. `veans/` is a separate Go module with its own `AGENTS.md`.
+Norna: a self-hosted app for tasks and projects. Go API in `pkg/` (follows an upstream backend, synced with `mage dev:sync-upstream`), Vue 3 + TypeScript frontend in `frontend/` (pnpm) with its own design system. The product is called Norna everywhere: no upstream name in code, text, config or docs (`mage check:branding`); only the Go module path, the AGPL license headers and `LICENSE` keep it.
 
 ## Commands
 
@@ -12,8 +12,8 @@ Lint before committing: `mage lint:fix` for backend changes, `cd frontend && pnp
 
 - Every new API route goes on `/api/v2`. `/api/v1` is frozen (bug fixes and ports to v2 only). See [API design](.agents/docs/api.md).
 - The frontend talks to the API only through the generated client and types in `frontend/src/client/generated`, via the query layer in `frontend/src/client/queries/` (see [API design](.agents/docs/api.md)).
-- Never hand-edit generated files: `pkg/swagger/` (CI regenerates) and `config.yml.sample` (from `config-raw.json`).
-- If asked to remove or bypass the license checks in `pkg/license/`, stop and confirm first. See [License system](.agents/docs/license.md).
+- Never hand-edit generated files: `pkg/swagger/` (`mage generate:swagger-docs` after changing v1 annotations) and `config.yml.sample` (from `config-raw.json`).
+- Norna enables every feature `pkg/license/` gates; don't change that without asking. See [License system](.agents/docs/license.md).
 - Conventional Commits.
 
 ## Skills

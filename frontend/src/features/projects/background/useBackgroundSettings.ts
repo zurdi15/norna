@@ -47,7 +47,7 @@ export function useUnsplashSearch(term: MaybeRefOrGetter<string>, enabled: Maybe
 }
 
 export function unsplashProfileUrl(author: string): string {
-	return `https://unsplash.com/@${encodeURIComponent(author)}?utm_source=vikunja&utm_medium=referral`
+	return `https://unsplash.com/@${encodeURIComponent(author)}?utm_source=norna&utm_medium=referral`
 }
 
-export const UNSPLASH_URL = 'https://unsplash.com/?utm_source=vikunja&utm_medium=referral'
+export const UNSPLASH_URL = 'https://unsplash.com/?utm_source=norna&utm_medium=referral'

@@ -159,7 +159,7 @@ export const useAuthStore = defineStore('auth', () => {
 		settings.value = parseUserSettings(raw)
 
 		// Sync the quick entry shortcut to the desktop app when settings are loaded
-		window.vikunjaDesktop?.updateQuickEntryShortcut(settings.value.frontend_settings.desktop_quick_entry_shortcut || '')
+		window.nornaDesktop?.updateQuickEntryShortcut(settings.value.frontend_settings.desktop_quick_entry_shortcut || '')
 	}
 
 	function setAuthenticated(newAuthenticated: boolean) {

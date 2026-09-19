@@ -551,7 +551,7 @@ CREATED:20230402T060451Z
 LAST-MODIFIED:20230402T074154Z
 SUMMARY:Test with tasks.org
 PRIORITY:9
-CATEGORIES:Vikunja
+CATEGORIES:Norna
 X-APPLE-SORT-ORDER:697384109
 DUE;TZID=Europe/Berlin:20230402T170001
 DTSTART;TZID=Europe/Berlin:20230401T090000
@@ -593,7 +593,7 @@ END:VCALENDAR`,
 				Priority: 1,
 				Labels: []*models.Label{
 					{
-						Title: "Vikunja",
+						Title: "Norna",
 					},
 				},
 				DueDate:   time.Date(2023, 4, 2, 15, 0, 1, 0, config.GetTimeZone()),
@@ -881,7 +881,7 @@ func TestGetCaldavTodosForTasks(t *testing.T) {
 VERSION:2.0
 X-PUBLISHED-TTL:PT4H
 X-WR-CALNAME:List title
-PRODID:-//Vikunja Todo App//EN
+PRODID:-//Norna//EN
 BEGIN:VTODO
 UID:randomuid
 DTSTAMP:20181201T011205Z
@@ -937,7 +937,7 @@ END:VCALENDAR`,
 VERSION:2.0
 X-PUBLISHED-TTL:PT4H
 X-WR-CALNAME:List title
-PRODID:-//Vikunja Todo App//EN
+PRODID:-//Norna//EN
 BEGIN:VTODO
 UID:randomuid
 DTSTAMP:20181201T011205Z
@@ -1035,7 +1035,7 @@ END:VCALENDAR`,
 VERSION:2.0
 X-PUBLISHED-TTL:PT4H
 X-WR-CALNAME:List title
-PRODID:-//Vikunja Todo App//EN
+PRODID:-//Norna//EN
 BEGIN:VTODO
 UID:randomuid_parent
 DTSTAMP:20181201T011205Z

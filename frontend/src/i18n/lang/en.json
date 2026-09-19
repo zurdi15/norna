@@ -288,7 +288,7 @@
     "newTask": "New task"
   },
   "apiConfig": {
-    "error": "Could not find or use Vikunja installation at \"{domain}\". Please check if the url has the correct format and you can reach it when accessing it directly and try again."
+    "error": "Could not find or use a Norna server at \"{domain}\". Check that the address is right and that you can open it directly, then try again."
   },
   "error": {
     "error": "Error",
@@ -390,23 +390,24 @@
     "14001": "The provided api token is invalid.",
     "14002": "The permission {permission} of group {group} is invalid.",
     "14005": "A migration from this service is already running. Please wait until it is done.",
-    "14009": "The provided zip file does not contain a Vikunja data file. Make sure you upload a Vikunja export.",
+    "14009": "The zip file doesn't contain a Norna data file. Make sure you upload a Norna export.",
     "14010": "The provided file could not be parsed. Please make sure it is a valid export file.",
     "14011": "The provided file is not a valid zip file.",
     "14012": "The provided file does not contain any data.",
-    "14013": "The export was created with a Vikunja version that is too old to import. Please create a new export with a more recent version.",
+    "14013": "The export was made with a version too old to import. Make a new export with a recent version.",
     "14016": "The import configuration could not be parsed. Please make sure it is a valid JSON object.",
     "14201": "Planka rejected the provided credentials. Check the URL and the API key or username and password.",
     "14202": "The Planka account requires an extra login step (two-factor code or accepting the terms). Log in to Planka in the browser once, or use an API key instead of username and password.",
     "14203": "A Planka URL and either an API key or username and password are required.",
-    "14204": "Could not reach a Planka API at the given URL. Check the URL and that Vikunja can reach the instance."
+    "14204": "Could not reach a Planka API at the given URL. Check the URL and that the server can reach the instance."
   },
   "about": {
     "title": "About Norna",
     "tagline": "Tasks and projects, woven together.",
     "app": "App",
     "server": "Server",
-    "basedOn": "Norna is a personal fork of"
+    "source": "Source code",
+    "license": "Free software under the AGPL-3.0 license."
   },
   "timeTracking": {
     "title": "Time tracking",
@@ -1812,7 +1813,7 @@
       "todoist": "Sign in to Todoist and bring your projects, tasks and labels.",
       "trello": "Sign in to Trello and bring your boards, lists and cards.",
       "microsoftTodo": "Sign in with Microsoft and bring your lists and tasks.",
-      "vikunjaFile": "Upload a .zip exported from Norna or Vikunja.",
+      "nornaFile": "Upload a .zip exported from Norna.",
       "ticktick": "Upload the backup file TickTick gives you.",
       "wekan": "Upload a board exported from WeKan.",
       "planka": "Connect to your Planka server with an API key or your login.",
@@ -1845,7 +1846,7 @@
       "dropHere": "Drop the file here",
       "change": "Change",
       "hints": {
-        "vikunjaFile": "In Norna or Vikunja, open Settings → Export, request an export and download the .zip.",
+        "nornaFile": "In Norna, open Settings → Export, request an export and download the .zip.",
         "ticktick": "In TickTick, go to Settings → Account → Backup and download the .csv file.",
         "wekan": "In WeKan, open the board menu, choose Export board and save the .json file."
       }
@@ -1958,7 +1959,7 @@
       "wrong": "That password isn't right."
     },
     "export": {
-      "description": "A copy of everything in your account: projects, tasks, comments and files. You can import it into Norna or Vikunja.",
+      "description": "A copy of everything in your account: projects, tasks, comments and files. You can import it into Norna.",
       "currentTitle": "Your export",
       "preparing": "Preparing your export…",
       "preparingDescription": "It can take a few minutes. We'll also email you when it's ready.",
@@ -2048,7 +2049,7 @@
       "showLastViewedDescription": "The projects you opened last.",
       "magic": "Quick add magic",
       "magicModes": {
-        "vikunja": "Norna",
+        "norna": "Norna",
         "todoist": "Todoist",
         "disabled": "Off"
       },

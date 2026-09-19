@@ -38,7 +38,7 @@ import (
 )
 
 func ExportUserData(s *xorm.Session, u *user.User) (err error) {
-	dumpFile, err := os.CreateTemp("", "vikunja-export-*.zip")
+	dumpFile, err := os.CreateTemp("", "norna-export-*.zip")
 	if err != nil {
 		return fmt.Errorf("error creating temp file: %w", err)
 	}
@@ -68,13 +68,13 @@ func ExportUserData(s *xorm.Session, u *user.User) (err error) {
 	if err != nil {
 		return err
 	}
-	// Vikunja Version
+	// Norna Version
 	err = utils.WriteBytesToZip("VERSION", []byte(version.Version), dumpWriter)
 	if err != nil {
 		return err
 	}
 
-	// If we reuse the same file again, saving it as a file in Vikunja will save it as a file with 0 bytes in size.
+	// If we reuse the same file again, saving it as a file in Norna will save it as a file with 0 bytes in size.
 	// Closing and reopening does work.
 	dumpWriter.Close()
 	dumpFile.Close()

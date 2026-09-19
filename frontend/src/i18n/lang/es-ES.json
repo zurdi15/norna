@@ -372,7 +372,7 @@
 		"14001": "El token de API no es válido.",
 		"14002": "El permiso {permission} del grupo {group} no es válido.",
 		"14005": "Ya hay una importación de este servicio en marcha. Espera a que termine.",
-		"14009": "El zip no contiene ningún archivo de datos de Vikunja. Asegúrate de subir una exportación de Vikunja.",
+		"14009": "El zip no contiene ningún archivo de datos de Norna. Asegúrate de subir una exportación de Norna.",
 		"14010": "No se ha podido leer el archivo. Asegúrate de que es una exportación válida.",
 		"14011": "El archivo no es un zip válido.",
 		"14012": "El archivo no contiene datos.",
@@ -403,7 +403,8 @@
 		"tagline": "Tareas y proyectos, bien tejidos.",
 		"app": "App",
 		"server": "Servidor",
-		"basedOn": "Norna es un fork personal de"
+		"source": "Código fuente",
+		"license": "Software libre bajo la licencia AGPL-3.0."
 	},
 	"time": {
 		"units": {
@@ -1602,7 +1603,7 @@
 			"todoist": "Inicia sesión en Todoist y trae tus proyectos, tareas y etiquetas.",
 			"trello": "Inicia sesión en Trello y trae tus tableros, listas y tarjetas.",
 			"microsoftTodo": "Inicia sesión con Microsoft y trae tus listas y tareas.",
-			"vikunjaFile": "Sube un .zip exportado desde Norna o Vikunja.",
+			"nornaFile": "Sube un .zip exportado desde Norna.",
 			"ticktick": "Sube la copia de seguridad que te da TickTick.",
 			"wekan": "Sube un tablero exportado desde WeKan.",
 			"planka": "Conéctate a tu servidor de Planka con una clave de API o tu usuario.",
@@ -1635,7 +1636,7 @@
 			"dropHere": "Suelta el archivo aquí",
 			"change": "Cambiar",
 			"hints": {
-				"vikunjaFile": "En Norna o Vikunja, abre Ajustes → Exportar, pide una exportación y descarga el .zip.",
+				"nornaFile": "En Norna, abre Ajustes → Exportar, pide una exportación y descarga el .zip.",
 				"ticktick": "En TickTick, ve a Ajustes → Cuenta → Copia de seguridad y descarga el archivo .csv.",
 				"wekan": "En WeKan, abre el menú del tablero, elige Exportar tablero y guarda el archivo .json."
 			}
@@ -1748,7 +1749,7 @@
 			"wrong": "Esa contraseña no es correcta."
 		},
 		"export": {
-			"description": "Una copia de todo lo que hay en tu cuenta: proyectos, tareas, comentarios y archivos. Puedes importarla en Norna o Vikunja.",
+			"description": "Una copia de todo lo que hay en tu cuenta: proyectos, tareas, comentarios y archivos. Puedes importarla en Norna.",
 			"currentTitle": "Tu exportación",
 			"preparing": "Preparando tu exportación…",
 			"preparingDescription": "Puede tardar unos minutos. También te avisaremos por email cuando esté lista.",
@@ -1838,7 +1839,7 @@
 			"showLastViewedDescription": "Los últimos proyectos que abriste.",
 			"magic": "Magia al añadir rápido",
 			"magicModes": {
-				"vikunja": "Norna",
+				"norna": "Norna",
 				"todoist": "Todoist",
 				"disabled": "Desactivada"
 			},

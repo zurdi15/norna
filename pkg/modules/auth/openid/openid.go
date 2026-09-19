@@ -103,7 +103,7 @@ type claims struct {
 	Name               string                   `json:"name"`
 	PreferredUsername  string                   `json:"preferred_username"`
 	Nickname           string                   `json:"nickname"`
-	VikunjaGroups      []map[string]interface{} `json:"vikunja_groups"`
+	NornaGroups        []map[string]interface{} `json:"norna_groups"`
 	Picture            string                   `json:"picture"`
 	ExtraSettingsLinks map[string]any           `json:"extra_settings_links"`
 }
@@ -281,7 +281,7 @@ func AuthenticateCallback(ctx context.Context, cb *Callback, providerKey string)
 		return nil, nil, err
 	}
 
-	teamData := getTeamDataFromToken(cl.VikunjaGroups, provider)
+	teamData := getTeamDataFromToken(cl.NornaGroups, provider)
 
 	err = models.SyncExternalTeamsForUser(s, u, teamData, idToken.Issuer, provider.Name)
 	if err != nil {
@@ -555,8 +555,8 @@ func mergeClaims(cl *claims, cl2 *claims, forceUserInfo bool) error {
 		cl.Picture = cl2.Picture
 	}
 
-	if (forceUserInfo && len(cl2.VikunjaGroups) > 0) || len(cl.VikunjaGroups) == 0 {
-		cl.VikunjaGroups = cl2.VikunjaGroups
+	if (forceUserInfo && len(cl2.NornaGroups) > 0) || len(cl.NornaGroups) == 0 {
+		cl.NornaGroups = cl2.NornaGroups
 	}
 
 	if (forceUserInfo && len(cl2.ExtraSettingsLinks) > 0) || len(cl.ExtraSettingsLinks) == 0 {

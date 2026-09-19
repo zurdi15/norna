@@ -50,12 +50,12 @@ describe('shouldDropEvent', () => {
 
 describe('shouldDropEvent with chunk load errors', () => {
 	const messages = [
-		'Failed to fetch dynamically imported module: https://try.vikunja.io/assets/ProjectList-abc123.js',
-		'error loading dynamically imported module: https://try.vikunja.io/assets/ProjectList-abc123.js',
+		'Failed to fetch dynamically imported module: https://tasks.example.com/assets/ProjectList-abc123.js',
+		'error loading dynamically imported module: https://tasks.example.com/assets/ProjectList-abc123.js',
 		'Importing a module script failed.',
 		'Unable to preload CSS for /assets/ProjectList-abc123.css',
 		'\'text/html\' is not a valid JavaScript MIME type.',
-		'Loading module from “https://try.vikunja.io/assets/ProjectList-abc123.js” was blocked because of a disallowed MIME type (“text/html”).',
+		'Loading module from “https://tasks.example.com/assets/ProjectList-abc123.js” was blocked because of a disallowed MIME type (“text/html”).',
 		'Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "text/html".',
 	]
 
@@ -134,7 +134,7 @@ describe('shouldDropEvent with third party injections', () => {
 			exception: {
 				values: [{
 					value: 'boom',
-					stacktrace: {frames: [{filename: 'https://try.vikunja.io/assets/index.js'}, {filename}]},
+					stacktrace: {frames: [{filename: 'https://tasks.example.com/assets/index.js'}, {filename}]},
 				}],
 			},
 		})).toBe(true)
@@ -145,7 +145,7 @@ describe('shouldDropEvent with third party injections', () => {
 			exception: {
 				values: [{
 					value: 'boom',
-					stacktrace: {frames: [{filename: 'chrome-extension://abc/content.js'}, {filename: 'https://try.vikunja.io/assets/index.js'}]},
+					stacktrace: {frames: [{filename: 'chrome-extension://abc/content.js'}, {filename: 'https://tasks.example.com/assets/index.js'}]},
 				}],
 			},
 		})).toBe(false)
@@ -156,7 +156,7 @@ describe('shouldDropEvent with third party injections', () => {
 			exception: {
 				values: [{
 					value: 'boom',
-					stacktrace: {frames: [{filename: 'https://try.vikunja.io/assets/index.js'}]},
+					stacktrace: {frames: [{filename: 'https://tasks.example.com/assets/index.js'}]},
 				}],
 			},
 		})).toBe(false)

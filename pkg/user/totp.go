@@ -100,7 +100,7 @@ func EnrollTOTP(s *xorm.Session, user *User) (t *TOTP, err error) {
 	}
 
 	key, err := totp.Generate(totp.GenerateOpts{
-		Issuer:      "Vikunja",
+		Issuer:      "Norna",
 		AccountName: user.Username,
 	})
 	if err != nil {

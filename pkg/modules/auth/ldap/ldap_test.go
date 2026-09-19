@@ -31,7 +31,7 @@ import (
 )
 
 func TestLdapLogin(t *testing.T) {
-	if os.Getenv("VIKUNJA_TESTS_USE_CONFIG") != "1" || !config.AuthLdapEnabled.GetBool() {
+	if os.Getenv("NORNA_TESTS_USE_CONFIG") != "1" || !config.AuthLdapEnabled.GetBool() {
 		t.Skip("Skipping LDAP tests because ldap is not configured")
 	}
 

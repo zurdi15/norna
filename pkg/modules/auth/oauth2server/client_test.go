@@ -23,11 +23,9 @@ import (
 )
 
 func TestValidateRedirectURI(t *testing.T) {
-	t.Run("accepts vikunja-flutter scheme", func(t *testing.T) {
-		assert.True(t, ValidateRedirectURI("vikunja-flutter://callback"))
-	})
-	t.Run("accepts vikunja-desktop scheme", func(t *testing.T) {
-		assert.True(t, ValidateRedirectURI("vikunja-desktop://auth"))
+	t.Run("rejects app schemes", func(t *testing.T) {
+		assert.False(t, ValidateRedirectURI("norna-desktop://auth"))
+		assert.False(t, ValidateRedirectURI("norna-flutter://callback"))
 	})
 	t.Run("accepts http localhost", func(t *testing.T) {
 		assert.True(t, ValidateRedirectURI("http://localhost/callback"))
@@ -74,7 +72,7 @@ func TestValidateRedirectURI(t *testing.T) {
 	t.Run("rejects data scheme", func(t *testing.T) {
 		assert.False(t, ValidateRedirectURI("data:text/html,<script>alert(1)</script>"))
 	})
-	t.Run("rejects non-vikunja custom scheme", func(t *testing.T) {
+	t.Run("rejects a custom scheme", func(t *testing.T) {
 		assert.False(t, ValidateRedirectURI("myapp://callback"))
 	})
 	t.Run("rejects empty URI", func(t *testing.T) {

@@ -20,7 +20,7 @@ package doctor
 type CheckResult struct {
 	Name   string
 	Passed bool
-	Value  string   // e.g., "vikunja (uid=1000)" or "OK"
+	Value  string   // e.g., "norna (uid=1000)" or "OK"
 	Error  string   // only populated if Passed is false
 	Lines  []string // additional lines to display (e.g., list of CORS origins)
 }

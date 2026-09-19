@@ -39,7 +39,7 @@ func newStaticTestEcho() *echo.Echo {
 
 // Paths still looking url-encoded after the first decode used to be decoded twice
 // and 500 with url.EscapeError.
-// See https://github.com/go-vikunja/vikunja/issues/3434
+// See upstream issue #3434.
 func TestStaticEncodedPath(t *testing.T) {
 	tests := []struct {
 		name string

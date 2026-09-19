@@ -29,13 +29,13 @@ func TestMd5String(t *testing.T) {
 	}{
 		{
 			name: "Test md5 generation",
-			args: args{cleartext: "vikunjarandomstringwhichisnotrandom"},
-			want: "58b27d8a1e45a9427dcfb8dea261c5ae",
+			args: args{cleartext: "nornarandomstringwhichisnotrandom"},
+			want: "dfbbbdd130a33bb94eeae019c02a65bc",
 		},
 		{
 			name: "Test md5 generation",
-			args: args{cleartext: "vikunjastring"},
-			want: "3e22b01e055d3d113a946742c2f67b90",
+			args: args{cleartext: "nornastring"},
+			want: "234fe290ea60597afc9fe166052a7d83",
 		},
 		{
 			name: "Test md5 generation",

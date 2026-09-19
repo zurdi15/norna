@@ -58,7 +58,7 @@ func LoadPluginFull(dir string) (*plugins.LoadedYaegiPlugin, error) {
 		return nil, fmt.Errorf("loading stdlib symbols: %w", err)
 	}
 	if err := i.Use(yaegi_symbols.Symbols); err != nil {
-		return nil, fmt.Errorf("loading vikunja symbols: %w", err)
+		return nil, fmt.Errorf("loading norna symbols: %w", err)
 	}
 
 	// Read and evaluate all .go files in the plugin directory.

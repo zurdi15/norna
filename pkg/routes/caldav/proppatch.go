@@ -67,7 +67,7 @@ func parsePropertyUpdate(body string) ([]xml.Name, error) {
 }
 
 // handlePropPatch answers PROPPATCH (RFC 4918 §9.2) without applying any
-// change: Vikunja doesn't support client-set collection metadata, so every
+// change: Norna doesn't support client-set collection metadata, so every
 // submitted property is refused with 403, the same "polite refusal" shape
 // sabre/dav uses for protected properties. Clients treat this as best-effort
 // and keep syncing instead of aborting on the 501 caldav-go falls back to.

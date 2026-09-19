@@ -39,7 +39,7 @@ const (
 
 // assertParentProjectIDIsANumber fails if any project in raw omits
 // parent_project_id or sends it as null. Clients parse it as a plain int, so a
-// missing key breaks the whole response (go-vikunja/app#295).
+// missing key breaks the whole response (upstream app issue #295).
 func assertParentProjectIDIsANumber(t *testing.T, raw json.RawMessage) map[int64]int64 {
 	var projects []map[string]json.RawMessage
 	require.NoError(t, json.Unmarshal(raw, &projects))

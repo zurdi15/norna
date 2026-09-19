@@ -6,6 +6,7 @@ import NornaMark from '@/features/shell/NornaMark.vue'
 import ModalPage from '@/features/shell/ModalPage.vue'
 import {useConfigStore} from '@/stores/config'
 import UiButton from '@/ui/UiButton.vue'
+import {SOURCE_CODE} from '@/urls'
 import {VERSION as frontendVersion} from '@/version.json'
 
 /** Which Norna this is: the versions of the app and of the server it talks to. */
@@ -61,14 +62,15 @@ const legal = computed(() => configStore.legal)
 				</dd>
 			</div>
 		</dl>
+		<!-- The AGPL asks a network service to offer its source to everyone using it. -->
 		<p class="text-sm text-pretty text-ink-muted">
-			{{ t('about.basedOn') }}
+			{{ t('about.license') }}
 			<a
-				href="https://vikunja.io"
+				:href="SOURCE_CODE"
 				target="_blank"
 				rel="noopener"
 				class="text-accent underline-offset-2 hover:underline"
-			>Vikunja</a>.
+			>{{ t('about.source') }}</a>
 		</p>
 		<p
 			v-if="legal.imprint_url || legal.privacy_policy_url"

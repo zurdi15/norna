@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Package humabridge mounts Huma's echo/v5 adapter (upstream humaecho) onto
-// an Echo group and adds the Vikunja-specific glue upstream doesn't provide:
+// an Echo group and adds the Norna-specific glue upstream doesn't provide:
 //
 //   - every request through the group stashes its *echo.Context on the
 //     request context under EchoContextKey, so handlers can reach the echo

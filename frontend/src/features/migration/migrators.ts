@@ -14,7 +14,7 @@ import plankaIcon from './icons/planka.png?url'
 import tickTickIcon from './icons/ticktick.svg?url'
 import todoistIcon from './icons/todoist.svg?url'
 import trelloIcon from './icons/trello.svg?url'
-import vikunjaFileIcon from './icons/vikunja-file.png?url'
+import nornaFileIcon from './icons/norna-file.svg?url'
 import wekanIcon from './icons/wekan.png?url'
 
 interface MigratorBase {
@@ -36,7 +36,7 @@ export const MIGRATORS: {[Id in MigratorId]: Migrator & {id: Id}} = {
 	'todoist': {id: 'todoist', kind: 'oauth', name: 'Todoist', icon: todoistIcon, i18nKey: 'todoist'},
 	'trello': {id: 'trello', kind: 'oauth', name: 'Trello', icon: trelloIcon, i18nKey: 'trello'},
 	'microsoft-todo': {id: 'microsoft-todo', kind: 'oauth', name: 'Microsoft To Do', icon: microsoftTodoIcon, i18nKey: 'microsoftTodo'},
-	'vikunja-file': {id: 'vikunja-file', kind: 'file', name: 'Vikunja', icon: vikunjaFileIcon, i18nKey: 'vikunjaFile', accept: '.zip'},
+	'norna-file': {id: 'norna-file', kind: 'file', name: 'Norna', icon: nornaFileIcon, i18nKey: 'nornaFile', accept: '.zip'},
 	'ticktick': {id: 'ticktick', kind: 'file', name: 'TickTick', icon: tickTickIcon, i18nKey: 'ticktick', accept: '.csv'},
 	'wekan': {id: 'wekan', kind: 'file', name: 'WeKan', icon: wekanIcon, i18nKey: 'wekan', accept: '.json'},
 	'planka': {id: 'planka', kind: 'credentials', name: 'Planka', icon: plankaIcon, i18nKey: 'planka'},

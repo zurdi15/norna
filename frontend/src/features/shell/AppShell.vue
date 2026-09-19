@@ -71,7 +71,7 @@ watch(online, isOnline => {
 }, {immediate: true})
 
 // The desktop quick-entry window asks the main window to open what it just created.
-const quickEntryChannel = new BroadcastChannel('vikunja-task-updates')
+const quickEntryChannel = new BroadcastChannel('norna-task-updates')
 quickEntryChannel.onmessage = event => {
 	if (event.data?.type === 'task-created-open' && event.data?.taskId) {
 		router.push({name: 'task.detail', params: {id: event.data.taskId}})

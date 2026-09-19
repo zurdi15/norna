@@ -122,9 +122,9 @@ func fingerprintParts(err error) []string {
 	var domainErr web.HTTPErrorProcessor
 	if errors.As(err, &domainErr) {
 		if code := domainErr.HTTPError().Code; code != 0 {
-			return []string{"vikunja", strconv.Itoa(code)}
+			return []string{"norna", strconv.Itoa(code)}
 		}
-		return []string{"vikunja", fmt.Sprintf("%T", domainErr)}
+		return []string{"norna", fmt.Sprintf("%T", domainErr)}
 	}
 
 	var pgErr *pq.Error

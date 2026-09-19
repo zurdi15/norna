@@ -1,7 +1,7 @@
-import type {VikunjaErrorModel} from '@/client/generated'
+import type {NornaErrorModel} from '@/client/generated'
 
 // With throwOnError, the generated client throws the parsed problem+json body itself.
-export type ApiProblem = VikunjaErrorModel & {message?: string}
+export type ApiProblem = NornaErrorModel & {message?: string}
 
 export function isApiProblem(error: unknown): error is ApiProblem {
 	return typeof error === 'object'

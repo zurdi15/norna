@@ -23,7 +23,7 @@ import (
 )
 
 // registerTipTapRules teaches the HTML→Markdown converter about the two
-// Vikunja-specific nodes that standard GFM doesn't model: TipTap mentions and
+// Norna-specific nodes that standard GFM doesn't model: TipTap mentions and
 // TipTap task lists.
 func registerTipTapRules(conv *converter.Converter) {
 	// Empty mention elements (the common stored form is <mention-user data-id data-label></mention-user>)

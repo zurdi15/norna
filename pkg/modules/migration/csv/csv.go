@@ -514,7 +514,7 @@ func parseBool(value string) bool {
 func parsePriority(value string) int {
 	// Try to parse as number
 	if p, err := strconv.Atoi(strings.TrimSpace(value)); err == nil {
-		// Vikunja uses 0-5 priority (0=unset, 1=low, 5=urgent)
+		// Norna uses 0-5 priority (0=unset, 1=low, 5=urgent)
 		if p < 0 {
 			return 0
 		}
@@ -579,9 +579,9 @@ func parseDate(value, format string) time.Time {
 	return time.Time{}
 }
 
-// Migrate imports CSV data into Vikunja
+// Migrate imports CSV data into Norna
 // @Summary Import all tasks from a CSV file
-// @Description Imports tasks from a CSV file into Vikunja. Requires a mapping configuration.
+// @Description Imports tasks from a CSV file into Norna. Requires a mapping configuration.
 // @tags migration
 // @Accept multipart/form-data
 // @Produce json
@@ -608,7 +608,7 @@ func (m *Migrator) SetOptions(options []byte) error {
 	return nil
 }
 
-// MigrateWithConfig imports CSV data into Vikunja with the provided configuration
+// MigrateWithConfig imports CSV data into Norna with the provided configuration
 func MigrateWithConfig(u *user.User, file io.ReaderAt, size int64, config *ImportConfig) error {
 	if size == 0 {
 		return &migration.ErrFileIsEmpty{}
@@ -649,9 +649,9 @@ func MigrateWithConfig(u *user.User, file io.ReaderAt, size int64, config *Impor
 		return &migration.ErrFileIsEmpty{}
 	}
 
-	vikunjaTasks := convertToVikunja(rows, config)
+	nornaTasks := convertToNorna(rows, config)
 
-	return migration.InsertFromStructure(vikunjaTasks, u)
+	return migration.InsertFromStructure(nornaTasks, u)
 }
 
 // hasProjectMapping returns true if any column is mapped to the project attribute
@@ -664,8 +664,8 @@ func hasProjectMapping(config *ImportConfig) bool {
 	return false
 }
 
-// convertToVikunja converts CSV rows to Vikunja project/task structure
-func convertToVikunja(rows [][]string, config *ImportConfig) []*models.ProjectWithTasksAndBuckets {
+// convertToNorna converts CSV rows to Norna project/task structure
+func convertToNorna(rows [][]string, config *ImportConfig) []*models.ProjectWithTasksAndBuckets {
 	var pseudoParentID int64 = 1
 	parentProject := &models.ProjectWithTasksAndBuckets{
 		Project: models.Project{
@@ -737,7 +737,7 @@ func convertToVikunja(rows [][]string, config *ImportConfig) []*models.ProjectWi
 	return result
 }
 
-// rowToTask converts a CSV row to a Vikunja task
+// rowToTask converts a CSV row to a Norna task
 func rowToTask(row []string, config *ImportConfig, taskID int64) models.Task {
 	task := models.Task{
 		ID: taskID,

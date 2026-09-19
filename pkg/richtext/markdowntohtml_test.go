@@ -36,8 +36,8 @@ func TestMarkdownToHTML(t *testing.T) {
 		},
 		{
 			name: "link",
-			md:   "see [the site](https://vikunja.io)",
-			want: `<p>see <a href="https://vikunja.io">the site</a></p>`,
+			md:   "see [the site](https://example.com)",
+			want: `<p>see <a href="https://example.com">the site</a></p>`,
 		},
 		{
 			name: "task list becomes tiptap dom",

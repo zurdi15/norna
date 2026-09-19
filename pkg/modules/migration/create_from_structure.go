@@ -49,7 +49,7 @@ type backgroundFileStorageCounter interface {
 	CountBackgroundFile(size int64) error
 }
 
-// InsertFromStructure takes a fully nested Vikunja data structure and a user and then creates everything for this user
+// InsertFromStructure takes a fully nested Norna data structure and a user and then creates everything for this user
 // (Projects, tasks, etc. Even attachments and relations.)
 func InsertFromStructure(str []*models.ProjectWithTasksAndBuckets, u *user.User) (err error) {
 	return insertFromStructureWithFileProvider(str, u, nil)

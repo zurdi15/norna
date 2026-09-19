@@ -29,13 +29,13 @@ func TestSha256(t *testing.T) {
 	}{
 		{
 			name: "Test sha256 generation",
-			args: args{cleartext: "vikunjarandomstringwhichisnotrandom"},
-			want: "46fc0f603dd986cf7ed3e631917d43da89a8df2bdf291",
+			args: args{cleartext: "nornarandomstringwhichisnotrandom"},
+			want: "74984750197c97d98d6ae8a39264f6c1d55d97bbf4d7b",
 		},
 		{
 			name: "Test sha256 generation",
-			args: args{cleartext: "vikunjastring"},
-			want: "f54d310f4d9a0bc13479dad5c5701e8d581744666b69f",
+			args: args{cleartext: "nornastring"},
+			want: "87f13154071b2a723b43c7380bc5c5848ac9d98b362d5",
 		},
 		{
 			name: "Test sha256 generation",

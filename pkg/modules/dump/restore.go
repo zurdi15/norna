@@ -126,7 +126,7 @@ func Restore(filename string, overrideConfig bool) error {
 
 	///////
 	// Check if we're restoring to the same version as the dump
-	err = checkVikunjaVersion(versionFile)
+	err = checkNornaVersion(versionFile)
 	if err != nil {
 		return err
 	}
@@ -226,7 +226,7 @@ func Restore(filename string, overrideConfig bool) error {
 	// Done
 	log.Infof("Done restoring dump.")
 	if overrideConfig {
-		log.Infof("Restart Vikunja to make sure the new configuration file is applied.")
+		log.Infof("Restart Norna to make sure the new configuration file is applied.")
 	}
 
 	return nil
@@ -245,10 +245,10 @@ func restoreDatabaseContents(dbfiles map[string]*zip.File) error {
 	s := db.NewSession()
 	defer s.Close()
 	if err := models.RebuildProjectAncestors(s); err != nil {
-		return fmt.Errorf("could not rebuild project ancestors (data is restored, run 'vikunja repair projects'): %w", err)
+		return fmt.Errorf("could not rebuild project ancestors (data is restored, run 'norna repair projects'): %w", err)
 	}
 	if err := s.Commit(); err != nil {
-		return fmt.Errorf("could not commit project ancestors rebuild (data is restored, run 'vikunja repair projects'): %w", err)
+		return fmt.Errorf("could not commit project ancestors rebuild (data is restored, run 'norna repair projects'): %w", err)
 	}
 
 	return nil
@@ -266,7 +266,7 @@ func restoreFile(id int64, zipFile *zip.File) error {
 	// Create a temporary file to make the content seekable without loading
 	// it all into memory. zip.File.Open() returns io.ReadCloser which is not
 	// seekable, but f.Save requires io.ReadSeeker.
-	tmpFile, err := os.CreateTemp("", "vikunja-restore-*")
+	tmpFile, err := os.CreateTemp("", "norna-restore-*")
 	if err != nil {
 		return fmt.Errorf("could not create temp file: %w", err)
 	}
@@ -498,7 +498,7 @@ func restoreConfig(configFile, dotEnvFile *zip.File, stdin *bufio.Reader) error 
 	}
 
 	log.Warning("No config file found, not restoring one.")
-	log.Warning("You'll likely have had Vikunja configured through environment variables.")
+	log.Warning("You'll likely have had Norna configured through environment variables.")
 
 	if dotEnvFile != nil {
 		dotenv, err := dotEnvFile.Open()
@@ -522,7 +522,7 @@ func restoreConfig(configFile, dotEnvFile *zip.File, stdin *bufio.Reader) error 
 	return nil
 }
 
-func checkVikunjaVersion(versionFile *zip.File) error {
+func checkNornaVersion(versionFile *zip.File) error {
 	if versionFile == nil {
 		return fmt.Errorf("dump does not contain VERSION file, refusing to continue")
 	}
@@ -550,7 +550,7 @@ func checkVikunjaVersion(versionFile *zip.File) error {
 		}
 
 		if !dumpedVersion.Equal(currentVersion) {
-			return fmt.Errorf("export was created with version %s but this is %s - please make sure you are running the same Vikunja version before restoring", dumpedVersion, currentVersion)
+			return fmt.Errorf("export was created with version %s but this is %s - please make sure you are running the same Norna version before restoring", dumpedVersion, currentVersion)
 		}
 	}
 

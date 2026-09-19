@@ -1,6 +1,6 @@
-import type {VikunjaErrorModel} from '@/client/generated'
+import type {NornaErrorModel} from '@/client/generated'
 
-export interface ValidationError extends Pick<VikunjaErrorModel, 'code' | 'errors'> {
+export interface ValidationError extends Pick<NornaErrorModel, 'code' | 'errors'> {
 	message?: string
 	invalid_fields?: string[]
 }

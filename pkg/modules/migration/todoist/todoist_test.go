@@ -33,7 +33,7 @@ import (
 	"gopkg.in/d4l3k/messagediff.v1"
 )
 
-func TestConvertTodoistToVikunja(t *testing.T) {
+func TestConvertTodoistToNorna(t *testing.T) {
 	time1, err := time.Parse(time.RFC3339Nano, "2014-09-26T08:25:05Z")
 	require.NoError(t, err)
 	time1 = time1.In(config.GetTimeZone())
@@ -360,7 +360,7 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 		},
 	}
 
-	vikunjaLabels := []*models.Label{
+	nornaLabels := []*models.Label{
 		{
 			Title:    "Label1",
 			HexColor: todoistColors["berry_red"],
@@ -439,7 +439,7 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 						DueDate:     dueTime,
 						Created:     time1,
 						DoneAt:      time3,
-						Labels:      vikunjaLabels,
+						Labels:      nornaLabels,
 						Reminders: []*models.TaskReminder{
 							{Reminder: time.Date(2020, time.June, 15, 7, 0, 0, 0, time.UTC).In(config.GetTimeZone())},
 						},
@@ -450,7 +450,7 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 						Title:   "Task400000004",
 						Done:    false,
 						Created: time1,
-						Labels:  vikunjaLabels,
+						Labels:  nornaLabels,
 					},
 				},
 				{
@@ -492,7 +492,7 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 						DueDate: dueTimeWithTime,
 						Created: time1,
 						DoneAt:  time3,
-						Labels:  vikunjaLabels,
+						Labels:  nornaLabels,
 					},
 				},
 				{
@@ -593,7 +593,7 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 						Done:    false,
 						DueDate: dueTime,
 						Created: time1,
-						Labels:  vikunjaLabels,
+						Labels:  nornaLabels,
 					},
 				},
 				{
@@ -601,7 +601,7 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 						Title:   "Task400000103",
 						Done:    false,
 						Created: time1,
-						Labels:  vikunjaLabels,
+						Labels:  nornaLabels,
 					},
 				},
 				{
@@ -609,7 +609,7 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 						Title:   "Task400000104",
 						Done:    false,
 						Created: time1,
-						Labels:  vikunjaLabels,
+						Labels:  nornaLabels,
 					},
 				},
 				{
@@ -618,7 +618,7 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 						Done:    false,
 						DueDate: dueTime,
 						Created: time1,
-						Labels:  vikunjaLabels,
+						Labels:  nornaLabels,
 					},
 				},
 			},
@@ -645,7 +645,7 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 	}
 
 	doneItems := make(map[string]*doneItem)
-	hierachie, err := convertTodoistToVikunja(testSync, doneItems)
+	hierachie, err := convertTodoistToNorna(testSync, doneItems)
 	require.NoError(t, err)
 	assert.NotNil(t, hierachie)
 	if diff, equal := messagediff.PrettyDiff(hierachie, expectedHierachie); !equal {
@@ -653,9 +653,9 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 	}
 }
 
-func TestConvertTodoistToVikunjaWithBrokenAttachment(t *testing.T) {
+func TestConvertTodoistToNornaWithBrokenAttachment(t *testing.T) {
 	// Todoist returns opaque identifiers instead of urls for attachments it does not host itself.
-	// Those must not fail the whole migration, see https://github.com/go-vikunja/vikunja/issues/3435
+	// Those must not fail the whole migration, see upstream issue #3435
 	testSync := &sync{
 		Projects: []*project{
 			{
@@ -685,7 +685,7 @@ func TestConvertTodoistToVikunjaWithBrokenAttachment(t *testing.T) {
 		},
 	}
 
-	hierachie, err := convertTodoistToVikunja(testSync, make(map[string]*doneItem))
+	hierachie, err := convertTodoistToNorna(testSync, make(map[string]*doneItem))
 	require.NoError(t, err)
 	require.Len(t, hierachie, 2)
 	require.Len(t, hierachie[1].Tasks, 1)
@@ -693,7 +693,7 @@ func TestConvertTodoistToVikunjaWithBrokenAttachment(t *testing.T) {
 	assert.Equal(t, "Lorem Ipsum dolor sit amet", hierachie[1].Tasks[0].Description)
 }
 
-func TestConvertTodoistToVikunjaPreservesDescriptions(t *testing.T) {
+func TestConvertTodoistToNornaPreservesDescriptions(t *testing.T) {
 	// The Todoist v1 sync API returns a `description` field (markdown) on every
 	// item. It must become the task description, with notes appended after it.
 	testSync := &sync{}
@@ -710,7 +710,7 @@ func TestConvertTodoistToVikunjaPreservesDescriptions(t *testing.T) {
 		]
 	}`), testSync))
 
-	hierachie, err := convertTodoistToVikunja(testSync, make(map[string]*doneItem))
+	hierachie, err := convertTodoistToNorna(testSync, make(map[string]*doneItem))
 	require.NoError(t, err)
 	require.Len(t, hierachie, 2)
 	require.Len(t, hierachie[1].Tasks, 3)

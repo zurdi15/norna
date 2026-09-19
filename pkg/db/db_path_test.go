@@ -57,117 +57,117 @@ func Test_resolveDatabasePath(t *testing.T) {
 			name: "memory database",
 			cfg: DatabasePathConfig{
 				ConfiguredPath: "memory",
-				RootPath:       "/opt/vikunja",
-				ExecutablePath: "/opt/vikunja",
+				RootPath:       "/opt/norna",
+				ExecutablePath: "/opt/norna",
 			},
-			userDataDir: mockUserDataDir("/home/user/.local/share/vikunja"),
+			userDataDir: mockUserDataDir("/home/user/.local/share/norna"),
 			expected:    "memory",
 		},
 
 		{
 			name: "absolute path should be used as-is",
 			cfg: DatabasePathConfig{
-				ConfiguredPath: "/var/lib/vikunja/vikunja.db",
-				RootPath:       "/opt/vikunja",
-				ExecutablePath: "/opt/vikunja",
+				ConfiguredPath: "/var/lib/norna/norna.db",
+				RootPath:       "/opt/norna",
+				ExecutablePath: "/opt/norna",
 			},
-			userDataDir: mockUserDataDir("/home/user/.local/share/vikunja"),
-			expected:    "/var/lib/vikunja/vikunja.db",
+			userDataDir: mockUserDataDir("/home/user/.local/share/norna"),
+			expected:    "/var/lib/norna/norna.db",
 		},
 		{
 			name: "absolute path with different rootpath still used as-is",
 			cfg: DatabasePathConfig{
 				ConfiguredPath: "/data/mydb.db",
 				RootPath:       "/custom/path",
-				ExecutablePath: "/opt/vikunja",
+				ExecutablePath: "/opt/norna",
 			},
-			userDataDir: mockUserDataDir("/home/user/.local/share/vikunja"),
+			userDataDir: mockUserDataDir("/home/user/.local/share/norna"),
 			expected:    "/data/mydb.db",
 		},
 
 		{
 			name: "relative path with explicit rootpath",
 			cfg: DatabasePathConfig{
-				ConfiguredPath: "vikunja.db",
-				RootPath:       "/var/lib/vikunja",
-				ExecutablePath: "/opt/vikunja",
+				ConfiguredPath: "norna.db",
+				RootPath:       "/var/lib/norna",
+				ExecutablePath: "/opt/norna",
 			},
-			userDataDir: mockUserDataDir("/home/user/.local/share/vikunja"),
-			expected:    "/var/lib/vikunja/vikunja.db",
+			userDataDir: mockUserDataDir("/home/user/.local/share/norna"),
+			expected:    "/var/lib/norna/norna.db",
 		},
 		{
 			name: "relative subdirectory path with explicit rootpath",
 			cfg: DatabasePathConfig{
-				ConfiguredPath: "data/vikunja.db",
-				RootPath:       "/var/lib/vikunja",
-				ExecutablePath: "/opt/vikunja",
+				ConfiguredPath: "data/norna.db",
+				RootPath:       "/var/lib/norna",
+				ExecutablePath: "/opt/norna",
 			},
-			userDataDir: mockUserDataDir("/home/user/.local/share/vikunja"),
-			expected:    "/var/lib/vikunja/data/vikunja.db",
+			userDataDir: mockUserDataDir("/home/user/.local/share/norna"),
+			expected:    "/var/lib/norna/data/norna.db",
 		},
 
 		{
 			name: "relative path with default rootpath uses user data dir",
 			cfg: DatabasePathConfig{
-				ConfiguredPath: "vikunja.db",
-				RootPath:       "/opt/vikunja",
-				ExecutablePath: "/opt/vikunja",
+				ConfiguredPath: "norna.db",
+				RootPath:       "/opt/norna",
+				ExecutablePath: "/opt/norna",
 			},
-			userDataDir: mockUserDataDir("/home/user/.local/share/vikunja"),
-			expected:    "/home/user/.local/share/vikunja/vikunja.db",
+			userDataDir: mockUserDataDir("/home/user/.local/share/norna"),
+			expected:    "/home/user/.local/share/norna/norna.db",
 		},
 
 		{
 			name: "os.Executable failure falls back to user data dir",
 			cfg: DatabasePathConfig{
-				ConfiguredPath: "vikunja.db",
-				RootPath:       "/opt/vikunja",
-				ExecutablePath: "/opt/vikunja",
+				ConfiguredPath: "norna.db",
+				RootPath:       "/opt/norna",
+				ExecutablePath: "/opt/norna",
 			},
-			userDataDir: mockUserDataDir("/home/user/.local/share/vikunja"),
-			expected:    "/home/user/.local/share/vikunja/vikunja.db",
+			userDataDir: mockUserDataDir("/home/user/.local/share/norna"),
+			expected:    "/home/user/.local/share/norna/norna.db",
 		},
 
 		{
 			name: "falls back to rootpath when userDataDir fails",
 			cfg: DatabasePathConfig{
-				ConfiguredPath: "vikunja.db",
-				RootPath:       "/opt/vikunja",
-				ExecutablePath: "/opt/vikunja",
+				ConfiguredPath: "norna.db",
+				RootPath:       "/opt/norna",
+				ExecutablePath: "/opt/norna",
 			},
 			userDataDir: mockUserDataDirError,
-			expected:    "/opt/vikunja/vikunja.db",
+			expected:    "/opt/norna/norna.db",
 		},
 
 		{
 			name: "empty configured path with explicit rootpath",
 			cfg: DatabasePathConfig{
 				ConfiguredPath: "",
-				RootPath:       "/var/lib/vikunja",
-				ExecutablePath: "/opt/vikunja",
+				RootPath:       "/var/lib/norna",
+				ExecutablePath: "/opt/norna",
 			},
-			userDataDir: mockUserDataDir("/home/user/.local/share/vikunja"),
-			expected:    "/var/lib/vikunja",
+			userDataDir: mockUserDataDir("/home/user/.local/share/norna"),
+			expected:    "/var/lib/norna",
 		},
 		{
 			name: "empty configured path with default rootpath",
 			cfg: DatabasePathConfig{
 				ConfiguredPath: "",
-				RootPath:       "/opt/vikunja",
-				ExecutablePath: "/opt/vikunja",
+				RootPath:       "/opt/norna",
+				ExecutablePath: "/opt/norna",
 			},
-			userDataDir: mockUserDataDir("/home/user/.local/share/vikunja"),
-			expected:    "/home/user/.local/share/vikunja",
+			userDataDir: mockUserDataDir("/home/user/.local/share/norna"),
+			expected:    "/home/user/.local/share/norna",
 		},
 		{
 			name: "path with dots normalized",
 			cfg: DatabasePathConfig{
-				ConfiguredPath: "/var/lib/vikunja/../vikunja/./db.db",
-				RootPath:       "/opt/vikunja",
-				ExecutablePath: "/opt/vikunja",
+				ConfiguredPath: "/var/lib/norna/../norna/./db.db",
+				RootPath:       "/opt/norna",
+				ExecutablePath: "/opt/norna",
 			},
-			userDataDir: mockUserDataDir("/home/user/.local/share/vikunja"),
-			expected:    "/var/lib/vikunja/db.db",
+			userDataDir: mockUserDataDir("/home/user/.local/share/norna"),
+			expected:    "/var/lib/norna/db.db",
 		},
 	}
 
@@ -189,15 +189,15 @@ func Test_resolveDatabasePath(t *testing.T) {
 func Test_resolveDatabasePath_Integration(t *testing.T) {
 	t.Run("with explicitly configured rootpath", func(t *testing.T) {
 		cfg := DatabasePathConfig{
-			ConfiguredPath: "vikunja.db",
+			ConfiguredPath: "norna.db",
 			RootPath:       "/custom/path",
-			ExecutablePath: "/opt/vikunja",
+			ExecutablePath: "/opt/norna",
 		}
 
 		result, err := resolveDatabasePath(cfg, resolveUserDataDir)
 		require.NoError(t, err)
 
-		expected := filepath.Join("/custom/path", "vikunja.db")
+		expected := filepath.Join("/custom/path", "norna.db")
 		assert.Equal(t, expected, result)
 	})
 
@@ -207,7 +207,7 @@ func Test_resolveDatabasePath_Integration(t *testing.T) {
 		execDir := filepath.Dir(execPath)
 
 		cfg := DatabasePathConfig{
-			ConfiguredPath: "vikunja.db",
+			ConfiguredPath: "norna.db",
 			RootPath:       execDir,
 			ExecutablePath: execDir,
 		}
@@ -215,12 +215,12 @@ func Test_resolveDatabasePath_Integration(t *testing.T) {
 		result, err := resolveDatabasePath(cfg, resolveUserDataDir)
 		require.NoError(t, err)
 
-		assert.NotEqual(t, filepath.Join(execDir, "vikunja.db"), result)
-		assert.Contains(t, result, "vikunja.db")
+		assert.NotEqual(t, filepath.Join(execDir, "norna.db"), result)
+		assert.Contains(t, result, "norna.db")
 
 		switch runtime.GOOS {
 		case "windows":
-			assert.Contains(t, result, "Vikunja")
+			assert.Contains(t, result, "Norna")
 		case "darwin":
 			assert.Contains(t, result, "Library")
 			assert.Contains(t, result, "Application Support")
@@ -235,15 +235,15 @@ func Test_resolveDatabasePath_Integration(t *testing.T) {
 
 	t.Run("with subdirectory path", func(t *testing.T) {
 		cfg := DatabasePathConfig{
-			ConfiguredPath: "data/vikunja.db",
+			ConfiguredPath: "data/norna.db",
 			RootPath:       "/custom/path",
-			ExecutablePath: "/opt/vikunja",
+			ExecutablePath: "/opt/norna",
 		}
 
 		result, err := resolveDatabasePath(cfg, resolveUserDataDir)
 		require.NoError(t, err)
 
-		expected := filepath.Join("/custom/path", "data", "vikunja.db")
+		expected := filepath.Join("/custom/path", "data", "norna.db")
 		assert.Equal(t, expected, result)
 	})
 }
@@ -268,22 +268,22 @@ func Test_resolveDatabasePath_Windows(t *testing.T) {
 		{
 			name: "windows absolute path",
 			cfg: DatabasePathConfig{
-				ConfiguredPath: "C:\\ProgramData\\Vikunja\\vikunja.db",
-				RootPath:       "C:\\Program Files\\Vikunja",
-				ExecutablePath: "C:\\Program Files\\Vikunja",
+				ConfiguredPath: "C:\\ProgramData\\Norna\\norna.db",
+				RootPath:       "C:\\Program Files\\Norna",
+				ExecutablePath: "C:\\Program Files\\Norna",
 			},
-			userDataDir: mockUserDataDir("C:\\Users\\test\\AppData\\Local\\Vikunja"),
-			expected:    "C:\\ProgramData\\Vikunja\\vikunja.db",
+			userDataDir: mockUserDataDir("C:\\Users\\test\\AppData\\Local\\Norna"),
+			expected:    "C:\\ProgramData\\Norna\\norna.db",
 		},
 		{
 			name: "windows relative path with explicit rootpath",
 			cfg: DatabasePathConfig{
-				ConfiguredPath: "vikunja.db",
-				RootPath:       "C:\\ProgramData\\Vikunja",
-				ExecutablePath: "C:\\Program Files\\Vikunja",
+				ConfiguredPath: "norna.db",
+				RootPath:       "C:\\ProgramData\\Norna",
+				ExecutablePath: "C:\\Program Files\\Norna",
 			},
-			userDataDir: mockUserDataDir("C:\\Users\\test\\AppData\\Local\\Vikunja"),
-			expected:    "C:\\ProgramData\\Vikunja\\vikunja.db",
+			userDataDir: mockUserDataDir("C:\\Users\\test\\AppData\\Local\\Norna"),
+			expected:    "C:\\ProgramData\\Norna\\norna.db",
 		},
 	}
 
@@ -314,19 +314,19 @@ func TestResolveUserDataDir(t *testing.T) {
 	case "windows":
 		t.Setenv("LOCALAPPDATA", filepath.Join(t.TempDir(), "AppData", "Local"))
 		dataDir := test()
-		assert.Contains(t, dataDir, "Vikunja")
+		assert.Contains(t, dataDir, "Norna")
 	case "darwin":
 		t.Setenv("HOME", t.TempDir())
 		dataDir := test()
 		assert.Contains(t, dataDir, "Library")
 		assert.Contains(t, dataDir, "Application Support")
-		assert.Contains(t, dataDir, "Vikunja")
+		assert.Contains(t, dataDir, "Norna")
 	default:
 		t.Run("with XDG_DATA_HOME", func(t *testing.T) {
 			xdgDataHome := t.TempDir()
 			t.Setenv("XDG_DATA_HOME", xdgDataHome)
 			dataDir := test()
-			assert.Equal(t, filepath.Join(xdgDataHome, "vikunja"), dataDir)
+			assert.Equal(t, filepath.Join(xdgDataHome, "norna"), dataDir)
 		})
 
 		t.Run("without XDG_DATA_HOME", func(t *testing.T) {
@@ -334,7 +334,7 @@ func TestResolveUserDataDir(t *testing.T) {
 			home := t.TempDir()
 			t.Setenv("HOME", home)
 			dataDir := test()
-			assert.Equal(t, filepath.Join(home, ".local", "share", "vikunja"), dataDir)
+			assert.Equal(t, filepath.Join(home, ".local", "share", "norna"), dataDir)
 		})
 	}
 }
@@ -343,13 +343,13 @@ func setUserDataDirForTest(t *testing.T, basePath string) string {
 	switch runtime.GOOS {
 	case "windows":
 		t.Setenv("LOCALAPPDATA", basePath)
-		return filepath.Join(basePath, "Vikunja")
+		return filepath.Join(basePath, "Norna")
 	case "darwin":
 		t.Setenv("HOME", basePath)
-		return filepath.Join(basePath, "Library", "Application Support", "Vikunja")
+		return filepath.Join(basePath, "Library", "Application Support", "Norna")
 	default:
 		t.Setenv("XDG_DATA_HOME", basePath)
-		return filepath.Join(basePath, "vikunja")
+		return filepath.Join(basePath, "norna")
 	}
 }
 
@@ -369,24 +369,24 @@ func setupDatabasePathTest(t *testing.T, configuredPath string) (dataDir string)
 }
 
 func TestResolvedDatabasePath_DoesNotCreateDataDir(t *testing.T) {
-	dataDir := setupDatabasePathTest(t, "vikunja.db")
+	dataDir := setupDatabasePathTest(t, "norna.db")
 
 	path, err := ResolvedDatabasePath()
 	require.NoError(t, err)
-	assert.Contains(t, path, "vikunja.db")
+	assert.Contains(t, path, "norna.db")
 
 	_, err = os.Stat(dataDir)
 	require.ErrorIs(t, err, os.ErrNotExist, "ResolvedDatabasePath must not create the data directory")
 }
 
 func TestResolvedDatabasePath_MatchesEnsureDatabasePath(t *testing.T) {
-	dataDir := setupDatabasePathTest(t, "vikunja.db")
+	dataDir := setupDatabasePathTest(t, "norna.db")
 
 	// Order matters: until the data directory exists, resolution reports the rootpath
 	// fallback instead - see TestResolvedDatabasePath_FallsBackWhileDataDirMissing.
 	ensured, err := ensureDatabasePath()
 	require.NoError(t, err)
-	assert.Equal(t, filepath.Join(dataDir, "vikunja.db"), ensured)
+	assert.Equal(t, filepath.Join(dataDir, "norna.db"), ensured)
 
 	info, err := os.Stat(filepath.Dir(ensured))
 	require.NoError(t, err)
@@ -401,34 +401,34 @@ func TestResolvedDatabasePath_MatchesEnsureDatabasePath(t *testing.T) {
 // TestResolvedDatabasePath_FallsBackWhileDataDirMissing pins the one case where doctor
 // and the server disagree: a data directory nobody created yet.
 func TestResolvedDatabasePath_FallsBackWhileDataDirMissing(t *testing.T) {
-	setupDatabasePathTest(t, "vikunja.db")
+	setupDatabasePathTest(t, "norna.db")
 
 	resolved, err := ResolvedDatabasePath()
 	require.NoError(t, err)
-	assert.Equal(t, filepath.Join(config.ServiceRootpath.GetString(), "vikunja.db"), resolved)
+	assert.Equal(t, filepath.Join(config.ServiceRootpath.GetString(), "norna.db"), resolved)
 }
 
 func TestEnsureDatabasePath_DoesNotCreateConfiguredDirectories(t *testing.T) {
 	t.Run("absolute path", func(t *testing.T) {
 		missingParent := filepath.Join(t.TempDir(), "deep", "nested")
-		setupDatabasePathTest(t, filepath.Join(missingParent, "vikunja.db"))
+		setupDatabasePathTest(t, filepath.Join(missingParent, "norna.db"))
 
 		path, err := ensureDatabasePath()
 		require.NoError(t, err)
-		assert.Equal(t, filepath.Join(missingParent, "vikunja.db"), path)
+		assert.Equal(t, filepath.Join(missingParent, "norna.db"), path)
 
 		_, err = os.Stat(missingParent)
 		require.ErrorIs(t, err, os.ErrNotExist, "ensureDatabasePath must not create a configured path's parents")
 	})
 
 	t.Run("rootpath relative path", func(t *testing.T) {
-		setupDatabasePathTest(t, filepath.Join("sub", "dir", "vikunja.db"))
+		setupDatabasePathTest(t, filepath.Join("sub", "dir", "norna.db"))
 		rootPath := filepath.Join(t.TempDir(), "install")
 		config.ServiceRootpath.Set(rootPath)
 
 		path, err := ensureDatabasePath()
 		require.NoError(t, err)
-		assert.Equal(t, filepath.Join(rootPath, "sub", "dir", "vikunja.db"), path)
+		assert.Equal(t, filepath.Join(rootPath, "sub", "dir", "norna.db"), path)
 
 		_, err = os.Stat(rootPath)
 		require.ErrorIs(t, err, os.ErrNotExist, "ensureDatabasePath must not create the rootpath")
@@ -436,12 +436,12 @@ func TestEnsureDatabasePath_DoesNotCreateConfiguredDirectories(t *testing.T) {
 }
 
 func TestEnsureDatabasePath_CreatesUserDataDir(t *testing.T) {
-	dataDir := setupDatabasePathTest(t, "vikunja.db")
+	dataDir := setupDatabasePathTest(t, "norna.db")
 
 	path, err := ensureDatabasePath()
 	require.NoError(t, err)
 
-	assert.Equal(t, filepath.Join(dataDir, "vikunja.db"), path)
+	assert.Equal(t, filepath.Join(dataDir, "norna.db"), path)
 
 	info, err := os.Stat(dataDir)
 	require.NoError(t, err)
@@ -453,7 +453,7 @@ func TestEnsureDatabasePath_FallsBackWhenDataDirIsNotCreatable(t *testing.T) {
 		t.Skip("directory permissions do not apply here")
 	}
 
-	setupDatabasePathTest(t, "vikunja.db")
+	setupDatabasePathTest(t, "norna.db")
 
 	readOnly := t.TempDir()
 	setUserDataDirForTest(t, filepath.Join(readOnly, "data"))
@@ -462,7 +462,7 @@ func TestEnsureDatabasePath_FallsBackWhenDataDirIsNotCreatable(t *testing.T) {
 
 	path, err := ensureDatabasePath()
 	require.NoError(t, err)
-	assert.Equal(t, filepath.Join(config.ServiceRootpath.GetString(), "vikunja.db"), path)
+	assert.Equal(t, filepath.Join(config.ServiceRootpath.GetString(), "norna.db"), path)
 
 	resolved, err := ResolvedDatabasePath()
 	require.NoError(t, err)
@@ -478,64 +478,64 @@ func TestIsSystemDirectory(t *testing.T) {
 		// Windows system directories
 		{
 			name:     "Windows System32",
-			path:     "C:\\Windows\\System32\\vikunja.db",
+			path:     "C:\\Windows\\System32\\norna.db",
 			expected: runtime.GOOS == "windows",
 		},
 		{
 			name:     "Windows SysWOW64",
-			path:     "C:\\Windows\\SysWOW64\\vikunja.db",
+			path:     "C:\\Windows\\SysWOW64\\norna.db",
 			expected: runtime.GOOS == "windows",
 		},
 		{
 			name:     "Windows root",
-			path:     "C:\\Windows\\vikunja.db",
+			path:     "C:\\Windows\\norna.db",
 			expected: runtime.GOOS == "windows",
 		},
 		{
 			name:     "Windows System32 lowercase",
-			path:     "c:\\windows\\system32\\vikunja.db",
+			path:     "c:\\windows\\system32\\norna.db",
 			expected: runtime.GOOS == "windows",
 		},
 		// Unix-like system directories
 		{
 			name:     "/bin",
-			path:     "/bin/vikunja.db",
+			path:     "/bin/norna.db",
 			expected: runtime.GOOS != "windows",
 		},
 		{
 			name:     "/sbin",
-			path:     "/sbin/vikunja.db",
+			path:     "/sbin/norna.db",
 			expected: runtime.GOOS != "windows",
 		},
 		{
 			name:     "/usr/bin",
-			path:     "/usr/bin/vikunja.db",
+			path:     "/usr/bin/norna.db",
 			expected: runtime.GOOS != "windows",
 		},
 		{
 			name:     "/etc",
-			path:     "/etc/vikunja.db",
+			path:     "/etc/norna.db",
 			expected: runtime.GOOS != "windows",
 		},
 		// Non-system directories
 		{
 			name:     "user home directory (Unix)",
-			path:     "/home/user/vikunja.db",
+			path:     "/home/user/norna.db",
 			expected: false,
 		},
 		{
 			name:     "user profile directory (Windows)",
-			path:     "C:\\Users\\user\\vikunja.db",
+			path:     "C:\\Users\\user\\norna.db",
 			expected: false,
 		},
 		{
 			name:     "custom directory",
-			path:     "/opt/vikunja/vikunja.db",
+			path:     "/opt/norna/norna.db",
 			expected: false,
 		},
 		{
 			name:     "relative path",
-			path:     "./vikunja.db",
+			path:     "./norna.db",
 			expected: false,
 		},
 	}
@@ -559,15 +559,15 @@ func TestIsSystemDirectory_EdgeCases(t *testing.T) {
 			}{
 				{
 					name: "custom app with windows in path",
-					path: "C:\\myapp\\windows\\data\\vikunja.db",
+					path: "C:\\myapp\\windows\\data\\norna.db",
 				},
 				{
 					name: "windows directory on non-C drive",
-					path: "D:\\windows\\vikunja.db",
+					path: "D:\\windows\\norna.db",
 				},
 				{
 					name: "user directory named windows",
-					path: "C:\\Users\\windows\\vikunja.db",
+					path: "C:\\Users\\windows\\norna.db",
 				},
 			}
 
@@ -579,7 +579,7 @@ func TestIsSystemDirectory_EdgeCases(t *testing.T) {
 		})
 
 		t.Run("safe Windows subdirectories", func(t *testing.T) {
-			assert.False(t, isSystemDirectory("C:\\Windows\\Temp\\vikunja.db"))
+			assert.False(t, isSystemDirectory("C:\\Windows\\Temp\\norna.db"))
 		})
 
 		t.Run("actual Windows system directories", func(t *testing.T) {
@@ -589,19 +589,19 @@ func TestIsSystemDirectory_EdgeCases(t *testing.T) {
 			}{
 				{
 					name: "Windows root",
-					path: "C:\\Windows\\vikunja.db",
+					path: "C:\\Windows\\norna.db",
 				},
 				{
 					name: "Windows root lowercase",
-					path: "c:\\windows\\vikunja.db",
+					path: "c:\\windows\\norna.db",
 				},
 				{
 					name: "System32",
-					path: "C:\\Windows\\System32\\vikunja.db",
+					path: "C:\\Windows\\System32\\norna.db",
 				},
 				{
 					name: "System32 uppercase",
-					path: "C:\\WINDOWS\\SYSTEM32\\vikunja.db",
+					path: "C:\\WINDOWS\\SYSTEM32\\norna.db",
 				},
 			}
 
@@ -619,19 +619,19 @@ func TestIsSystemDirectory_EdgeCases(t *testing.T) {
 			}{
 				{
 					name: "/home/bin not same as /bin",
-					path: "/home/bin/vikunja.db",
+					path: "/home/bin/norna.db",
 				},
 				{
 					name: "/opt/sbin not same as /sbin",
-					path: "/opt/sbin/vikunja.db",
+					path: "/opt/sbin/norna.db",
 				},
 				{
 					name: "/usr/local/bin is safe",
-					path: "/usr/local/bin/vikunja.db",
+					path: "/usr/local/bin/norna.db",
 				},
 				{
 					name: "/binaries not same as /bin",
-					path: "/binaries/vikunja.db",
+					path: "/binaries/norna.db",
 				},
 			}
 
@@ -649,11 +649,11 @@ func TestIsSystemDirectory_EdgeCases(t *testing.T) {
 			}{
 				{
 					name: "/bin",
-					path: "/bin/vikunja.db",
+					path: "/bin/norna.db",
 				},
 				{
 					name: "/etc",
-					path: "/etc/vikunja.db",
+					path: "/etc/norna.db",
 				},
 			}
 

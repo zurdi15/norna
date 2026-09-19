@@ -141,7 +141,7 @@ func TestCallTool_UnknownTool(t *testing.T) {
 func TestCallTool_ClientAddress(t *testing.T) {
 	m, ctx := newTestCaller(t)
 	caller := humabridge.EchoContextFrom(ctx).Request()
-	caller.Host = "vikunja.example.com"
+	caller.Host = "norna.example.com"
 	caller.Header.Add("X-Forwarded-For", "203.0.113.9")
 	caller.Header.Add("X-Forwarded-For", "198.51.100.4")
 	caller.Header.Set("X-Request-Id", "req-1")
@@ -151,13 +151,13 @@ func TestCallTool_ClientAddress(t *testing.T) {
 	req, err := tl.newRequest(ctx, humabridge.EchoContextFrom(ctx), map[string]json.RawMessage{"id": json.RawMessage(`1`)})
 	require.NoError(t, err)
 	assert.Equal(t, caller.RemoteAddr, req.RemoteAddr)
-	assert.Equal(t, "vikunja.example.com", req.Host)
+	assert.Equal(t, "norna.example.com", req.Host)
 	assert.Equal(t, []string{
 		"203.0.113.9",
 		"198.51.100.4",
 	}, req.Header.Values("X-Forwarded-For"))
 	assert.Equal(t, "req-1", req.Header.Get("X-Request-Id"))
-	assert.Equal(t, "vikunja.example.com", req.Header.Get("X-Forwarded-Host"))
+	assert.Equal(t, "norna.example.com", req.Header.Get("X-Forwarded-Host"))
 	assert.Empty(t, req.Header.Get("Accept-Language"))
 	assert.Empty(t, req.Header.Get("X-Forwarded-Proto"))
 }
@@ -175,11 +175,11 @@ func TestCallTool_KeepsTheForwardedHost(t *testing.T) {
 	m, ctx := newTestCaller(t)
 	caller := humabridge.EchoContextFrom(ctx).Request()
 	caller.Host = "internal:3456"
-	caller.Header.Set("X-Forwarded-Host", "vikunja.example.com")
+	caller.Header.Set("X-Forwarded-Host", "norna.example.com")
 	tl := m.index["things_read"]
 	req, err := tl.newRequest(ctx, humabridge.EchoContextFrom(ctx), map[string]json.RawMessage{"id": json.RawMessage(`1`)})
 	require.NoError(t, err)
-	assert.Equal(t, "vikunja.example.com", req.Header.Get("X-Forwarded-Host"))
+	assert.Equal(t, "norna.example.com", req.Header.Get("X-Forwarded-Host"))
 }
 
 func TestNewRequest_PatchSendsFormatAsAHeader(t *testing.T) {

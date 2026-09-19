@@ -1,5 +1,7 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 
+import {PrefixMode} from '@/modules/quickAddMagic/prefixes'
+
 import {
 	DEFAULT_FRONTEND_SETTINGS,
 	mergeFrontendSettings,
@@ -37,6 +39,11 @@ describe('parseFrontendSettings', () => {
 
 		expect(settings.play_sound_when_done).toBe(true)
 		expect(settings.quick_add_default_reminders).toEqual([])
+	})
+
+	it('falls back to the default quick add mode for one it does not know', () => {
+		expect(parseFrontendSettings({quick_add_magic_mode: 'a-retired-mode'}).quick_add_magic_mode).toBe(PrefixMode.Default)
+		expect(parseFrontendSettings({quick_add_magic_mode: PrefixMode.Todoist}).quick_add_magic_mode).toBe(PrefixMode.Todoist)
 	})
 
 	it('accepts null for nullable settings', () => {

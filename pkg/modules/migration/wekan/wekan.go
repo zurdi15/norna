@@ -141,7 +141,7 @@ func convertMarkdownToHTML(input string) (string, error) {
 	return richtext.CommonMarkToHTML([]byte(input))
 }
 
-func convertWekanToVikunja(board *wekanBoard) []*models.ProjectWithTasksAndBuckets {
+func convertWekanToNorna(board *wekanBoard) []*models.ProjectWithTasksAndBuckets {
 	// Build lookup maps
 	labelsByID := make(map[string]wekanLabel, len(board.Labels))
 	for _, l := range board.Labels {
@@ -369,9 +369,9 @@ func (m *Migrator) Name() string {
 	return "wekan"
 }
 
-// Migrate takes a WeKan board JSON export and imports it into Vikunja.
+// Migrate takes a WeKan board JSON export and imports it into Norna.
 // @Summary Import all projects, tasks etc. from a WeKan board export
-// @Description Imports all projects, tasks, labels, checklists, comments, and attachments from a WeKan board JSON export into Vikunja.
+// @Description Imports all projects, tasks, labels, checklists, comments, and attachments from a WeKan board JSON export into Norna.
 // @tags migration
 // @Accept x-www-form-urlencoded
 // @Produce json
@@ -394,7 +394,7 @@ func (m *Migrator) Migrate(user *user.User, file io.ReaderAt, size int64) error 
 		return &migration.ErrFileIsEmpty{}
 	}
 
-	vikunjaData := convertWekanToVikunja(board)
+	nornaData := convertWekanToNorna(board)
 
-	return migration.InsertFromStructure(vikunjaData, user)
+	return migration.InsertFromStructure(nornaData, user)
 }

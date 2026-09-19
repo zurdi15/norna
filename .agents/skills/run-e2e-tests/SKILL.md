@@ -1,6 +1,6 @@
 ---
 name: run-e2e-tests
-description: Run Vikunja's Playwright end-to-end tests through `mage test:e2e`. Use when asked to run e2e tests, reproduce a bug in the browser, or verify a frontend change end to end.
+description: Run Norna's Playwright end-to-end tests through `mage test:e2e`. Use when asked to run e2e tests, reproduce a bug in the browser, or verify a frontend change end to end.
 ---
 
 # Running E2E Tests
@@ -25,7 +25,7 @@ cat /tmp/e2e-output.log | grep -E '(passed|failed)'
 cat /tmp/e2e-output.log | tail -20
 ```
 
-Set `VIKUNJA_E2E_SKIP_BUILD=true` to skip rebuilding the API binary when iterating on frontend-only changes.
+Set `NORNA_E2E_SKIP_BUILD=true` to skip rebuilding the API binary when iterating on frontend-only changes.
 
 A full-suite run can fail late for reasons unrelated to the change (login rate limiting after hundreds of logins, license test setup). Re-run the failing specs alone, and on `main`, before attributing a failure to the PR.
 

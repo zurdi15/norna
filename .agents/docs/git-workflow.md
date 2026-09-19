@@ -7,7 +7,7 @@
   - backend changes: `mage lint:fix`
   - frontend changes: `cd frontend && pnpm lint:fix`
   - CSS or Vue `<style>` changes: also `pnpm lint:styles:fix`
-- Never commit edits to `pkg/swagger/`; CI regenerates it after commit.
+- Never hand-edit `pkg/swagger/`; regenerate it with `mage generate:swagger-docs` when v1 annotations change.
 
 ## Plans
 

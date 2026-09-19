@@ -87,7 +87,7 @@ func (m *Migration) Name() string {
 
 // AuthURL returns the url users need to authenticate against
 // @Summary Get the auth url from trello
-// @Description Returns the auth url where the user needs to get its auth code. This code can then be used to migrate everything from trello to Vikunja.
+// @Description Returns the auth url where the user needs to get its auth code. This code can then be used to migrate everything from trello to Norna.
 // @tags migration
 // @Produce json
 // @Security JWTKeyAuth
@@ -100,7 +100,7 @@ func (m *Migration) AuthURL() string {
 		"&scope=read" +
 		"&callback_method=fragment" +
 		"&response_type=token" +
-		"&name=Vikunja%20Migration" +
+		"&name=Norna%20Migration" +
 		"&key=" + config.MigrationTrelloKey.GetString() +
 		"&return_url=" + config.MigrationTrelloRedirectURL.GetString()
 }
@@ -216,14 +216,14 @@ func convertMarkdownToHTML(input string) (output string, err error) {
 	return richtext.CommonMarkToHTML([]byte(input))
 }
 
-// Converts all previously obtained data from trello into the vikunja format.
+// Converts all previously obtained data from trello into the Norna format.
 // `trelloData` should contain all boards with their projects and cards respectively.
-func convertTrelloDataToVikunja(organizationName string, trelloData []*trello.Board, client *trello.Client, currentMember *trello.Member) (fullVikunjaHierachie []*models.ProjectWithTasksAndBuckets, err error) {
+func convertTrelloDataToNorna(organizationName string, trelloData []*trello.Board, client *trello.Client, currentMember *trello.Member) (fullNornaHierachie []*models.ProjectWithTasksAndBuckets, err error) {
 
 	log.Debugf("[Trello Migration] ")
 
 	var pseudoParentID int64 = 1
-	fullVikunjaHierachie = []*models.ProjectWithTasksAndBuckets{
+	fullNornaHierachie = []*models.ProjectWithTasksAndBuckets{
 		{
 			Project: models.Project{
 				ID:    pseudoParentID,
@@ -234,7 +234,7 @@ func convertTrelloDataToVikunja(organizationName string, trelloData []*trello.Bo
 
 	var bucketID int64 = 1
 
-	log.Debugf("[Trello Migration] Converting %d boards to vikunja projects", len(trelloData))
+	log.Debugf("[Trello Migration] Converting %d boards to Norna projects", len(trelloData))
 
 	actionMemberCache := make(map[string]*trello.Member)
 
@@ -342,7 +342,7 @@ func convertTrelloDataToVikunja(organizationName string, trelloData []*trello.Bo
 							return nil, err
 						}
 
-						vikunjaAttachment := &models.TaskAttachment{
+						nornaAttachment := &models.TaskAttachment{
 							File: &files.File{
 								Name:        attachment.Name,
 								Mime:        attachment.MimeType,
@@ -352,17 +352,17 @@ func convertTrelloDataToVikunja(organizationName string, trelloData []*trello.Bo
 						}
 
 						if card.IDAttachmentCover != "" && card.IDAttachmentCover == attachment.ID {
-							vikunjaAttachment.ID = 42
+							nornaAttachment.ID = 42
 							task.CoverImageAttachmentID = 42
 						}
 
-						task.Attachments = append(task.Attachments, vikunjaAttachment)
+						task.Attachments = append(task.Attachments, nornaAttachment)
 
 						log.Debugf("[Trello Migration] Downloaded card attachment %s", attachment.ID)
 						continue
 					}
 
-					// Other links are not attachments in Vikunja, but we can add them to the description
+					// Other links are not attachments in Norna, but we can add them to the description
 					task.Description += `<p><a href="` + attachment.URL + `">` + attachment.Name + "</a></p>\n"
 				}
 
@@ -443,15 +443,15 @@ func convertTrelloDataToVikunja(organizationName string, trelloData []*trello.Bo
 
 		log.Debugf("[Trello Migration] Converted all cards to tasks for board %s", board.ID)
 
-		fullVikunjaHierachie = append(fullVikunjaHierachie, project)
+		fullNornaHierachie = append(fullNornaHierachie, project)
 	}
 
 	return
 }
 
-// Migrate gets all tasks from trello for a user and puts them into vikunja
+// Migrate gets all tasks from trello for a user and puts them into Norna
 // @Summary Migrate all projects, tasks etc. from trello
-// @Description Migrates all projects, tasks, notes, reminders, subtasks and files from trello to vikunja.
+// @Description Migrates all projects, tasks, notes, reminders, subtasks and files from trello to Norna.
 // @tags migration
 // @Accept json
 // @Produce json
@@ -503,7 +503,7 @@ func (m *Migration) Migrate(u *user.User) (err error) {
 		if err != nil {
 			return err
 		}
-		hierarchy, err := convertTrelloDataToVikunja(orgName, boards, client, currentMember)
+		hierarchy, err := convertTrelloDataToNorna(orgName, boards, client, currentMember)
 		if err != nil {
 			return err
 		}

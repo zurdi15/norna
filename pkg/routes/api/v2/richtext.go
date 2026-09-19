@@ -30,13 +30,13 @@ import (
 const (
 	// "markdown" converts rich-text fields on read and write; anything else keeps HTML.
 	richTextFormatQuery  = "format"
-	RichTextFormatHeader = "X-Vikunja-Format"
+	RichTextFormatHeader = "X-Norna-Format"
 	markdownFormat       = "markdown"
 )
 
 // requestWantsMarkdown reports whether the request asked for markdown. The per-op
 // `format` query field on the input structs only documents the param; the value is
-// read here so this also catches the X-Vikunja-Format header — the only channel
+// read here so this also catches the X-Norna-Format header — the only channel
 // that survives AutoPatch's PATCH re-dispatch (it strips the query).
 func requestWantsMarkdown(ctx context.Context) bool {
 	ec := humabridge.EchoContextFrom(ctx)
@@ -52,7 +52,7 @@ func requestWantsMarkdown(ctx context.Context) bool {
 const richTextFormatAPIDescription = "## Rich-text fields\n\n" +
 	"Descriptions (task, project, label, team, saved filter) and task comments are stored as HTML. " +
 	"Add `?format=markdown` to read and write them as GFM Markdown instead; on write it is converted " +
-	"to HTML and `@mentions` resolved to existing users. On `PATCH`, send the `X-Vikunja-Format: markdown` " +
+	"to HTML and `@mentions` resolved to existing users. On `PATCH`, send the `X-Norna-Format: markdown` " +
 	"header instead (merge-patch drops query parameters). CalDAV always exchanges task descriptions as " +
 	"Markdown.\n\n" +
 	"Writing is lossy: Markdown can't express every HTML construct (e.g. underline), so a field you send " +
@@ -64,7 +64,7 @@ const richTextFormatAPIDescription = "## Rich-text fields\n\n" +
 // stripPatchFormatQuery removes the `format` query param AutoPatch copies onto
 // each synthesised PATCH. The query doesn't survive AutoPatch's re-dispatch, so
 // advertising it on PATCH would be a trap (markdown silently stored as HTML);
-// PATCH uses the X-Vikunja-Format header instead. Call after EnableAutoPatch.
+// PATCH uses the X-Norna-Format header instead. Call after EnableAutoPatch.
 func stripPatchFormatQuery(api huma.API) {
 	for _, item := range api.OpenAPI().Paths {
 		if item == nil || item.Patch == nil {

@@ -329,8 +329,8 @@ func TestUserWebhookHMACSigning(t *testing.T) {
 	delivery := capture.waitForPayload(t)
 
 	// Verify the HMAC signature header is present and correct
-	signature := delivery.Headers.Get("X-Vikunja-Signature")
-	require.NotEmpty(t, signature, "X-Vikunja-Signature header should be set")
+	signature := delivery.Headers.Get("X-Norna-Signature")
+	require.NotEmpty(t, signature, "X-Norna-Signature header should be set")
 
 	mac := hmac.New(sha256.New, []byte(secret))
 	_, err = mac.Write(delivery.Body)

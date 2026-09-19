@@ -32,7 +32,7 @@ func init() {
 
 var restoreCmd = &cobra.Command{
 	Use:   "restore [filename]",
-	Short: "Restores all vikunja data from a vikunja dump.",
+	Short: "Restores all Norna data from a Norna dump.",
 	Args:  cobra.ExactArgs(1),
 	PreRun: func(_ *cobra.Command, _ []string) {
 		initialize.FullInitWithoutAsync()

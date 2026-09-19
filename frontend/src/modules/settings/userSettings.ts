@@ -104,6 +104,10 @@ export function parseFrontendSettings(raw: unknown): FrontendSettings {
 		if (value === undefined) {
 			continue
 		}
+		// An enum setting only takes a value it knows (a renamed or removed mode falls back).
+		if (key === 'quick_add_magic_mode' && !Object.values(PrefixMode).includes(value as PrefixMode)) {
+			continue
+		}
 		if (fallback === undefined || fallback === null || value === null || typeof value === typeof fallback) {
 			settings[key] = Array.isArray(fallback) && !Array.isArray(value) ? fallback : value
 		}

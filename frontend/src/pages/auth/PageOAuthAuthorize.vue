@@ -33,7 +33,7 @@ function param(name: string): string | undefined {
 const missing = computed(() => REQUIRED.filter(name => param(name) === undefined))
 const clientId = computed(() => param('client_id') ?? '')
 
-// Where the app listens: an app scheme (vikunja-desktop:) or a local address.
+// Where the app listens: a local address, or the app's own scheme.
 const destination = computed(() => {
 	try {
 		const url = new URL(param('redirect_uri') ?? '')

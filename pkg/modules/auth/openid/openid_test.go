@@ -122,17 +122,17 @@ func TestGetOrCreateUser(t *testing.T) {
 		oidcID := "47404"
 		cl := &claims{
 			Email: "other-email-address@some.service.com",
-			VikunjaGroups: []map[string]interface{}{
+			NornaGroups: []map[string]interface{}{
 				{"name": team, "oidcID": oidcID},
 			},
 		}
 
-		provider := &Provider{Name: "Vikunja Login"}
+		provider := &Provider{Name: "Norna Login"}
 		idToken := &oidc.IDToken{Issuer: "https://some.service.com", Subject: "12345"}
 
 		u, err := getOrCreateUser(s, cl, provider, idToken)
 		require.NoError(t, err)
-		teamData := getTeamDataFromToken(cl.VikunjaGroups, nil)
+		teamData := getTeamDataFromToken(cl.NornaGroups, nil)
 		require.NoError(t, err)
 		err = models.SyncExternalTeamsForUser(s, u, teamData, "https://some.issuer", provider.Name)
 		require.NoError(t, err)
@@ -159,17 +159,17 @@ func TestGetOrCreateUser(t *testing.T) {
 		oidcID := "15"
 		cl := &claims{
 			Email: "other-email-address@some.service.com",
-			VikunjaGroups: []map[string]interface{}{
+			NornaGroups: []map[string]interface{}{
 				{"name": team, "oidcID": oidcID, "isPublic": true},
 			},
 		}
 
-		provider := &Provider{Name: "Vikunja Login"}
+		provider := &Provider{Name: "Norna Login"}
 		idToken := &oidc.IDToken{Issuer: "https://some.service.com", Subject: "12345"}
 
 		u, err := getOrCreateUser(s, cl, provider, idToken)
 		require.NoError(t, err)
-		teamData := getTeamDataFromToken(cl.VikunjaGroups, nil)
+		teamData := getTeamDataFromToken(cl.NornaGroups, nil)
 		err = models.SyncExternalTeamsForUser(s, u, teamData, "https://some.issuer", provider.Name)
 		require.NoError(t, err)
 		err = s.Commit()
@@ -191,14 +191,14 @@ func TestGetOrCreateUser(t *testing.T) {
 		oidcID := "14"
 		cl := &claims{
 			Email: "other-email-address@some.service.com",
-			VikunjaGroups: []map[string]interface{}{
+			NornaGroups: []map[string]interface{}{
 				{"name": team, "oidcID": oidcID},
 			},
 		}
 
 		u := &user.User{ID: 10}
-		teamData := getTeamDataFromToken(cl.VikunjaGroups, nil)
-		err := models.SyncExternalTeamsForUser(s, u, teamData, "https://some.issuer", "Vikunja Login")
+		teamData := getTeamDataFromToken(cl.NornaGroups, nil)
+		err := models.SyncExternalTeamsForUser(s, u, teamData, "https://some.issuer", "Norna Login")
 		require.NoError(t, err)
 		err = s.Commit()
 		require.NoError(t, err)
@@ -213,13 +213,13 @@ func TestGetOrCreateUser(t *testing.T) {
 		defer s.Close()
 
 		cl := &claims{
-			Email:         "other-email-address@some.service.com",
-			VikunjaGroups: []map[string]interface{}{},
+			Email:       "other-email-address@some.service.com",
+			NornaGroups: []map[string]interface{}{},
 		}
 
 		u := &user.User{ID: 10}
-		teamData := getTeamDataFromToken(cl.VikunjaGroups, nil)
-		err := models.SyncExternalTeamsForUser(s, u, teamData, "https://some.issuer", "Vikunja Login")
+		teamData := getTeamDataFromToken(cl.NornaGroups, nil)
+		err := models.SyncExternalTeamsForUser(s, u, teamData, "https://some.issuer", "Norna Login")
 		require.NoError(t, err)
 		err = s.Commit()
 		require.NoError(t, err)

@@ -19,7 +19,7 @@ const {t} = useI18n()
 const {frontend, saveFrontend} = useAccountSettings()
 
 const magicItems = computed(() => [
-	{value: PrefixMode.Default, label: t('settingsAccount.general.magicModes.vikunja')},
+	{value: PrefixMode.Default, label: t('settingsAccount.general.magicModes.norna')},
 	{value: PrefixMode.Todoist, label: t('settingsAccount.general.magicModes.todoist')},
 	{value: PrefixMode.Disabled, label: t('settingsAccount.general.magicModes.disabled')},
 ])

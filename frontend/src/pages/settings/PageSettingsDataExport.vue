@@ -25,7 +25,7 @@ import UiSkeleton from '@/ui/UiSkeleton.vue'
 import UiSpinner from '@/ui/UiSpinner.vue'
 
 /**
- * A copy of everything in the account, as a zip another Norna or Vikunja can import.
+ * A copy of everything in the account, as a zip another Norna can import.
  * The server builds it in the background: the page waits for it and an email follows.
  */
 defineOptions({inheritAttrs: false})

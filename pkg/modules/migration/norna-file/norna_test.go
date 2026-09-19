@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-package vikunjafile
+package nornafile
 
 import (
 	"archive/zip"
@@ -32,7 +32,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestVikunjaFileMigrator_Migrate(t *testing.T) {
+func TestNornaFileMigrator_Migrate(t *testing.T) {
 	t.Run("migrate successfully", func(t *testing.T) {
 		db.LoadAndAssertFixtures(t)
 

@@ -132,7 +132,7 @@ func (err ValidationHTTPError) GetHTTPCode() int {
 	return err.HTTPCode
 }
 
-// GetCode returns Vikunja's numeric domain error code. v2's translateDomainError
+// GetCode returns Norna's numeric domain error code. v2's translateDomainError
 // reads it to keep the v1 `code` body contract, since this type does not
 // implement web.HTTPErrorProcessor (the embedded field shadows the method name).
 func (err ValidationHTTPError) GetCode() int {

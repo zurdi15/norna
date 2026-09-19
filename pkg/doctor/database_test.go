@@ -39,7 +39,7 @@ func setDatabaseConfig(t *testing.T, dbType, path string) {
 
 func TestCheckDatabase_DoesNotCreateSqliteFile(t *testing.T) {
 	tempDir := t.TempDir()
-	dbPath := filepath.Join(tempDir, "vikunja.db")
+	dbPath := filepath.Join(tempDir, "norna.db")
 	setDatabaseConfig(t, "sqlite", dbPath)
 
 	group := CheckDatabase()
@@ -81,7 +81,7 @@ func TestCheckDatabase_MemoryPath(t *testing.T) {
 }
 
 func TestCheckDatabase_SqlitePathIsADirectory(t *testing.T) {
-	dbPath := filepath.Join(t.TempDir(), "vikunja.db")
+	dbPath := filepath.Join(t.TempDir(), "norna.db")
 	require.NoError(t, os.Mkdir(dbPath, 0700))
 	setDatabaseConfig(t, "sqlite", dbPath)
 
@@ -95,7 +95,7 @@ func TestCheckDatabase_SqlitePathIsADirectory(t *testing.T) {
 }
 
 func TestCheckParadeDB_SystemCatalogs(t *testing.T) {
-	if os.Getenv("VIKUNJA_TESTS_USE_CONFIG") != "1" {
+	if os.Getenv("NORNA_TESTS_USE_CONFIG") != "1" {
 		t.Skip("requires a PostgreSQL test database")
 	}
 	t.Cleanup(config.ResetForTests)
@@ -130,7 +130,7 @@ func TestCheckParadeDB_SystemCatalogs(t *testing.T) {
 				assert.Empty(t, results[1].Error)
 			} else {
 				assert.True(t, strings.HasPrefix(results[1].Error, "missing: idx_"), results[1].Error)
-				assert.Contains(t, results[1].Error, "(restart Vikunja to create them)")
+				assert.Contains(t, results[1].Error, "(restart Norna to create them)")
 			}
 		})
 	}

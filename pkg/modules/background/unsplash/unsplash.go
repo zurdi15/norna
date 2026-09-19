@@ -298,7 +298,7 @@ func (p *Provider) Set(s *xorm.Session, image *background.Image, project *models
 
 	// Stream the response body into a temp file so we have a seekable reader
 	// for S3 uploads without buffering the entire image in memory.
-	tmpFile, err := os.CreateTemp("", "vikunja-unsplash-*")
+	tmpFile, err := os.CreateTemp("", "norna-unsplash-*")
 	if err != nil {
 		return fmt.Errorf("could not create temp file for unsplash download: %w", err)
 	}
@@ -319,7 +319,7 @@ func (p *Provider) Set(s *xorm.Session, image *background.Image, project *models
 		return fmt.Errorf("could not seek temp file to start: %w", err)
 	}
 
-	// Save it as a file in vikunja
+	// Save it as a file in Norna
 	file, err := files.CreateWithSession(s, tmpFile, "", uint64(written), auth)
 	if err != nil {
 		return
