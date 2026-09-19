@@ -495,6 +495,24 @@ func TestHumaProject(t *testing.T) {
 			assert.Equal(t, http.StatusNotFound, getHTTPErrorCode(err))
 			assertHandlerErrorCode(t, err, models.ErrCodeProjectDoesNotExist)
 		})
+		t.Run("Default project of its owner", func(t *testing.T) {
+			// Project 37 is user16's own default project.
+			testHandler := handlerFor(&user.User{
+				ID:       16,
+				Username: "user16",
+				Email:    "user16@example.com",
+				Issuer:   "local",
+			})
+			rec, err := testHandler.testDeleteWithUser(nil, map[string]string{"project": "37"})
+			require.NoError(t, err)
+			assert.Equal(t, http.StatusNoContent, rec.Code)
+			db.AssertMissing(t, "projects", map[string]interface{}{
+				"id": 37,
+			})
+			db.AssertMissing(t, "users", map[string]interface{}{
+				"default_project_id": 37,
+			})
+		})
 		t.Run("Permissions check", func(t *testing.T) {
 			// Delete needs admin everywhere: read and write must be refused, admin allowed.
 			deleteForbidden := func(t *testing.T, projectID string) {
