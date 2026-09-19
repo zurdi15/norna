@@ -82,7 +82,7 @@ mkdir -p data && sudo chown 1000:1000 data
 docker compose up -d
 ```
 
-Open `http://localhost:3456` and register the first account. To make it an instance admin (for the admin panel), run `docker compose exec norna /app/norna/norna user set-admin <username>`. The commented compose file is [examples/docker-compose.yml](examples/docker-compose.yml).
+Open `http://localhost:3456` and register the first account. To make it an instance admin (for the admin panel), run `docker compose exec norna /app/norna/norna user set-admin <username> --admin`. The commented compose file is [examples/docker-compose.yml](examples/docker-compose.yml).
 
 ## Configuration
 
