@@ -12,9 +12,9 @@ import UiCalendar from '@/ui/UiCalendar.vue'
 import UiIcon from '@/ui/UiIcon.vue'
 import UiSegmented from '@/ui/UiSegmented.vue'
 
-import {formatDay} from './format'
+import {formatDay, NEVER_EXPIRES} from './format'
 
-/** When a new token stops working: a month, three, a year, or a day picked on the calendar. */
+/** When a new token stops working: a month, three, a year, never, or a day picked on the calendar. */
 const props = withDefaults(defineProps<{
 	invalid?: boolean
 	describedBy?: string
@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<{
 
 const model = defineModel<Date>({required: true})
 
-type Choice = '30' | '90' | '365' | 'custom'
+type Choice = '30' | '90' | '365' | 'never' | 'custom'
 
 const {t, locale} = useI18n()
 const authStore = useAuthStore()
@@ -38,6 +38,7 @@ const choices = computed(() => [
 	{value: '30' as const, label: t('settingsIntegrations.tokens.expiry.days', {count: 30})},
 	{value: '90' as const, label: t('settingsIntegrations.tokens.expiry.days', {count: 90})},
 	{value: '365' as const, label: t('settingsIntegrations.tokens.expiry.year')},
+	{value: 'never' as const, label: t('settingsIntegrations.tokens.expiry.never')},
 	{value: 'custom' as const, label: t('settingsIntegrations.tokens.expiry.custom')},
 ])
 
@@ -45,9 +46,13 @@ const selected = computed({
 	get: () => choice.value,
 	set: (value: Choice) => {
 		choice.value = value
-		// A custom date starts from the one already chosen.
-		if (value !== 'custom') {
+		// A custom date starts from the one already chosen, or from a year after "never".
+		if (value === 'never') {
+			model.value = NEVER_EXPIRES
+		} else if (value !== 'custom') {
 			model.value = addDays(new Date(), Number(value))
+		} else if (model.value.getTime() === NEVER_EXPIRES.getTime()) {
+			model.value = addDays(new Date(), 365)
 		}
 	},
 })
