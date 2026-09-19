@@ -4,7 +4,9 @@ import {useI18n} from 'vue-i18n'
 import {useRouter} from 'vue-router'
 import {ArrowUp, Calendar, FolderClosed, Repeat, Rows3} from '@lucide/vue'
 
+import type {Label} from '@/client/generated'
 import {useQuickAddTaskMutation, useQuickAddTasksMutation} from '@/client/queries/tasks'
+import {useLabels} from '@/composables/useLabels'
 import {useProjects} from '@/composables/useProjects'
 import {useTaskDateFormat} from '@/composables/useTaskDateFormat'
 import {success} from '@/message'
@@ -20,6 +22,7 @@ import UiIconButton from '@/ui/UiIconButton.vue'
 import PriorityMark from '../PriorityMark.vue'
 import {priorityLabelKey} from '../priority'
 import ProjectPicker from '../properties/ProjectPicker.vue'
+import {useTaskTypeIds} from '../taskTypes'
 import {useQuickAddSettings} from '../useQuickAddSettings'
 import MagicMirror from './MagicMirror'
 
@@ -47,10 +50,18 @@ const quickAddMany = useQuickAddTasksMutation()
 
 const text = ref('')
 const pickedProjectId = ref<number | null>(null)
+const pickedTypeId = ref<number | null>(null)
 const projectPickerOpen = ref(false)
 const input = useTemplateRef<HTMLTextAreaElement>('input')
 
 const projectId = computed(() => pickedProjectId.value ?? props.defaultProjectId)
+
+const {labels: allLabels} = useLabels()
+const typeIds = useTaskTypeIds()
+const types = computed(() => typeIds.value
+	.map(id => allLabels.value.find(label => label.id === id))
+	.filter((label): label is Label => label !== undefined))
+const pickedLabels = computed(() => types.value.filter(type => type.id === pickedTypeId.value))
 const prefixes = computed(() => PREFIXES[settings.value.magicMode])
 const lines = computed(() => text.value.split('\n').map(line => line.trim()).filter(Boolean))
 const firstLine = computed(() => lines.value[0] ?? '')
@@ -87,12 +98,13 @@ async function submit() {
 		if (lines.value.length > 1) {
 			const result = await quickAddMany.mutateAsync({
 				...settings.value,
+				labels: pickedLabels.value,
 				entries: lines.value.map(title => ({title, projectId: projectId.value})),
 			})
 			const created = result.tasks.filter(task => task !== null).length
 			success({message: t('quickAdd.createdMany', {count: created})})
 		} else {
-			const {task} = await quickAdd.mutateAsync({...settings.value, title: lines.value[0]!, projectId: projectId.value})
+			const {task} = await quickAdd.mutateAsync({...settings.value, labels: pickedLabels.value, title: lines.value[0]!, projectId: projectId.value})
 			success({message: t('quickAdd.created', {title: task.title})}, [{
 				title: t('tasks.actions.open'),
 				callback: () => void router.push({name: 'task.detail', params: {id: task.id}}),
@@ -119,6 +131,11 @@ function onKeydown(event: KeyboardEvent) {
 		event.preventDefault()
 		void submit()
 	}
+}
+
+// One type at a time; tapping the picked one again leaves the task without.
+function toggleType(id: number) {
+	pickedTypeId.value = pickedTypeId.value === id ? null : id
 }
 
 function pickProject(id: number) {
@@ -162,6 +179,27 @@ defineExpose({focus})
 					@input="onInput"
 					@keydown="onKeydown"
 				/>
+			</div>
+
+			<!-- mousedown.prevent keeps the focus, and a phone's keyboard, in the text. -->
+			<div
+				v-if="types.length"
+				role="group"
+				:aria-label="t('quickAdd.type')"
+				class="flex flex-wrap gap-1.5"
+			>
+				<UiChip
+					v-for="type in types"
+					:key="type.id"
+					as="button"
+					:color="type.hex_color"
+					:pressed="type.id === pickedTypeId"
+					class="pointer-coarse:h-9 pointer-coarse:px-2.5"
+					@mousedown.prevent
+					@click="toggleType(type.id ?? 0)"
+				>
+					{{ type.title }}
+				</UiChip>
 			</div>
 
 			<div

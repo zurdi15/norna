@@ -32,6 +32,8 @@ import UiMenu from '@/ui/UiMenu.vue'
 import PriorityMark from './PriorityMark.vue'
 import TaskCheck from './TaskCheck.vue'
 import TaskDue from './TaskDue.vue'
+import TaskTypeChips from './TaskTypeChips.vue'
+import {splitTaskTypes, useTaskTypeIds} from './taskTypes'
 import {useTaskSelection} from './selection'
 import {useTaskLink} from './useTaskLink'
 import {useTaskMenu} from './useTaskMenu'
@@ -70,7 +72,10 @@ const done = computed(() => props.task.done ?? false)
 const due = computed(() => getTaskDate(props.task.due_date))
 const identifier = computed(() => (props.showIdentifier ?? !props.showProject) ? getTaskIdentifier(props.task) : '')
 const project = computed(() => props.showProject ? projects.projects[props.task.project_id ?? 0] : undefined)
-const labels = computed(() => props.task.labels ?? [])
+const typeIds = useTaskTypeIds()
+const labelsByKind = computed(() => splitTaskTypes(props.task.labels ?? [], typeIds.value))
+const types = computed(() => labelsByKind.value.types)
+const labels = computed(() => labelsByKind.value.others)
 const assignees = computed(() => props.task.assignees ?? [])
 const checklist = computed(() => props.task.description ? getChecklistStatistics(props.task.description) : {total: 0, checked: 0})
 const subtasks = computed(() => props.task.related_tasks?.subtask ?? [])
@@ -188,6 +193,7 @@ const countClass = 'inline-flex items-center gap-1 font-mono text-2xs text-ink-f
 						>
 							<span class="sr-only">{{ t('tasks.row.unread') }}</span>
 						</span>
+						<TaskTypeChips :types="types" />
 						<!-- The link covers the whole row; the check and the menu sit above it. -->
 						<RouterLink
 							:to="taskLink(task.id ?? 0)"

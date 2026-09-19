@@ -673,6 +673,8 @@ export function bulkUpdateTasksMutationOptions() {
 export interface QuickAddSettings {
 	magicMode: PrefixMode
 	defaultReminders?: readonly QuickAddDefaultReminder[]
+	/** Labels picked outside the text, such as the task type; they go on every task. */
+	labels?: readonly Label[]
 }
 
 export interface QuickAddTaskInput extends QuickAddSettings {
@@ -785,7 +787,8 @@ async function ensureQuickAddLabels(titles: string[]): Promise<{labels: Label[],
 	return {labels: [...found, ...createdLabels], created: createdLabels}
 }
 
-async function attachLabels(task: Task, labels: Label[]): Promise<Task> {
+async function attachLabels(task: Task, fromText: Label[], picked: readonly Label[] = []): Promise<Task> {
+	const labels = [...fromText, ...picked.filter(label => !fromText.some(other => other.id === label.id))]
 	if (labels.length === 0 || typeof task.id !== 'number') {
 		return task
 	}
@@ -810,7 +813,7 @@ export function quickAddTaskMutationOptions() {
 			const {data: created} = await tasksCreate({path: {project: task.project_id ?? input.projectId}, body: task})
 			const {labels, created: createdLabels} = await ensureQuickAddLabels(titles)
 			try {
-				return {task: await attachLabels(created, labels), createdLabels}
+				return {task: await attachLabels(created, labels, input.labels), createdLabels}
 			} catch (labelError) {
 				// The task exists by now; failing the whole add would make the user create it twice.
 				return {task: created, createdLabels, labelError}
@@ -884,7 +887,7 @@ export function quickAddTasksMutationOptions() {
 			try {
 				for (const [index, task] of tasks.entries()) {
 					if (task) {
-						tasks[index] = await attachLabels(task, partitionQuickAddLabels(labels, built[index]!.labels).found)
+						tasks[index] = await attachLabels(task, partitionQuickAddLabels(labels, built[index]!.labels).found, input.labels)
 					}
 				}
 			} catch (labelError) {
