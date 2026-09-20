@@ -56,6 +56,23 @@ test.describe('Quick add on a phone @mobile', () => {
 		await expect(page.getByText('Created: Water the plants')).toBeVisible()
 	})
 
+	test('keeps its height while a plain title is typed', async ({authenticatedPage: page, currentUser}) => {
+		await seedProject(currentUser.id)
+		await page.goto('/')
+
+		await page.getByRole('navigation', {name: 'Navigation'}).last().getByRole('button', {name: 'New task'}).click()
+		const dialog = page.getByRole('dialog')
+		const empty = (await dialog.boundingBox())!.height
+
+		await dialog.getByRole('textbox', {name: 'New task, with quick add magic'}).fill('Water the plants')
+		await expect(dialog.getByText('Water the plants')).toBeVisible()
+		expect((await dialog.boundingBox())!.height).toBe(empty)
+
+		// What the magic understood still gets its row, which does make the drawer taller.
+		await dialog.getByRole('textbox', {name: 'New task, with quick add magic'}).fill('Water the plants tomorrow')
+		await expect.poll(async () => (await dialog.boundingBox())!.height).toBeGreaterThan(empty)
+	})
+
 	test('shows a word while the keyboard is still composing it', async ({authenticatedPage: page, currentUser}) => {
 		await seedProject(currentUser.id)
 		await page.goto('/')
