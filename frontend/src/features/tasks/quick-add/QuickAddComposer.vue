@@ -71,6 +71,14 @@ const parsed = computed(() => parseTaskText(firstLine.value, settings.value.magi
 const highlighted = computed(() => text.value.split('\n').map(line =>
 	highlightMagic(line, parseTaskText(line, settings.value.magicMode), prefixes.value)))
 
+// An empty chip row would still take its gap: the drawer grew by a line on the first letter.
+const hasChips = computed(() => lines.value.length > 1
+	|| parsed.value.date !== null
+	|| parsed.value.repeats !== null
+	|| parsed.value.labels.length > 0
+	|| Boolean(parsed.value.priority)
+	|| parsed.value.assignees.length > 0)
+
 const targetProject = computed(() => {
 	const id = resolveQuickAddProjectId(parsed.value.project, projects.projectsArray, projectId.value)
 	return id === null ? undefined : projects.projects[id]
@@ -203,7 +211,7 @@ defineExpose({focus})
 			</div>
 
 			<div
-				v-if="lines.length"
+				v-if="hasChips"
 				class="flex flex-wrap gap-1.5"
 			>
 				<UiChip
