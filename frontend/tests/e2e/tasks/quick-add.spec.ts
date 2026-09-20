@@ -56,7 +56,7 @@ test.describe('Quick add on a phone @mobile', () => {
 		await expect(page.getByText('Created: Water the plants')).toBeVisible()
 	})
 
-	test('keeps its height while a plain title is typed', async ({authenticatedPage: page, currentUser}) => {
+	test('keeps its height whatever the title', async ({authenticatedPage: page, currentUser}) => {
 		await seedProject(currentUser.id)
 		await page.goto('/')
 
@@ -66,6 +66,11 @@ test.describe('Quick add on a phone @mobile', () => {
 
 		await dialog.getByRole('textbox', {name: 'New task, with quick add magic'}).fill('Water the plants')
 		await expect(dialog.getByText('Water the plants')).toBeVisible()
+		expect((await dialog.boundingBox())!.height).toBe(empty)
+
+		// A title too long for the box scrolls inside it instead of growing the drawer.
+		await dialog.getByRole('textbox', {name: 'New task, with quick add magic'}).fill('Water all the plants on the balcony and the ones in the living room as well')
+		await expect(dialog.getByText('Water all the plants')).toBeVisible()
 		expect((await dialog.boundingBox())!.height).toBe(empty)
 
 		// What the magic understood still gets its row, which does make the drawer taller.
