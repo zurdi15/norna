@@ -162,31 +162,34 @@ defineExpose({focus})
 	>
 		<div class="grid gap-3 px-4 py-3">
 			<!-- The textarea's text is transparent over a copy that carries the highlights. -->
-			<div class="grid max-h-[40dvh] overflow-y-auto text-lg/relaxed">
-				<MagicMirror
-					:lines="highlighted"
-					class="pointer-events-none col-start-1 row-start-1 wrap-break-word whitespace-pre-wrap text-ink"
-				/>
-				<textarea
-					ref="input"
-					:value="text"
-					rows="1"
-					enterkeyhint="send"
-					autocomplete="off"
-					data-autofocus
-					:aria-label="t('quickAdd.label')"
-					:aria-describedby="hint ? 'quick-add-hint' : undefined"
-					:placeholder="t('quickAdd.placeholder')"
-					class="
-						col-start-1 row-start-1 resize-none overflow-hidden bg-transparent wrap-break-word
-						whitespace-pre-wrap text-transparent caret-accent
-						selection:bg-accent/25 selection:text-transparent
-						placeholder:text-ink-faint
-						focus:outline-none
-					"
-					@input="onInput"
-					@keydown="onKeydown"
-				/>
+			<!-- Two lines tall whatever it holds, so the drawer doesn't move as the text grows; longer text scrolls. -->
+			<div class="h-13 overflow-y-auto text-lg/relaxed">
+				<div class="grid min-h-full">
+					<MagicMirror
+						:lines="highlighted"
+						class="pointer-events-none col-start-1 row-start-1 wrap-break-word whitespace-pre-wrap text-ink"
+					/>
+					<textarea
+						ref="input"
+						:value="text"
+						rows="1"
+						enterkeyhint="send"
+						autocomplete="off"
+						data-autofocus
+						:aria-label="t('quickAdd.label')"
+						:aria-describedby="hint ? 'quick-add-hint' : undefined"
+						:placeholder="t('quickAdd.placeholder')"
+						class="
+							col-start-1 row-start-1 resize-none overflow-hidden bg-transparent wrap-break-word
+							whitespace-pre-wrap text-transparent caret-accent
+							selection:bg-accent/25 selection:text-transparent
+							placeholder:text-ink-faint
+							focus:outline-none
+						"
+						@input="onInput"
+						@keydown="onKeydown"
+					/>
+				</div>
 			</div>
 
 			<!-- mousedown.prevent keeps the focus, and a phone's keyboard, in the text. -->
