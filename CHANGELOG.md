@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.2.1 - 2026-09-20
+
+### Arreglado
+- La caja de texto de «nueva tarea» mide siempre dos líneas: el drawer ya no daba un salto al escribir la primera letra ni crecía con el título. Los títulos largos hacen scroll dentro de la caja.
+
 ## 0.2.0 - 2026-09-19
 
 ### Añadido
