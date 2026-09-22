@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.3.0 - 2026-09-22
+
+### Cambiado
+- Los «tipos de tarea» pasan a ser **etiquetas destacadas** y ahora puedes marcar **varias** al añadir una tarea (fix y ui/ux a la vez), de un toque y sin escribir el asterisco. Las que ya tenías marcadas se mantienen.
+- Las etiquetas destacadas van por delante del título allá donde salga la tarea: lista, kanban, tabla, gantt, detalle, Hoy y Próximas.
+
 ## 0.2.3 - 2026-09-22
 
 ### Arreglado
