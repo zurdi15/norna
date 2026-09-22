@@ -32,12 +32,12 @@ function toggle(id: number) {
 		v-if="!isPending && !sorted.length"
 		class="text-sm text-pretty text-ink-muted"
 	>
-		{{ t('settingsAccount.general.taskTypesEmpty') }}
+		{{ t('settingsAccount.general.featuredLabelsEmpty') }}
 		<RouterLink
 			:to="{name: 'labels.index'}"
 			class="text-accent hover:underline"
 		>
-			{{ t('settingsAccount.general.taskTypesLabels') }}
+			{{ t('settingsAccount.general.featuredLabelsLabels') }}
 		</RouterLink>
 	</p>
 	<div

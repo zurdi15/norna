@@ -7,6 +7,8 @@ import type {TaskDetail} from '@/client/queries/tasks'
 import {PERMISSIONS} from '@/constants/permissions'
 import {PRO_FEATURE} from '@/constants/proFeatures'
 import TaskTimeTracking from '@/features/time-tracking/TaskTimeTracking.vue'
+import FeaturedLabelChips from '@/features/tasks/FeaturedLabelChips.vue'
+import {splitFeaturedLabels, useFeaturedLabelIds} from '@/features/tasks/featuredLabels'
 import {formatDateSince} from '@/helpers/time/formatDate'
 import {getDisplayName} from '@/modules/user/displayName'
 import {useConfigStore} from '@/stores/config'
@@ -40,6 +42,9 @@ const {t} = useI18n()
 const router = useRouter()
 const actions = useTaskActionsStore()
 const configStore = useConfigStore()
+
+const featuredIds = useFeaturedLabelIds()
+const featured = computed(() => splitFeaturedLabels(props.task.labels ?? [], featuredIds.value).featured)
 
 const properties = useTemplateRef<InstanceType<typeof TaskProperties>>('properties')
 const relations = useTemplateRef<InstanceType<typeof TaskRelations>>('relations')
@@ -106,6 +111,10 @@ const updatedLine = computed(() => props.task.updated && props.task.updated !== 
 		@deleted="leave"
 	/>
 	<article :class="cn('pb-12', inPanel ? 'px-5' : 'mx-auto max-w-3xl px-4 md:px-6')">
+		<FeaturedLabelChips
+			:labels="featured"
+			class="mt-4"
+		/>
 		<TaskTitle
 			:task="task"
 			:editable="editable"

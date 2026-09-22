@@ -51,6 +51,14 @@ describe('parseFrontendSettings', () => {
 		expect(parseFrontendSettings({background_brightness: null}).background_brightness).toBeNull()
 	})
 
+	it('reads what was stored under a setting\'s old name', () => {
+		expect(parseFrontendSettings({task_type_label_ids: [3, 1]}).featured_label_ids).toEqual([3, 1])
+	})
+
+	it('prefers the current name when both are stored', () => {
+		expect(parseFrontendSettings({task_type_label_ids: [3], featured_label_ids: [7]}).featured_label_ids).toEqual([7])
+	})
+
 	it('keeps optional settings that have no default', () => {
 		expect(parseFrontendSettings({default_due_time: '09:00'}).default_due_time).toBe('09:00')
 	})
@@ -61,6 +69,12 @@ describe('mergeFrontendSettings', () => {
 		const merged = mergeFrontendSettings({some_future_key: 1, color_schema: 'dark'}, {color_schema: 'light'})
 
 		expect(merged).toEqual({some_future_key: 1, color_schema: 'light'})
+	})
+
+	it('drops a setting\'s old name once it is saved again', () => {
+		const merged = mergeFrontendSettings({task_type_label_ids: [3]}, {})
+		expect(merged.featured_label_ids).toEqual([3])
+		expect('task_type_label_ids' in merged).toBe(false)
 	})
 
 	it('normalizes camelCase keys so the patch replaces them', () => {
