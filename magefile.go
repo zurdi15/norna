@@ -38,6 +38,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
@@ -414,26 +415,121 @@ func goTestPackagesExcept(ctx context.Context, exclude ...string) ([]string, err
 	return packages, nil
 }
 
+// usesConfiguredTestDatabase reports whether the tests run against the database from
+// the config (NORNA_TESTS_USE_CONFIG=1) instead of an in-memory SQLite. The in-memory
+// one belongs to a single test process; the configured one is shared by all of them.
+func usesConfiguredTestDatabase() bool {
+	return os.Getenv("NORNA_TESTS_USE_CONFIG") == "1"
+}
+
+// goTestParallelism is go test's -p, the number of packages built and tested at once:
+// one per CPU, or one at a time when the packages would share the configured database.
+func goTestParallelism() string {
+	if usesConfiguredTestDatabase() {
+		return "1"
+	}
+	return strconv.Itoa(runtime.NumCPU())
+}
+
 // Feature runs the feature tests
 func (Test) Feature(ctx context.Context) error {
 	mg.Deps(initVars, ensureFrontendDistExists)
-	// We run everything sequentially and not in parallel to prevent issues with real test databases
-	return runAndStreamOutput(ctx, "go", "test", goDetectVerboseFlag(), "-p", "1", "-coverprofile", "cover.out", "-timeout", "45m", "-short", "./...")
+	return runAndStreamOutput(ctx, "go", "test", goDetectVerboseFlag(), "-p", goTestParallelism(), "-timeout", "45m", "-short", "./...")
 }
 
-// Coverage runs the tests and builds the coverage html file from coverage output
+// Coverage runs the feature tests with coverage and builds the coverage html file from its output
 func (Test) Coverage(ctx context.Context) error {
-	mg.Deps(initVars)
-	mg.Deps(Test.Feature)
+	mg.Deps(initVars, ensureFrontendDistExists)
+	if err := runAndStreamOutput(ctx, "go", "test", goDetectVerboseFlag(), "-p", goTestParallelism(), "-coverprofile", "cover.out", "-timeout", "45m", "-short", "./..."); err != nil {
+		return err
+	}
 	return runAndStreamOutput(ctx, "go", "tool", "cover", "-html=cover.out", "-o", "cover.html")
 }
 
-// Web runs the web tests
+// Web runs the web tests. Every top-level test sets up its own server and fixtures, so
+// with the in-memory database each one runs in a process of its own, one per CPU at a
+// time. Against the configured database they run in a single process.
 func (Test) Web(ctx context.Context) error {
 	mg.Deps(initVars, ensureFrontendDistExists)
-	// We run everything sequentially and not in parallel to prevent issues with real test databases
-	args := []string{"test", goDetectVerboseFlag(), "-p", "1", "-timeout", "45m", "./pkg/webtests"}
-	return runAndStreamOutput(ctx, "go", args...)
+	if usesConfiguredTestDatabase() {
+		return runAndStreamOutput(ctx, "go", "test", goDetectVerboseFlag(), "-p", "1", "-timeout", "45m", webtestsPackage)
+	}
+	return runTestsInProcesses(ctx, webtestsPackage, runtime.NumCPU())
+}
+
+// runTestsInProcesses builds the tests of pkg once and runs each top-level test in its
+// own process, at most n at a time. Like go test, it prints a failing test's output (or
+// every test's with mage -v) and one ok/FAIL line for the package.
+func runTestsInProcesses(ctx context.Context, pkg string, n int) error {
+	start := time.Now()
+	tmp, err := os.MkdirTemp("", "norna-tests-*")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(tmp)
+
+	bin := filepath.Join(tmp, filepath.Base(pkg)+".test")
+	if err := runAndStreamOutput(ctx, "go", "test", "-c", "-o", bin, pkg); err != nil {
+		return err
+	}
+
+	// go test runs a test binary in its package directory.
+	list := exec.CommandContext(ctx, bin, "-test.list", ".")
+	list.Dir = pkg
+	out, err := list.Output()
+	if err != nil {
+		return fmt.Errorf("failed to list the tests in %s: %w", pkg, err)
+	}
+	var tests []string
+	for _, name := range strings.Fields(string(out)) {
+		if strings.HasPrefix(name, "Test") {
+			tests = append(tests, name)
+		}
+	}
+
+	queue := make(chan string)
+	var (
+		wg     sync.WaitGroup
+		mu     sync.Mutex
+		failed []string
+	)
+	workers := min(n, len(tests))
+	for range workers {
+		wg.Go(func() {
+			for name := range queue {
+				args := []string{"-test.run", "^" + name + "$", "-test.timeout", "45m", "-test.paniconexit0"}
+				if mg.Verbose() {
+					args = append(args, "-test.v")
+				}
+				cmd := exec.CommandContext(ctx, bin, args...)
+				cmd.Dir = pkg
+				output, err := cmd.CombinedOutput()
+
+				mu.Lock()
+				if err != nil {
+					failed = append(failed, name)
+				}
+				if err != nil || mg.Verbose() {
+					_, _ = os.Stdout.Write(output)
+				}
+				mu.Unlock()
+			}
+		})
+	}
+	for _, name := range tests {
+		queue <- name
+	}
+	close(queue)
+	wg.Wait()
+
+	elapsed := time.Since(start).Seconds()
+	if len(failed) > 0 {
+		sort.Strings(failed)
+		fmt.Printf("FAIL\t%s\t%.3fs\n", pkg, elapsed)
+		return fmt.Errorf("%d of %d tests failed: %s", len(failed), len(tests), strings.Join(failed, ", "))
+	}
+	fmt.Printf("ok  \t%s\t%.3fs\t(%d tests, %d processes at a time)\n", pkg, elapsed, len(tests), workers)
+	return nil
 }
 
 // Filter runs every test matching the given `go test -run` filter.
@@ -450,8 +546,7 @@ func (Test) Filter(ctx context.Context, filter string) error {
 		return err
 	}
 
-	// We run everything sequentially and not in parallel to prevent issues with real test databases
-	args := append([]string{"test", goDetectVerboseFlag(), "-p", "1", "-timeout", "45m", "-run", filter, "-short"}, packages...)
+	args := append([]string{"test", goDetectVerboseFlag(), "-p", goTestParallelism(), "-timeout", "45m", "-run", filter, "-short"}, packages...)
 	if err := runAndStreamOutput(ctx, "go", args...); err != nil {
 		return err
 	}
@@ -1384,6 +1479,25 @@ func (Build) Build(ctx context.Context) error {
 	return runAndStreamOutput(ctx, "go", "build", goDetectVerboseFlag(), "-tags", Tags, "-ldflags", "-s -w "+Ldflags, "-o", Executable)
 }
 
+// Static builds the binary the Docker image ships, dist/norna-<os>-<arch>: statically
+// linked, SQLite's C code included, so it runs on an empty scratch image. It embeds
+// frontend/dist, so build the frontend first (cd frontend && pnpm build).
+func (Build) Static(ctx context.Context) error {
+	mg.Deps(initVars)
+	if info, err := os.Stat(filepath.Join("frontend", "dist", "index.html")); err != nil || info.Size() == 0 {
+		return fmt.Errorf("frontend/dist has no frontend build to embed: run pnpm build in frontend/ first")
+	}
+	target, err := exec.CommandContext(ctx, "go", "env", "GOOS", "GOARCH").Output()
+	if err != nil {
+		return fmt.Errorf("failed to read the target platform: %w", err)
+	}
+	out := filepath.Join(DIST, Executable+"-"+strings.Join(strings.Fields(string(target)), "-"))
+	// netgo and osusergo keep DNS and user lookups in Go, out of the glibc a static binary can't load.
+	tags := strings.Join(append(strings.Fields(Tags), "netgo"), " ")
+	return runAndStreamOutput(ctx, "go", "build", goDetectVerboseFlag(), "-tags", tags,
+		"-ldflags", `-s -w -linkmode external -extldflags "-static" `+Ldflags, "-o", out)
+}
+
 func (Build) SaveVersionToFile() error {
 	// Open the file for writing. If the file doesn't exist, create it.
 	// If it exists, truncate it.
@@ -2167,6 +2281,7 @@ func forkOwnedPathspecs() []string {
 		"CHANGELOG.md",
 		"CONTRIBUTING.md",
 		"Dockerfile",
+		".dockerignore",
 		"publiccode.yml",
 		"nfpm.yaml",
 		"devenv.nix",
