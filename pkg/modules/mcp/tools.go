@@ -21,6 +21,7 @@ import (
 	"net/http"
 	"sort"
 	"strings"
+	"sync"
 
 	"code.vikunja.io/api/pkg/models"
 
@@ -90,7 +91,7 @@ func buildTools(oapi *huma.OpenAPI, groupPrefix string) (map[string]*tool, []*to
 			if _, dup := index[name]; dup {
 				return nil, nil, fmt.Errorf("mcp: duplicate tool name %s", name)
 			}
-			spec, err := buildToolSpec(oapi, c.op)
+			built, err := toolSpecFor(oapi, c.op)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -100,9 +101,9 @@ func buildTools(oapi *huma.OpenAPI, groupPrefix string) (map[string]*tool, []*to
 				op:          c.op,
 				echoPath:    groupPrefix + echoPath(c.op.Path),
 				typed:       typed,
-				spec:        spec,
+				spec:        built.spec,
 				contentType: ct,
-				description: describe(oapi, c.op, spec),
+				description: built.description,
 			}
 		}
 	}
@@ -113,6 +114,33 @@ func buildTools(oapi *huma.OpenAPI, groupPrefix string) (map[string]*tool, []*to
 	sort.Slice(order, func(i, j int) bool { return order[i].name < order[j].name })
 	return index, order, nil
 }
+
+// toolSpecs caches the work behind a tool: its argument schema and its description.
+// Both come from the operation's Go types, so they are the same for every API built in
+// this process. The server builds one API, but the web tests build a new one for each
+// request, and this is the most expensive part of that.
+var toolSpecs sync.Map
+
+type cachedToolSpec struct {
+	spec        *toolSpec
+	description string
+}
+
+func toolSpecFor(oapi *huma.OpenAPI, op *huma.Operation) (*cachedToolSpec, error) {
+	if cached, ok := toolSpecs.Load(op.OperationID); ok && op.OperationID != "" {
+		return cached.(*cachedToolSpec), nil
+	}
+	spec, err := buildToolSpec(oapi, op)
+	if err != nil {
+		return nil, err
+	}
+	built := &cachedToolSpec{spec: spec, description: describe(oapi, op, spec)}
+	if op.OperationID != "" {
+		toolSpecs.Store(op.OperationID, built)
+	}
+	return built, nil
+}
+
 func echoPath(path string) string { return strings.NewReplacer("{", ":", "}", "").Replace(path) }
 
 // AutoPatch's PATCH prose is boilerplate about JSON Patch, which MCP callers cannot use; read it from the PUT instead.

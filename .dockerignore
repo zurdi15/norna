@@ -1,23 +1,4 @@
-files/
-dist/
-logs/
-docs/
-.devenv/
-.direnv/
-.idea/
-
-Dockerfile
-docker-manifest.tmpl
-docker-manifest-unstable.tmpl
-*.db
-*.zip
-
-# Frontend
-/frontend/node_modules/
-/frontend/.direnv
-/frontend/dist
-
-# Not needed in the image
-plans/
-.agents/
-.claude/
+# The image only packages the prebuilt binary (see the Dockerfile), so that is all the
+# build context has to carry.
+*
+!dist/norna-linux-*

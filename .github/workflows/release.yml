@@ -1,8 +1,11 @@
 name: Release
 
 # Publica la imagen multi-arch en GHCR. Dos vías:
-#  · manual: Actions → Release → "Run workflow" (elige versión y plataformas)
+#  · manual: Actions → Release → "Run workflow" (elige versión)
 #  · automática: al empujar una tag vX.Y.Z
+#
+# Los checks y la construcción de la imagen van a la vez; los tags solo se mueven
+# cuando los dos terminan bien.
 on:
   workflow_dispatch:
     inputs:
@@ -14,11 +17,6 @@ on:
         description: "Mover también el tag :latest"
         type: boolean
         default: true
-      platforms:
-        description: "Plataformas del build"
-        required: false
-        default: linux/amd64,linux/arm64
-        type: string
   push:
     tags: ["v*.*.*"]
 
@@ -35,37 +33,28 @@ env:
 
 jobs:
   checks:
-    name: Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: jdx/mise-action@v2
-      - name: Backend
-        # frontend/embed.go incrusta dist/: sin build del frontend basta un index vacío para compilar
-        run: |
-          mkdir -p frontend/dist && touch frontend/dist/index.html
-          go tool mage check:branding
-          go tool mage test:feature
-          go tool mage test:web
-      - name: Frontend
-        working-directory: frontend
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm typecheck
-          pnpm vitest run --dir ./src
+    name: Checks
+    uses: ./.github/workflows/ci.yml
 
-  publish:
-    name: Imagen multi-arch → GHCR
-    needs: checks
-    runs-on: ubuntu-latest
+  build:
+    name: Imagen ${{ matrix.arch }}
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
+    # cada arquitectura en un runner suyo: nada se compila cruzado ni emulado
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: Resolver versión y tags
+      - name: Resolver versión
         id: meta
+        env:
+          VERSION_INPUT: ${{ inputs.version }}
         run: |
           set -euo pipefail
-          version="${{ inputs.version }}"
+          version="$VERSION_INPUT"
           if [ -z "$version" ]; then
             if [ "$GITHUB_REF_TYPE" != "tag" ]; then
               echo "::error::Sin 'version' de entrada solo se puede lanzar desde una tag (ref actual: $GITHUB_REF_NAME)"
@@ -73,15 +62,12 @@ jobs:
             fi
             version="${GITHUB_REF_NAME#v}"
           fi
-          tags="$IMAGE:$version"
-          # en un push de tag inputs.latest viene vacío: latest se mueve igual
-          if [ "${{ inputs.latest }}" != "false" ]; then
-            tags="$tags,$IMAGE:latest"
-          fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "tags=$tags" >> "$GITHUB_OUTPUT"
 
-      # el binario se compila cruzado con xgo: no hace falta emular arm64 con QEMU
+      - uses: ./.github/actions/binary
+        with:
+          version: ${{ steps.meta.outputs.version }}
+
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
         with:
@@ -89,20 +75,72 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/build-push-action@v6
+      # Se sube sin tag, solo por digest: los tags los mueve el job publish cuando
+      # los checks han pasado. Sin attestations, que convierten cada arquitectura en
+      # un índice y estorban al juntarlas.
+      - name: Subir la imagen por digest
+        id: build
+        uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: ${{ inputs.platforms || 'linux/amd64,linux/arm64' }}
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          build-args: |
-            RELEASE_VERSION=${{ steps.meta.outputs.version }}
+          platforms: linux/${{ matrix.arch }}
+          provenance: false
           labels: |
             org.opencontainers.image.version=${{ steps.meta.outputs.version }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
+
+      - name: Guardar el digest
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/digests
+          touch "/tmp/digests/${DIGEST#sha256:}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: digest-${{ matrix.arch }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Tags en GHCR
+    needs: [checks, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests
+          pattern: digest-*
+          merge-multiple: true
+
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Juntar las arquitecturas bajo los tags
+        id: meta
+        working-directory: /tmp/digests
+        env:
+          VERSION: ${{ needs.build.outputs.version }}
+          LATEST: ${{ inputs.latest }}
+        run: |
+          set -euo pipefail
+          tags="$IMAGE:$VERSION"
+          # en un push de tag inputs.latest viene vacío: latest se mueve igual
+          if [ "$LATEST" != "false" ]; then
+            tags="$tags,$IMAGE:latest"
+          fi
+          docker buildx imagetools create \
+            $(echo "$tags" | tr ',' '\n' | sed 's/^/-t /') \
+            $(printf "$IMAGE@sha256:%s " *)
+          echo "tags=$tags" >> "$GITHUB_OUTPUT"
 
       - name: Resumen
         run: |
@@ -112,5 +150,5 @@ jobs:
             echo '```'
             echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n'
             echo '```'
-            echo "Plataformas: \`${{ inputs.platforms || 'linux/amd64,linux/arm64' }}\`"
+            echo "Plataformas: \`linux/amd64, linux/arm64\`"
           } >> "$GITHUB_STEP_SUMMARY"
