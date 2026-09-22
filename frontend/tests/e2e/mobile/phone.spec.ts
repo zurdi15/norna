@@ -83,6 +83,23 @@ test.describe('Daily use on a phone @mobile', () => {
 		await expect.poll(barBlur).toContain('blur')
 	})
 
+	// The keyboard follows the focus, and it used to stay in the drawer until Reka unmounted
+	// it: the page then resized a second time, after the drawer was gone, and the bar rode
+	// that resize halfway up the screen before dropping into place.
+	test('lets the keyboard go when the quick add closes', async ({authenticatedPage: page}) => {
+		const bar = page.getByRole('navigation', {name: 'Navigation'})
+		await page.goto('/')
+		await expect(bar).toBeVisible()
+
+		await bar.getByRole('button', {name: 'New task'}).click()
+		await page.getByRole('textbox').first().fill('Buy cables')
+		await expect(bar).toBeHidden()
+
+		await page.keyboard.press('Escape')
+		expect(await page.evaluate(() => document.activeElement?.tagName.toLowerCase())).not.toBe('textarea')
+		await expect(bar).toBeVisible()
+	})
+
 	test('completes a task from Home', async ({authenticatedPage: page}) => {
 		await page.goto('/')
 
