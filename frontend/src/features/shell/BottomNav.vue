@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, type Component} from 'vue'
+import {computed, onUnmounted, ref, watch, type Component} from 'vue'
 import {useRoute} from 'vue-router'
 import {useI18n} from 'vue-i18n'
 import {useActiveElement} from '@vueuse/core'
@@ -21,6 +21,30 @@ const covered = usePageCovered()
 const activeElement = useActiveElement()
 const typing = computed(() => isFormField(activeElement.value ?? null)
 	|| (activeElement.value?.closest('[contenteditable="true"]') ?? null) !== null)
+
+// How long the bar waits before coming back. An Android keyboard resizes the page as it
+// slides away, and a bar fixed to the bottom rides that resize: it used to reappear
+// halfway up the screen and then drop into place when a drawer with a text box closed.
+const SETTLE_MS = 250
+
+const hidden = computed(() => keyboardInset.value > 0 || typing.value)
+const visible = ref(true)
+let settle: ReturnType<typeof setTimeout> | undefined
+
+watch(hidden, (isHidden, wasHidden) => {
+	clearTimeout(settle)
+	if (isHidden) {
+		visible.value = false
+		return
+	}
+	// Only coming back from hidden waits; the first render has nothing to wait for.
+	if (wasHidden === undefined) {
+		visible.value = true
+		return
+	}
+	settle = setTimeout(() => visible.value = true, SETTLE_MS)
+}, {immediate: true})
+onUnmounted(() => clearTimeout(settle))
 
 const routeName = computed(() => String(route.name ?? ''))
 
@@ -48,9 +72,9 @@ const itemClass = 'flex flex-col items-center justify-center gap-0.5 text-3xs fo
 </script>
 
 <template>
-	<!-- Hidden while the keyboard is open (iOS): it would sit on top of the field being typed in. -->
+	<!-- Hidden while the keyboard is open: it would sit on top of the field being typed in. -->
 	<nav
-		v-show="keyboardInset === 0 && !typing"
+		v-show="visible"
 		:aria-label="t('shell.navigation')"
 		:class="cn(
 			'fixed inset-x-0 bottom-0 z-(--z-nav) border-t border-line pb-safe',

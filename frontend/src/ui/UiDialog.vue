@@ -63,7 +63,19 @@ const swipe = useSwipeDismiss({
 	onDismiss: () => open.value = false,
 })
 
-watch(open, isOpen => isOpen && swipe.reset())
+watch(open, isOpen => {
+	if (isOpen) {
+		swipe.reset()
+		return
+	}
+	// A phone's keyboard follows the focus, and the focus is in the sheet until Reka
+	// unmounts it. Dropping it as the sheet starts leaving lets the keyboard slide away
+	// with it, instead of after it, resizing the page a second time.
+	const focused = document.activeElement
+	if (focused instanceof HTMLElement && sheet.value?.contains(focused)) {
+		focused.blur()
+	}
+})
 
 const contentStyle = computed(() => asSheet.value
 	? {...layer.contentStyle.value, ...swipe.style.value, bottom: `${keyboardInset.value}px`}
