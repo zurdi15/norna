@@ -24,6 +24,14 @@ jobs:
       - uses: actions/checkout@v4
       # go, node y pnpm salen de mise.toml: las mismas versiones que en local
       - uses: jdx/mise-action@v2
+      # golangci-lint typa todo el proyecto: sin la caché de Go son dos minutos más
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: go-lint-${{ runner.os }}-${{ hashFiles('go.sum') }}
+          restore-keys: go-lint-${{ runner.os }}-
       # frontend/embed.go incrusta dist/: sin build del frontend basta un index vacío para compilar
       - run: mkdir -p frontend/dist && touch frontend/dist/index.html
       - uses: golangci/golangci-lint-action@v8
