@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.2.2 - 2026-09-22
+
+### Arreglado
+- En el móvil, al hacer scroll por la lista de un proyecto, las casillas de las tareas ya no se pintan por encima de la cabecera, las pestañas de vista ni el buscador.
+- Los iconos de la barra de abajo ya no parpadean al cerrar un drawer.
+
 ## 0.2.1 - 2026-09-20
 
 ### Arreglado
