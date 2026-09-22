@@ -1,10 +1,37 @@
-import {computed, onScopeDispose, shallowRef, watch, type Ref} from 'vue'
+import {computed, onScopeDispose, readonly, ref, shallowRef, watch, type Ref} from 'vue'
 
 // The dialogs open right now, oldest first.
 const stack = shallowRef<symbol[]>([])
 
 function remove(layer: symbol) {
 	stack.value = stack.value.filter(entry => entry !== layer)
+}
+
+// A dialog leaves the stack when it starts closing, and then animates out for
+// --duration-base. Rounded up, this is how long the page stays covered after that.
+const EXIT_MS = 200
+
+const covered = ref(false)
+let settle: ReturnType<typeof setTimeout> | undefined
+
+watch(() => stack.value.length, open => {
+	clearTimeout(settle)
+	if (open > 0) {
+		covered.value = true
+		return
+	}
+	settle = setTimeout(() => covered.value = false, EXIT_MS)
+})
+
+/**
+ * Whether a dialog covers the page, counting the time it takes to animate away.
+ *
+ * What is under it does not have to look like anything, and had better not blur: Chrome
+ * on Android flickers a fixed element with a backdrop filter while a sheet animates over
+ * it, which is what the bottom bar did every time a drawer closed.
+ */
+export function usePageCovered() {
+	return readonly(covered)
 }
 
 /**
