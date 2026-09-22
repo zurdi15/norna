@@ -1,0 +1,42 @@
+name: Binario
+description: Compila el binario estático de Norna, con el frontend incrustado, para la arquitectura del runner.
+
+inputs:
+  version:
+    description: "Versión que lleva el binario. Vacío = la que diga git describe"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    # go, node y pnpm salen de mise.toml: las mismas versiones que en local
+    - uses: jdx/mise-action@v2
+
+    # sin esta caché cada build recompila SQLite en C y todas las dependencias
+    - uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: go-static-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('go.sum') }}
+        restore-keys: go-static-${{ runner.os }}-${{ runner.arch }}-
+
+    - name: Frontend
+      shell: bash
+      working-directory: frontend
+      env:
+        RELEASE_VERSION: ${{ inputs.version }}
+      run: |
+        set -euo pipefail
+        pnpm install --frozen-lockfile
+        version="${RELEASE_VERSION:-dev}"
+        echo "{\"VERSION\": \"${version/-g/-}\"}" > src/version.json
+        pnpm build
+
+    # el binario incrusta frontend/dist, así que va después del frontend
+    - name: Binario
+      shell: bash
+      env:
+        RELEASE_VERSION: ${{ inputs.version }}
+      run: go tool mage build:static
