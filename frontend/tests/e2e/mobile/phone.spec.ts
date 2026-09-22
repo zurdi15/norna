@@ -61,6 +61,28 @@ test.describe('Daily use on a phone @mobile', () => {
 		}).toPass()
 	})
 
+	// Chrome on Android flickers a fixed element with a backdrop filter while a sheet
+	// animates over it: the bar's icons blinked every time a drawer closed.
+	test('stops blurring the bottom bar while a drawer covers it', async ({authenticatedPage: page}) => {
+		const barBlur = () => page.evaluate(() => {
+			const bar = [...document.querySelectorAll('nav')]
+				.find(el => getComputedStyle(el).position === 'fixed')
+			return bar ? getComputedStyle(bar).backdropFilter : 'no bar yet'
+		})
+
+		await page.goto('/projects/1/12')
+		await expect.poll(barBlur).toContain('blur')
+
+		await page.getByRole('button', {name: 'Columns'}).click()
+		await page.getByRole('dialog', {name: 'Columns'}).waitFor()
+		expect(await barBlur()).toBe('none')
+
+		// Still covered while the sheet animates away, and blurring again once it is gone.
+		await page.keyboard.press('Escape')
+		expect(await barBlur()).toBe('none')
+		await expect.poll(barBlur).toContain('blur')
+	})
+
 	test('completes a task from Home', async ({authenticatedPage: page}) => {
 		await page.goto('/')
 
