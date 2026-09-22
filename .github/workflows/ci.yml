@@ -71,8 +71,8 @@ jobs:
           restore-keys: go-web-${{ runner.os }}-
       - run: go tool mage test:web
 
-  frontend:
-    name: Frontend
+  frontend-lint:
+    name: Lint frontend
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -84,6 +84,17 @@ jobs:
       - run: pnpm lint
       - run: pnpm lint:styles
       - run: pnpm typecheck
+
+  frontend-tests:
+    name: Tests frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - run: pnpm install --frozen-lockfile
       - run: pnpm vitest run --dir ./src
       - run: pnpm build
 
