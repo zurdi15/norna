@@ -4,7 +4,7 @@ import {useI18n} from 'vue-i18n'
 import {useStorage} from '@vueuse/core'
 import {ArrowDown, ArrowUp, ChevronLeft, ChevronRight, MessageSquare, SearchX, Table2} from '@lucide/vue'
 
-import type {ProjectView} from '@/client/generated'
+import type {ProjectView, Task} from '@/client/generated'
 import type {ProjectResponse} from '@/client/queries/projects'
 import {useProjects} from '@/composables/useProjects'
 import {useTaskDateFormat} from '@/composables/useTaskDateFormat'
@@ -28,6 +28,9 @@ import UiProgress from '@/ui/UiProgress.vue'
 import UiSkeleton from '@/ui/UiSkeleton.vue'
 
 import type {ViewFilters} from '../useViewFilters'
+import FeaturedLabelChips from '@/features/tasks/FeaturedLabelChips.vue'
+import {splitFeaturedLabels, useFeaturedLabelIds} from '@/features/tasks/featuredLabels'
+
 import {defaultVisibleColumns, nextSort, TABLE_COLUMNS, type TableColumnKey} from './columns'
 import TableColumnPicker from './TableColumnPicker.vue'
 
@@ -55,6 +58,10 @@ const list = useTaskList(() => ({kind: 'view', projectId: props.project.id, view
 
 const visible = useStorage<TableColumnKey[]>('norna:table-columns', defaultVisibleColumns())
 const columns = computed(() => TABLE_COLUMNS.filter(column => column.required || visible.value.includes(column.key)))
+
+// Featured labels lead the title, like in every other view; the labels column has the rest.
+const featuredIds = useFeaturedLabelIds()
+const byKind = (task: Task) => splitFeaturedLabels(task.labels ?? [], featuredIds.value)
 
 const filtering = computed(() => props.filters.q !== '' || props.filters.filter !== '')
 
@@ -184,16 +191,21 @@ const stickyClass = 'sticky inset-s-0 z-10 bg-canvas'
 								v-else-if="column.key === 'identifier'"
 								class="font-mono text-2xs text-ink-faint"
 							>{{ getTaskIdentifier(task) }}</span>
-							<RouterLink
-								v-else-if="column.key === 'title'"
-								:to="taskLink(task.id ?? 0)"
-								:class="cn(
-									'rounded-sm hover:underline focus-visible:outline-2 focus-visible:outline-accent',
-									task.done && 'text-ink-faint line-through decoration-line-strong',
-								)"
-							>
-								{{ task.title }}
-							</RouterLink>
+							<template v-else-if="column.key === 'title'">
+								<FeaturedLabelChips
+									:labels="byKind(task).featured"
+									class="me-1.5 align-middle"
+								/>
+								<RouterLink
+									:to="taskLink(task.id ?? 0)"
+									:class="cn(
+										'rounded-sm hover:underline focus-visible:outline-2 focus-visible:outline-accent',
+										task.done && 'text-ink-faint line-through decoration-line-strong',
+									)"
+								>
+									{{ task.title }}
+								</RouterLink>
+							</template>
 							<span
 								v-else-if="column.key === 'project' && projects.projects[task.project_id ?? 0]"
 								class="inline-flex items-center gap-1.5 text-sm text-ink-muted"
@@ -216,7 +228,7 @@ const stickyClass = 'sticky inset-s-0 z-10 bg-canvas'
 								class="inline-flex gap-2.5"
 							>
 								<span
-									v-for="label in task.labels ?? []"
+									v-for="label in byKind(task).others"
 									:key="label.id"
 									class="inline-flex items-center gap-1.5 text-sm text-ink-muted"
 								>

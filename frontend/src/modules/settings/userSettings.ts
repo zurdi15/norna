@@ -40,7 +40,7 @@ export interface FrontendSettings {
 	desktop_quick_entry_shortcut: string
 	quick_add_default_reminders: QuickAddDefaultReminder[]
 	// Labels that act as a task's type: picked when adding a task, shown as a chip before its title.
-	task_type_label_ids: number[]
+	featured_label_ids: number[]
 	time_tracking_default_start?: string
 	default_due_time?: string
 }
@@ -63,7 +63,7 @@ export const DEFAULT_FRONTEND_SETTINGS: Readonly<FrontendSettings> = Object.free
 	comment_sort_order: 'asc',
 	desktop_quick_entry_shortcut: 'CmdOrCtrl+Shift+A',
 	quick_add_default_reminders: [],
-	task_type_label_ids: [],
+	featured_label_ids: [],
 })
 
 export interface UserSettings extends Omit<Required<UserGeneralSettings>, '$schema' | 'frontend_settings' | 'language' | 'week_start'> {
@@ -91,13 +91,33 @@ function snakeKeys(value: unknown): unknown {
 	return Object.fromEntries(Object.entries(value).map(([key, v]) => [toSnakeKey(key), snakeKeys(v)]))
 }
 
+// Settings that were stored under another name once. The blob outlives the name, so a
+// rename here would otherwise drop what the user had chosen.
+const RENAMED_KEYS: Readonly<Record<string, string>> = {
+	task_type_label_ids: 'featured_label_ids',
+}
+
+function renamedKeys(value: unknown): unknown {
+	if (!isPlainObject(value)) {
+		return value
+	}
+	const renamed = {...value}
+	for (const [was, now] of Object.entries(RENAMED_KEYS)) {
+		if (renamed[was] !== undefined && renamed[now] === undefined) {
+			renamed[now] = renamed[was]
+		}
+		delete renamed[was]
+	}
+	return renamed
+}
+
 /**
  * Reads the stored blob over the defaults. A stored value only wins when it has the
  * same type as the default (null counts as matching for nullable settings), so a
  * malformed blob can't break the app.
  */
 export function parseFrontendSettings(raw: unknown): FrontendSettings {
-	const stored = snakeKeys(raw)
+	const stored = renamedKeys(snakeKeys(raw))
 	const settings: Record<string, unknown> = {...DEFAULT_FRONTEND_SETTINGS}
 	if (!isPlainObject(stored)) {
 		return settings as unknown as FrontendSettings
@@ -123,7 +143,7 @@ export function parseFrontendSettings(raw: unknown): FrontendSettings {
  * replaces the whole blob, so keys this frontend doesn't know are carried over.
  */
 export function mergeFrontendSettings(raw: unknown, patch: Partial<FrontendSettings>): Record<string, unknown> {
-	const stored = snakeKeys(raw)
+	const stored = renamedKeys(snakeKeys(raw))
 	return {
 		...(isPlainObject(stored) ? stored : {}),
 		...patch,

@@ -10,8 +10,8 @@ import {useAttachmentUrl} from '@/features/tasks/attachments/useAttachmentUrl'
 import PriorityMark from '@/features/tasks/PriorityMark.vue'
 import TaskCheck from '@/features/tasks/TaskCheck.vue'
 import TaskDue from '@/features/tasks/TaskDue.vue'
-import TaskTypeChips from '@/features/tasks/TaskTypeChips.vue'
-import {splitTaskTypes, useTaskTypeIds} from '@/features/tasks/taskTypes'
+import FeaturedLabelChips from '@/features/tasks/FeaturedLabelChips.vue'
+import {splitFeaturedLabels, useFeaturedLabelIds} from '@/features/tasks/featuredLabels'
 import {useTaskLink} from '@/features/tasks/useTaskLink'
 import {useTaskMenu} from '@/features/tasks/useTaskMenu'
 import {getChecklistStatistics} from '@/helpers/checklistFromText'
@@ -51,9 +51,9 @@ const {hasFinePointer} = useBreakpoints()
 const done = computed(() => props.task.done ?? false)
 const identifier = computed(() => getTaskIdentifier(props.task))
 const due = computed(() => getTaskDate(props.task.due_date))
-const typeIds = useTaskTypeIds()
-const labelsByKind = computed(() => splitTaskTypes(props.task.labels ?? [], typeIds.value))
-const types = computed(() => labelsByKind.value.types)
+const featuredIds = useFeaturedLabelIds()
+const labelsByKind = computed(() => splitFeaturedLabels(props.task.labels ?? [], featuredIds.value))
+const featured = computed(() => labelsByKind.value.featured)
 const labels = computed(() => labelsByKind.value.others)
 const shownLabels = computed(() => labels.value.slice(0, 4))
 const assignees = computed(() => props.task.assignees ?? [])
@@ -144,7 +144,7 @@ const countClass = 'inline-flex items-center gap-1 font-mono text-2xs text-ink-f
 
 			<div class="flex min-h-4 items-center gap-2">
 				<span class="truncate font-mono text-2xs tracking-wide text-ink-faint">{{ identifier }}</span>
-				<TaskTypeChips :types="types" />
+				<FeaturedLabelChips :labels="featured" />
 				<span
 					v-if="task.is_unread"
 					class="size-1.5 shrink-0 rounded-full bg-accent"

@@ -22,7 +22,7 @@ import UiIconButton from '@/ui/UiIconButton.vue'
 import PriorityMark from '../PriorityMark.vue'
 import {priorityLabelKey} from '../priority'
 import ProjectPicker from '../properties/ProjectPicker.vue'
-import {useTaskTypeIds} from '../taskTypes'
+import {useFeaturedLabelIds} from '../featuredLabels'
 import {useQuickAddSettings} from '../useQuickAddSettings'
 import MagicMirror from './MagicMirror'
 
@@ -50,18 +50,18 @@ const quickAddMany = useQuickAddTasksMutation()
 
 const text = ref('')
 const pickedProjectId = ref<number | null>(null)
-const pickedTypeId = ref<number | null>(null)
+const pickedFeaturedIds = ref<number[]>([])
 const projectPickerOpen = ref(false)
 const input = useTemplateRef<HTMLTextAreaElement>('input')
 
 const projectId = computed(() => pickedProjectId.value ?? props.defaultProjectId)
 
 const {labels: allLabels} = useLabels()
-const typeIds = useTaskTypeIds()
-const types = computed(() => typeIds.value
+const featuredIds = useFeaturedLabelIds()
+const featured = computed(() => featuredIds.value
 	.map(id => allLabels.value.find(label => label.id === id))
 	.filter((label): label is Label => label !== undefined))
-const pickedLabels = computed(() => types.value.filter(type => type.id === pickedTypeId.value))
+const pickedLabels = computed(() => featured.value.filter(label => pickedFeaturedIds.value.includes(label.id ?? 0)))
 const prefixes = computed(() => PREFIXES[settings.value.magicMode])
 const lines = computed(() => text.value.split('\n').map(line => line.trim()).filter(Boolean))
 const firstLine = computed(() => lines.value[0] ?? '')
@@ -141,9 +141,11 @@ function onKeydown(event: KeyboardEvent) {
 	}
 }
 
-// One type at a time; tapping the picked one again leaves the task without.
-function toggleType(id: number) {
-	pickedTypeId.value = pickedTypeId.value === id ? null : id
+// As many as the task deserves; tapping a picked one again takes it off.
+function toggleFeatured(id: number) {
+	pickedFeaturedIds.value = pickedFeaturedIds.value.includes(id)
+		? pickedFeaturedIds.value.filter(other => other !== id)
+		: [...pickedFeaturedIds.value, id]
 }
 
 function pickProject(id: number) {
@@ -194,22 +196,22 @@ defineExpose({focus})
 
 			<!-- mousedown.prevent keeps the focus, and a phone's keyboard, in the text. -->
 			<div
-				v-if="types.length"
+				v-if="featured.length"
 				role="group"
-				:aria-label="t('quickAdd.type')"
+				:aria-label="t('quickAdd.featured')"
 				class="flex flex-wrap gap-1.5"
 			>
 				<UiChip
-					v-for="type in types"
-					:key="type.id"
+					v-for="label in featured"
+					:key="label.id"
 					as="button"
-					:color="type.hex_color"
-					:pressed="type.id === pickedTypeId"
+					:color="label.hex_color"
+					:pressed="pickedFeaturedIds.includes(label.id ?? 0)"
 					class="pointer-coarse:h-9 pointer-coarse:px-2.5"
 					@mousedown.prevent
-					@click="toggleType(type.id ?? 0)"
+					@click="toggleFeatured(label.id ?? 0)"
 				>
-					{{ type.title }}
+					{{ label.title }}
 				</UiChip>
 			</div>
 

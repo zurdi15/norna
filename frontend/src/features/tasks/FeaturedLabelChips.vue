@@ -2,25 +2,25 @@
 import type {Label} from '@/client/generated'
 import UiChip from '@/ui/UiChip.vue'
 
-/** A task's type labels as small chips, before its title in lists and on cards. */
+/** A task's featured labels as small chips, before its title wherever the task shows up. */
 defineProps<{
-	types: readonly Label[]
+	labels: readonly Label[]
 }>()
 </script>
 
 <template>
 	<span
-		v-if="types.length"
+		v-if="labels.length"
 		class="inline-flex shrink-0 gap-1"
 	>
 		<UiChip
-			v-for="type in types"
-			:key="type.id"
+			v-for="label in labels"
+			:key="label.id"
 			size="sm"
-			:color="type.hex_color"
+			:color="label.hex_color"
 			class="max-w-28"
 		>
-			{{ type.title }}
+			{{ label.title }}
 		</UiChip>
 	</span>
 </template>

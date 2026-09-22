@@ -11,7 +11,7 @@ import UiSelect from '@/ui/UiSelect.vue'
 import UiSwitch from '@/ui/UiSwitch.vue'
 
 import QuickAddRemindersField from '../QuickAddRemindersField.vue'
-import TaskTypesField from '../TaskTypesField.vue'
+import FeaturedLabelsField from '../FeaturedLabelsField.vue'
 import TimeInput from '../TimeInput.vue'
 import {useAccountSettings} from '../useAccountSettings'
 
@@ -60,14 +60,14 @@ const relationItems = computed(() => RELATION_KINDS.map(value => ({value, label:
 			/>
 		</SettingsRow>
 		<SettingsRow
-			:label="t('settingsAccount.general.taskTypes')"
-			:description="t('settingsAccount.general.taskTypesDescription')"
+			:label="t('settingsAccount.general.featuredLabels')"
+			:description="t('settingsAccount.general.featuredLabelsDescription')"
 			stack
 		>
-			<TaskTypesField
-				:label="t('settingsAccount.general.taskTypes')"
-				:model-value="frontend.task_type_label_ids"
-				@update:modelValue="ids => saveFrontend({task_type_label_ids: [...ids]})"
+			<FeaturedLabelsField
+				:label="t('settingsAccount.general.featuredLabels')"
+				:model-value="frontend.featured_label_ids"
+				@update:modelValue="ids => saveFrontend({featured_label_ids: [...ids]})"
 			/>
 		</SettingsRow>
 		<SettingsRow

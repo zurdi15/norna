@@ -18,6 +18,8 @@ import {
 	type GanttDragMode,
 } from '@/composables/useGanttBar'
 import {PRIORITIES} from '@/constants/priorities'
+import FeaturedLabelChips from '@/features/tasks/FeaturedLabelChips.vue'
+import {splitFeaturedLabels, useFeaturedLabelIds} from '@/features/tasks/featuredLabels'
 import PriorityMark from '@/features/tasks/PriorityMark.vue'
 import TaskCheck from '@/features/tasks/TaskCheck.vue'
 import {useTaskLink} from '@/features/tasks/useTaskLink'
@@ -64,6 +66,9 @@ const emit = defineEmits<{
 const {t} = useI18n()
 const router = useRouter()
 const taskLink = useTaskLink()
+
+const featuredIds = useFeaturedLabelIds()
+const featuredOf = (task: Task) => splitFeaturedLabels(task.labels ?? [], featuredIds.value).featured
 const authStore = useAuthStore()
 const actions = useTaskActionsStore()
 const {isMd, hasFinePointer} = useBreakpoints()
@@ -490,6 +495,7 @@ defineExpose({scrollToDate})
 								"
 							>
 								<span class="shrink-0 font-mono text-2xs text-ink-faint">{{ getTaskIdentifier(item.row.task) }}</span>
+								<FeaturedLabelChips :labels="featuredOf(item.row.task)" />
 								<span
 									:class="cn(
 										'truncate hover:underline',
@@ -507,7 +513,10 @@ defineExpose({scrollToDate})
 							:to="taskLink(item.row.id)"
 							class="flex min-w-0 flex-1 flex-col justify-center self-stretch"
 						>
-							<span :class="cn('truncate text-sm', item.row.task.done && 'text-ink-faint line-through')">{{ item.row.task.title }}</span>
+							<span class="flex min-w-0 items-center gap-1.5">
+								<FeaturedLabelChips :labels="featuredOf(item.row.task)" />
+								<span :class="cn('truncate text-sm', item.row.task.done && 'text-ink-faint line-through')">{{ item.row.task.title }}</span>
+							</span>
 							<span class="font-mono text-3xs text-ink-faint">{{ getTaskIdentifier(item.row.task) }}</span>
 						</RouterLink>
 					</div>
