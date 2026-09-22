@@ -31,6 +31,36 @@ test.describe('Daily use on a phone @mobile', () => {
 		])
 	})
 
+	// The check of a row is above the link covering that row, and used to tie with the
+	// sticky header, which it won by coming later in the document: the checks of the rows
+	// scrolling by were painted over the header.
+	test('scrolls the list under the header, not over it', async ({authenticatedPage: page, currentUser}) => {
+		await seedTasks(1, currentUser.id, Array.from({length: 20}, (_, i) => ({title: `Filler ${i + 1}`})))
+		await page.goto('/projects/1')
+		await page.getByRole('checkbox', {name: 'Complete “Filler 1”'}).waitFor()
+
+		await page.evaluate(() => window.scrollTo(0, 400))
+		expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(100)
+
+		await expect(async () => {
+			const overHeader = await page.evaluate(() => {
+				const header = document.querySelector('header')!
+				const {top, bottom} = header.getBoundingClientRect()
+				const strays = new Set<string>()
+				for (let x = 4; x < window.innerWidth; x += 12) {
+					for (let y = top + 2; y < bottom - 2; y += 6) {
+						const el = document.elementFromPoint(x, y)
+						if (el && !header.contains(el)) {
+							strays.add(el.getAttribute('aria-label') ?? el.tagName.toLowerCase())
+						}
+					}
+				}
+				return [...strays]
+			})
+			expect(overHeader).toEqual([])
+		}).toPass()
+	})
+
 	test('completes a task from Home', async ({authenticatedPage: page}) => {
 		await page.goto('/')
 

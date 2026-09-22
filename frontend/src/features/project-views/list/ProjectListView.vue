@@ -154,7 +154,7 @@ const dragging = ref(false)
 				:key="task.id"
 				:data-task-row="task.id"
 				class="
-					relative
+					relative isolate
 					before:absolute before:inset-s-11.5 before:inset-e-0 before:top-0 before:z-10 before:h-px
 					before:bg-line
 					first:before:hidden
