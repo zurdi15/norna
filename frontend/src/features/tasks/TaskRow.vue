@@ -161,12 +161,18 @@ const countClass = 'inline-flex items-center gap-1 font-mono text-2xs text-ink-f
 				/>
 			</div>
 
+			<!--
+				isolate keeps the z-10 of the check and the menu inside the row, where they only
+				have to beat the link covering it. Without it they tie with the sticky page
+				header, which they win by coming later in the document: on a phone the checks of
+				the rows scrolling by were painted over the header.
+			-->
 			<div
 				:data-active="active || undefined"
 				:data-selected="selected || undefined"
 				:style="swipe.style.value"
 				:class="cn(
-					'group/row relative flex gap-3 bg-canvas px-4 py-2.5 transition-colors duration-150',
+					'group/row relative isolate flex gap-3 bg-canvas px-4 py-2.5 transition-colors duration-150',
 					'hover:bg-canvas-subtle data-active:bg-canvas-subtle data-selected:bg-accent-subtle',
 					'@xl:min-h-9.5 @xl:items-center @xl:px-6 @xl:py-1.5',
 				)"
