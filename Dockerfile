@@ -1,34 +1,18 @@
 # syntax=docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
-FROM --platform=$BUILDPLATFORM node:24.21.0-alpine@sha256:be80f76cf40ec8e42b9bec49f60a55e0660f30af58d3e5a25530785b30ea67e2 AS frontendbuilder
 
-WORKDIR /build
+# This image only packages a binary built beforehand:
+#
+#   cd frontend && pnpm build          # the binary embeds frontend/dist
+#   go tool mage build:static          # → dist/norna-linux-<arch>
+#   docker build .
+#
+# Compiling outside Docker keeps Go's build cache between runs, which is most of the
+# difference between a one-minute image and a ten-minute one. The release workflow
+# builds each architecture on a runner of that architecture, so nothing cross-compiles.
 
-ENV PNPM_CACHE_FOLDER=.cache/pnpm/
-ENV PUPPETEER_SKIP_DOWNLOAD=true
-ENV CYPRESS_INSTALL_BINARY=0
-
-COPY frontend/pnpm-lock.yaml frontend/package.json frontend/pnpm-workspace.yaml ./
-RUN npm install -g corepack && corepack enable && \
-    pnpm install --frozen-lockfile
-COPY frontend/ ./
-ARG RELEASE_VERSION=dev
-RUN echo "{\"VERSION\": \"${RELEASE_VERSION/-g/-}\"}" > src/version.json && pnpm run build
-
-FROM --platform=$BUILDPLATFORM ghcr.io/techknowlogick/xgo:go-1.27.x@sha256:8cc742b41f043a4fd45d2f63f1fcd12cb27949342df09efb5561f2aadfbe6da3 AS apibuilder
-
-RUN go install github.com/magefile/mage@latest && \
-    mv /go/bin/mage /usr/local/go/bin
-
-WORKDIR /go/src/norna
-COPY . ./
-COPY --from=frontendbuilder /build/dist ./frontend/dist
-
-ARG TARGETOS TARGETARCH TARGETVARIANT RELEASE_VERSION
-ENV RELEASE_VERSION=$RELEASE_VERSION
-
-RUN export PATH=$PATH:$GOPATH/bin && \
-	mage build:clean && \
-    (cd build && mage release:xgo norna "${TARGETOS}/${TARGETARCH}/${TARGETVARIANT}")
+# An empty image has no directories to write to and no CA certificates. Neither
+# depends on the target architecture, so this stage runs on the build platform.
+FROM --platform=$BUILDPLATFORM alpine:3.22@sha256:5291449c3df73caf6ed85e649dec1b9e818b39a5d8c871e97afc13e9cd5e8fa8 AS rootfs
 
 RUN mkdir -p /tmp && chmod 1777 /tmp && mkdir -p /data/files
 
@@ -50,9 +34,9 @@ WORKDIR /app/norna
 ENTRYPOINT [ "/app/norna/norna" ]
 EXPOSE 3456
 
-COPY --from=apibuilder --chown=1000:1000 --chmod=1777 /tmp /tmp
+COPY --from=rootfs --chown=1000:1000 --chmod=1777 /tmp /tmp
 # Owned by the app's user, so a new named volume starts writable.
-COPY --from=apibuilder --chown=1000:1000 /data /data
+COPY --from=rootfs --chown=1000:1000 /data /data
 
 USER 1000
 
@@ -61,5 +45,6 @@ ENV NORNA_SERVICE_ROOTPATH=/app/norna/
 ENV NORNA_DATABASE_PATH=/data/norna.db
 ENV NORNA_FILES_BASEPATH=/data/files
 
-COPY --from=apibuilder /build/norna-* norna
-COPY --from=apibuilder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+ARG TARGETOS TARGETARCH
+COPY dist/norna-${TARGETOS}-${TARGETARCH} norna
+COPY --from=rootfs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/

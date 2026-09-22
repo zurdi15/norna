@@ -140,7 +140,7 @@ DEV_PROXY=http://127.0.0.1:3456 pnpm dev   # frontend on :4173 with hot reload
 ```
 pkg/        Go API · Echo (v1) and Huma (v2) · XORM · SQLite, Postgres or MySQL
 frontend/   Vue 3 · Vite · TypeScript · Tailwind 4 · Reka UI · TanStack Query (PWA)
-Dockerfile  multi-stage: frontend build → cross-compiled Go binary → scratch image
+Dockerfile  packages the static binary from `go tool mage build:static` into a scratch image
 ```
 
 Tests: `go tool mage test:feature` and `go tool mage test:web` (API) · `cd frontend && pnpm vitest run --dir ./src` (unit) · `go tool mage test:e2e ""` (Playwright, desktop and phone). Lint: `go tool mage lint:fix` · `cd frontend && pnpm lint:fix`.
