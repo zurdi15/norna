@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented in this file.
 
+## 0.2.3 - 2026-09-22
+
+### Arreglado
+- Al cerrar el drawer de «nueva tarea» en el móvil, la barra de abajo ya no da un salto raro: el teclado se va con el drawer y la barra espera a que la pantalla se asiente antes de volver.
+
 ## 0.2.2 - 2026-09-22
 
 ### Arreglado
